@@ -1,4 +1,4 @@
-# NewMod native ET: Legacy modules (Linux x86_64)
+# Overzealous native ET: Legacy modules (Linux, Windows, macOS)
 CC ?= cc
 CXX ?= c++
 PYTHON ?= python3
@@ -7,7 +7,7 @@ WITH_OMNIBOT ?= 1
 # Inherited, spoofable key fallback; experimental and disabled by default.
 WITH_AUTO_GUID ?= 0
 ARCH ?= x86_64
-# NewMod, Arena.ai, 2026-11-21: reject empty/multiple values and avoid
+# Overzealous, Arena.ai, 2026-11-27: reject empty/multiple values and avoid
 # silently labeling a native build as an unsupported architecture.
 ifneq ($(WITH_LUA),0)
   ifneq ($(WITH_LUA),1)
@@ -27,15 +27,43 @@ endif
 ifneq ($(ARCH),x86_64)
   $(error only ARCH=x86_64 is currently supported)
 endif
-OUT := build/obj-$(ARCH)-lua$(WITH_LUA)-bot$(WITH_OMNIBOT)-uid$(WITH_AUTO_GUID)
-MODDIR := build/newmod
+
+# --- Platform detection -------------------------------------------------------
+# Overzealous, Arena.ai, 2026-11-27: auto-detect OS and use correct
+# shared-library link flags and output extensions.
+UNAME_S := $(shell uname -s 2>/dev/null)
+ifeq ($(UNAME_S),Linux)
+  PLATFORM := linux
+  SHLIB_FLAG := -shared
+  SHLIB_EXT := so
+  LDLIBS := -lm -ldl
+  COMMON_FLAGS := -O2 -g -fPIC -fcommon -fno-strict-aliasing -D_GNU_SOURCE -DLUA_USE_POSIX
+else ifeq ($(UNAME_S),Darwin)
+  PLATFORM := macos
+  SHLIB_FLAG := -dynamiclib
+  SHLIB_EXT := dylib
+  LDLIBS := -lm
+  COMMON_FLAGS := -O2 -g -fPIC -fno-strict-aliasing -DLUA_USE_POSIX
+else ifneq (,$(findstring MINGW,$(UNAME_S)))
+  PLATFORM := windows
+  SHLIB_FLAG := -shared
+  SHLIB_EXT := dll
+  LDLIBS := -lm
+  COMMON_FLAGS := -O2 -g -fPIC -fcommon -fno-strict-aliasing
+  # Windows needs static libgcc/libstdc++ to avoid DLL dependencies
+  LDLIBS += -static-libgcc -static-libstdc++
+else
+  $(error Unsupported platform: $(UNAME_S). Use Linux, macOS, or MinGW.)
+endif
+
+OUT := build/obj-$(PLATFORM)-$(ARCH)-lua$(WITH_LUA)-bot$(WITH_OMNIBOT)-uid$(WITH_AUTO_GUID)
+MODDIR := build/overzealous
 # Keep linked variants separate; switching options must not reuse stale modules.
-VARIANT_DIR := build/variant-$(ARCH)-lua$(WITH_LUA)-bot$(WITH_OMNIBOT)-uid$(WITH_AUTO_GUID)
-COMMON_FLAGS := -O2 -g -fPIC -fcommon -fno-strict-aliasing -D_GNU_SOURCE -DLUA_USE_POSIX
+VARIANT_DIR := build/variant-$(PLATFORM)-$(ARCH)-lua$(WITH_LUA)-bot$(WITH_OMNIBOT)-uid$(WITH_AUTO_GUID)
+
 CFLAGS ?= -std=gnu11
 CXXFLAGS ?= -std=gnu++11 -fpermissive -Wno-write-strings -Wno-return-type
 CPPFLAGS += -Isrc/game -Isrc/lua
-LDLIBS := -lm -ldl
 
 GAME_SRC := src/game/bg_animation.c \
     src/game/bg_animgroup.c \
@@ -189,22 +217,22 @@ obj = $(addprefix $(OUT)/$(1)/,$(addsuffix .o,$(basename $(2))))
 GAME_OBJ := $(call obj,game,$(GAME_SRC))
 CGAME_OBJ := $(call obj,cgame,$(CGAME_SRC))
 UI_OBJ := $(call obj,ui,$(UI_SRC))
-MODULES := $(VARIANT_DIR)/qagame.mp.$(ARCH).so $(VARIANT_DIR)/cgame.mp.$(ARCH).so $(VARIANT_DIR)/ui.mp.$(ARCH).so
+MODULES := $(VARIANT_DIR)/qagame.mp.$(ARCH).$(SHLIB_EXT) $(VARIANT_DIR)/cgame.mp.$(ARCH).$(SHLIB_EXT) $(VARIANT_DIR)/ui.mp.$(ARCH).$(SHLIB_EXT)
 
-.PHONY: all clean test test-matrix
+.PHONY: all clean test test-matrix pk3
 all: $(MODULES)
 	@mkdir -p $(MODDIR)
 	@cp -f $(MODULES) $(MODDIR)/
 
-$(VARIANT_DIR)/qagame.mp.$(ARCH).so: $(GAME_OBJ)
+$(VARIANT_DIR)/qagame.mp.$(ARCH).$(SHLIB_EXT): $(GAME_OBJ)
 	@mkdir -p $(@D)
-	$(CXX) -shared -o $@ $^ $(LDLIBS)
-$(VARIANT_DIR)/cgame.mp.$(ARCH).so: $(CGAME_OBJ)
+	$(CXX) $(SHLIB_FLAG) -o $@ $^ $(LDLIBS)
+$(VARIANT_DIR)/cgame.mp.$(ARCH).$(SHLIB_EXT): $(CGAME_OBJ)
 	@mkdir -p $(@D)
-	$(CXX) -shared -o $@ $^ $(LDLIBS)
-$(VARIANT_DIR)/ui.mp.$(ARCH).so: $(UI_OBJ)
+	$(CXX) $(SHLIB_FLAG) -o $@ $^ $(LDLIBS)
+$(VARIANT_DIR)/ui.mp.$(ARCH).$(SHLIB_EXT): $(UI_OBJ)
 	@mkdir -p $(@D)
-	$(CXX) -shared -o $@ $^ $(LDLIBS)
+	$(CXX) $(SHLIB_FLAG) -o $@ $^ $(LDLIBS)
 
 $(OUT)/game/%.o: %.c
 	@mkdir -p $(@D)
@@ -224,14 +252,22 @@ $(OUT)/ui/%.o: %.c
 clean:
 	rm -rf build
 
-# NewMod, Arena.ai, 2026-11-21: regressions run against the selected variant.
+# Overzealous, Arena.ai, 2026-11-27: regressions run against the selected variant.
 test: all
-	ARCH="$(ARCH)" WITH_LUA="$(WITH_LUA)" WITH_OMNIBOT="$(WITH_OMNIBOT)" WITH_AUTO_GUID="$(WITH_AUTO_GUID)" CC="$(CC)" CXX="$(CXX)" $(PYTHON) -m unittest discover -s tests -v
+	PLATFORM="$(PLATFORM)" ARCH="$(ARCH)" WITH_LUA="$(WITH_LUA)" WITH_OMNIBOT="$(WITH_OMNIBOT)" WITH_AUTO_GUID="$(WITH_AUTO_GUID)" CC="$(CC)" CXX="$(CXX)" $(PYTHON) -m unittest discover -s tests -v
 
 # Build/test all four Lua/Bot variants with the selected UID setting, then
-# restore the requested combination in build/newmod.
+# restore the requested combination in build/overzealous.
 test-matrix:
 	@set -e; for lua in 0 1; do for bot in 0 1; do \
 		$(MAKE) --no-print-directory test WITH_LUA=$$lua WITH_OMNIBOT=$$bot WITH_AUTO_GUID="$(WITH_AUTO_GUID)" ARCH="$(ARCH)"; \
 	done; done
 	@$(MAKE) --no-print-directory all WITH_LUA="$(WITH_LUA)" WITH_OMNIBOT="$(WITH_OMNIBOT)" WITH_AUTO_GUID="$(WITH_AUTO_GUID)" ARCH="$(ARCH)"
+
+# Pack pak/ contents into a pk3 archive (zip format) with gameinfo.txt
+PK3 := build/overzealous-$(PLATFORM)-$(ARCH).pk3
+pk3: all
+	@mkdir -p build
+	@rm -f $(PK3)
+	cd pak && zip -r -q ../$(PK3) . -x '.*'
+	@echo "Created $(PK3) ($$(du -h $(PK3) | cut -f1))"

@@ -1,6 +1,6 @@
-# NewMod 0.2.0-dev
+# Overzealous 0.3.0-dev
 
-NewMod is an **experimental, incomplete** Enemy Territory mod derived from
+Overzealous is an **experimental, incomplete** Enemy Territory mod derived from
 No Quarter. It incorporates selected Jaymod- and Oz-inspired administrative
 commands, not a complete merge of the three mods. The source builds native
 Linux x86-64 game, cgame and UI modules for an ET: Legacy-based deployment;
@@ -11,7 +11,7 @@ foundation of this work. Jaymod's Bud Byrd and Mike Miscevic, the Oz/ETPub
 contributors, id Software, the Lua team and the Omni-Bot contributors are
 also credited in [PROVENANCE.md](PROVENANCE.md). See [CHANGES](CHANGES) for
 dated changes and [LEGAL](LEGAL) before any deployment or distribution.
-NewMod is not an official No Quarter, Jaymod, Oz or ET: Legacy release.
+Overzealous is not an official No Quarter, Jaymod, Oz or ET: Legacy release.
 
 ## What is and is not implemented
 
@@ -70,8 +70,8 @@ make -j8 test-matrix WITH_AUTO_GUID=1  # repeat with experimental key fallback
 make -j8 all WITH_AUTO_GUID=0          # restore default outputs
 ```
 
-The outputs are `build/newmod/qagame.mp.x86_64.so`,
-`build/newmod/cgame.mp.x86_64.so`, and `build/newmod/ui.mp.x86_64.so`.
+The outputs are `build/overzealous/qagame.mp.x86_64.so`,
+`build/overzealous/cgame.mp.x86_64.so`, and `build/overzealous/ui.mp.x86_64.so`.
 `build/` is generated and ignored. `make clean` removes it.
 
 `WITH_LUA=0` and `WITH_OMNIBOT=0` disable the respective adapter, e.g.
@@ -99,7 +99,7 @@ API does not report short writes to this client code. The unrelated upstream
 `SYSTEM_CHECK` option is not enabled or supported by this Makefile.
 
 Build options have separate object directories, but each `make all` copies the
-chosen set into `build/newmod/`; do not run different build variants in
+chosen set into `build/overzealous/`; do not run different build variants in
 parallel against that shared output directory.
 
 To reproduce the optional server smoke tests, supply an ET: Legacy 2.86.2
@@ -124,10 +124,10 @@ media. Use `--show-log` to inspect output and `--port` to select a port.
 ## Deployment prerequisites
 
 For controlled local development, use ET: Legacy 2.86.2 on Linux x86-64,
-a separate `newmod` game directory, authorized base-game data, compatible
-mod media and matching NewMod client modules. The game advertises
-`gamename=newmod`, `mod_version=0.2.0-dev` and `GAME_VERSION` `NewMod 0.2`;
-an NQ, Jaymod or Oz client is not a matching NewMod client. Client packaging and distribution are still
+a separate `overzealous` game directory, authorized base-game data, compatible
+mod media and matching Overzealous client modules. The game advertises
+`gamename=overzealous`, `mod_version=0.3.0-dev` and `GAME_VERSION` `Overzealous 0.3`;
+an NQ, Jaymod or Oz client is not a matching Overzealous client. Client packaging and distribution are still
 open work: merely copying the three `.so` files does not create a usable
 client package. Respect the original engine/version checks and the license
 conditions in `LEGAL`; do not bypass them to make incompatible clients load.
@@ -143,12 +143,12 @@ Both features are disabled by the inherited `g_medics` default of `65`. Bits
 are combined with the server's existing settings; these numbers intentionally
 **do not** match Jaymod/Oz because their bits conflict with NQ settings.
 
-* `g_medics` bit `8192` enables `WP_ADRENALINE_SHARE` (NewMod ID 63). An
+* `g_medics` bit `8192` enables `WP_ADRENALINE_SHARE` (Overzealous ID 63). An
   active level-4 medic also needs NQ's `g_adrenaline` medic bit `256`, the
   self-adrenaline weapon, and war mode off. The tool is an alternate to
   self-adrenaline and shares its needle pool and NQ charge timing. It applies
   NQ adrenaline to an eligible living teammate in syringe range; a miss or
-  rejected target refunds a needle consumed by movement. Matching NewMod
+  rejected target refunds a needle consumed by movement. Matching Overzealous
   game/cgame builds are required, including when this feature is disabled:
   movement fire-event tagging also affects ordinary weapons. Bot behavior,
   packet-loss corrections, effects and real-client gameplay are unverified.
@@ -280,7 +280,7 @@ game filesystem; set it to an empty string to disable reports.
 level and meet the threshold to receive a notification. Reports contain
 names, GUIDs and reasons; restrict access to and retention of that file.
 
-**Privacy limitation:** NewMod intercepts report commands before its own chat,
+**Privacy limitation:** Overzealous intercepts report commands before its own chat,
 admin log and Lua client-command hook. ET: Legacy can log or record the raw
 client command in engine debug logs or server-side demos *before* the game
 module receives it, and other plugins or proxies may also retain it. This is

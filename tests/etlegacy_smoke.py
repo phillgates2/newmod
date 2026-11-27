@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Optional synthetic ET: Legacy dedicated-server smoke test.
 
-NewMod, Arena.ai, 2026-11-21. This creates disposable stand-ins, not game
+Overzealous, Arena.ai, 2026-11-27. This creates disposable stand-ins, not game
 media or a playable map. It checks selected initialization, Lua, command,
 gravity and restart paths without connecting any clients. The ET: Legacy
 engine must be supplied separately; the normal unit suite does not need it.
@@ -25,7 +25,7 @@ def make_empty_bsp():
     """A deliberately empty ET BSP with just enough structure to load."""
     lumps = [b""] * 17
     lumps[0] = (
-        b'{\n"classname" "worldspawn"\n"message" "NewMod smoke test"\n}\n'
+        b'{\n"classname" "worldspawn"\n"message" "Overzealous smoke test"\n}\n'
         b'{\n"classname" "script_multiplayer"\n"scriptname" "game_manager"\n}\n'
         b'{\n"classname" "info_player_intermission"\n"origin" "0 0 128"\n}\n\0'
     )
@@ -54,9 +54,9 @@ def make_empty_tracemap():
 
 
 def create_fixture(base, bot_capable=False):
-    etmain, newmod = base / "etmain", base / "newmod"
+    etmain, overzealous = base / "etmain", base / "overzealous"
     etmain.mkdir(parents=True)
-    newmod.mkdir()
+    overzealous.mkdir()
     character = (
         'characterDef\n{\n mesh "models/test/empty.mdm"\n'
         ' animationGroup "animations/test.anim"\n'
@@ -66,9 +66,9 @@ def create_fixture(base, bot_capable=False):
     # the real maps, models, sounds or gameplay data needed for a release.
     with zipfile.ZipFile(etmain / "pak0.pk3", "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("default.cfg", 'seta com_hunkmegs "128"\n')
-        z.writestr("maps/newmod_test.bsp", make_empty_bsp())
-        z.writestr("maps/newmod_test.script", "game_manager\n{\n spawn\n {\n }\n}\n")
-        z.writestr("maps/newmod_test_tracemap.tga", make_empty_tracemap())
+        z.writestr("maps/overzealous_test.bsp", make_empty_bsp())
+        z.writestr("maps/overzealous_test.script", "game_manager\n{\n spawn\n {\n }\n}\n")
+        z.writestr("maps/overzealous_test_tracemap.tga", make_empty_tracemap())
         for team in ("axis", "allied"):
             for cls in ("soldier", "medic", "engineer", "fieldops", "cvops"):
                 z.writestr(f"characters/temperate/{team}/{cls}.char", character)
@@ -94,33 +94,33 @@ def create_fixture(base, bot_capable=False):
     lua = (
         "local nextFrameReport = 0\n"
         "function et_InitGame(levelTime, randomSeed, restart)\n"
-        "  et.G_Print('NEWMOD_LUA_INIT\\n')\nend\n"
+        "  et.G_Print('OVERZEALOUS_LUA_INIT\\n')\nend\n"
         "function et_RunFrame(levelTime)\n"
         "  if levelTime >= nextFrameReport then\n"
-        "    et.G_Print('NEWMOD_LUA_FRAME ' .. levelTime .. '\\n')\n"
+        "    et.G_Print('OVERZEALOUS_LUA_FRAME ' .. levelTime .. '\\n')\n"
         "    nextFrameReport = levelTime + 5000\n"
         "  end\nend\n"
         "function et_ConsoleCommand(command)\n"
-        "  et.G_Print('NEWMOD_LUA_CONSOLE ' .. command .. '\\n')\n"
+        "  et.G_Print('OVERZEALOUS_LUA_CONSOLE ' .. command .. '\\n')\n"
         "  return 0\nend\n"
-        "function et_Quit()\n  et.G_Print('NEWMOD_LUA_QUIT\\n')\nend\n"
+        "function et_Quit()\n  et.G_Print('OVERZEALOUS_LUA_QUIT\\n')\nend\n"
     ).encode()
-    (newmod / "smoke.lua").write_bytes(lua)
+    (overzealous / "smoke.lua").write_bytes(lua)
     digest = hashlib.sha1(lua).hexdigest().upper()
     # A report spanning two pages lets the console test the actual game-map
     # initialization path: the saved query must disappear after map_restart.
-    (newmod / "shrubbot.cfg").write_text("".join(
+    (overzealous / "shrubbot.cfg").write_text("".join(
         f"[level]\nlevel = {i}\nname = SmokeLevel{i:02}\nflags = h\n\n"
         for i in range(25)
     ))
-    (newmod / "smoke.cfg").write_text(
+    (overzealous / "smoke.cfg").write_text(
         'set lua_modules " , ; smoke.lua ;, "\n'
         f'set lua_allowedModules "{digest}"\n'
         # Keep this empty fixture in warmup: automatic match restart would be
         # queued behind the console's wait command and suspend game frames.
         'set g_doWarmup "1"\nset match_minplayers "2"\n'
     )
-    return newmod
+    return overzealous
 
 
 def available_udp_port():
@@ -134,7 +134,7 @@ def available_udp_port():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("engine", type=Path, help="ET: Legacy 2.86.2 Linux x86-64 dedicated-server executable")
-    parser.add_argument("--module", type=Path, default=ROOT / "build/newmod/qagame.mp.x86_64.so")
+    parser.add_argument("--module", type=Path, default=ROOT / "build/overzealous/qagame.mp.x86_64.so")
     parser.add_argument("--port", type=int, default=0, help="local UDP port (default: choose an available port)")
     parser.add_argument("--timed", action="store_true", help="also wait about 32 seconds for an actual gravity change")
     parser.add_argument("--show-log", action="store_true", help="print the engine output on success too")
@@ -145,21 +145,21 @@ def main():
     if not 0 <= args.port <= 65535:
         parser.error("port must be between 0 and 65535")
 
-    with tempfile.TemporaryDirectory(prefix="newmod-etl-smoke-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="overzealous-etl-smoke-") as temporary:
         root = Path(temporary)
         base, home = root / "base", root / "home"
         home.mkdir()
-        newmod = create_fixture(base)
-        shutil.copyfile(module, newmod / "qagame.mp.x86_64.so")
+        overzealous = create_fixture(base)
+        shutil.copyfile(module, overzealous / "qagame.mp.x86_64.so")
         port = args.port or available_udp_port()
         command = [
             str(engine),
             "+set", "fs_basepath", str(base), "+set", "fs_homepath", str(home),
-            "+set", "fs_game", "newmod", "+set", "net_ip", "127.0.0.1",
+            "+set", "fs_game", "overzealous", "+set", "net_ip", "127.0.0.1",
             "+set", "net_port", str(port), "+set", "dedicated", "1",
             "+set", "com_recommendedSet", "1", "+set", "g_gametype", "2",
             "+set", "sv_pure", "0", "+set", "sv_fps", "20", "+set", "omnibot_enable", "0",
-            "+exec", "smoke.cfg", "+map", "newmod_test", "+wait", "12",
+            "+exec", "smoke.cfg", "+map", "overzealous_test", "+wait", "12",
             "+levlist", "+page", "2",
             "+set", "g_gravity", "925.50", "+crazygravity", "on", "+crazygravity",
         ]
@@ -178,8 +178,8 @@ def main():
             return 1
         output = re.sub(r"\x1b\[[0-9;]*m", "", proc.stdout)
         expected = (
-            "gamename: newmod", "Lua API: Loading smoke.lua", "NEWMOD_LUA_INIT", "NEWMOD_LUA_FRAME",
-            "NEWMOD_LUA_CONSOLE crazygravity", "NEWMOD_LUA_QUIT",
+            "gamename: overzealous", "Lua API: Loading smoke.lua", "OVERZEALOUS_LUA_INIT", "OVERZEALOUS_LUA_FRAME",
+            "OVERZEALOUS_LUA_CONSOLE crazygravity", "OVERZEALOUS_LUA_QUIT",
             "crazygravity: enabled", "crazygravity: disabled", "==== ShutdownGame ====",
         )
         problems = []
@@ -188,7 +188,7 @@ def main():
         for marker in expected:
             if marker not in output:
                 problems.append(f"missing output: {marker}")
-        if output.count("NEWMOD_LUA_INIT") < 2 or output.count("NEWMOD_LUA_QUIT") < 2:
+        if output.count("OVERZEALOUS_LUA_INIT") < 2 or output.count("OVERZEALOUS_LUA_QUIT") < 2:
             problems.append("Lua was not initialized and shut down on both sides of map_restart")
         # Require the actual second page before restart and the empty query
         # afterwards; a plain initialization smoke would not test retention.

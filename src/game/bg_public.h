@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-#define	GAME_VERSION	"NewMod 0.2" /* NewMod, Arena.ai, 2026-11-21 (see CHANGES): weapon-ID change requires matching client modules. */
+#define	GAME_VERSION	"Overzealous 0.3" /* Overzealous, Arena.ai, 2026-11-27 (see CHANGES): weapon-ID change requires matching client modules. */
 
 #if defined(_DEBUG)
 	#define	GAME_VERSION_DATED	GAME_VERSION
@@ -33,7 +33,7 @@ extern "C" {
 
 #define USE_MDXFILE
 
-#define NEWMOD_VERSION "0.2.0-dev" /* NewMod, Arena.ai, 2026-11-21; see CHANGES */
+#define OVERZEALOUS_VERSION "0.3.0-dev" /* Overzealous, Arena.ai, 2026-11-27; see CHANGES */
 #define NQ_VERSION "1.3.0b" // compatibility reasons with Omni-Bots...
 #define NOQUARTER
 

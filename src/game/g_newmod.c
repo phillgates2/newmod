@@ -641,7 +641,7 @@ qboolean G_nm_about(gentity_t *ent, int skiparg) {
 		SP("^dabout: ^9usage: !about\n");
 		return qfalse;
 	}
-	SP("^d" GAME_VERSION " ^9(experimental No Quarter-based ET: Legacy mod)\n");
+	SP("^d" GAME_VERSION " ^9(experimental No Quarter-based ET: Legacy mod - Overzealous)\n");
 	SP("^9Includes selected Jaymod and Oz adaptations; feature parity is incomplete.\n");
 	return qtrue;
 }

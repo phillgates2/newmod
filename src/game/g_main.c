@@ -443,7 +443,7 @@ cvarTable_t		gameCvarTable[] =
 	{ NULL,									"gamename",								GAMEVERSION,							CVAR_SERVERINFO | CVAR_ROM, 								0,		qfalse },
 	{ NULL,									"gamedate",								__DATE__,								CVAR_ROM, 													0,		qfalse },
 	{ &g_gamestate,							"gamestate",							"-1",									CVAR_WOLFINFO | CVAR_ROM,									0,		qfalse },
-	{ NULL,									"mod_version",							NEWMOD_VERSION,								CVAR_SERVERINFO | CVAR_ROM },
+{ NULL,								"mod_version",				OVERZEALOUS_VERSION,				CVAR_SERVERINFO | CVAR_ROM },
 	/* NewMod, Arena.ai, 2026-11-21 (see CHANGES): advertise this derivative, not its upstream. */
 	/* NewMod, Arena.ai, 2026-11-21 (see CHANGES): no public project URL has been verified. */
 	{ NULL,									"mod_url",								"",	CVAR_SERVERINFO | CVAR_ROM },
@@ -2905,9 +2905,9 @@ static void ServerCheck( void ) {
 		msgWhine = qtrue;
 		shutdown = qtrue;
 	}
-	/* NewMod, Arena.ai, 2026-11-21 (see CHANGES): retain the engine-version check above; use a distinct directory. */
-	else if ( Q_stricmp(versionStr, "newmod" ) != 0 ) {
-		G_Printf("^1Error: Wrong mod directory, should be 'newmod'\n" );
+	/* Overzealous, Arena.ai, 2026-11-27 (see CHANGES): retain the engine-version check above; use a distinct directory. */
+	else if ( Q_stricmp(versionStr, "overzealous" ) != 0 ) {
+		G_Printf("^1Error: Wrong mod directory, should be 'overzealous'\n" );
 		msgWhine = qtrue;
 		shutdown = qtrue;
 	}

@@ -26,7 +26,7 @@ extern "C" {
 
 // the "gameversion" client command will print this plus compile date
 #ifndef PRE_RELEASE_DEMO
-#define GAMEVERSION			"newmod" /* NewMod, Arena.ai, 2026-11-21 (see CHANGES): distinct mod identity. */
+#define GAMEVERSION			"overzealous" /* Overzealous, Arena.ai, 2026-11-27 (see CHANGES): distinct mod identity. */
 #else
 //#define GAMEVERSION			"You look like you need a monkey!"
 #define GAMEVERSION			"ettest"
