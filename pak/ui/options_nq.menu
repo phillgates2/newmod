@@ -1,0 +1,91 @@
+#include "ui/menudef.h"
+
+// Defines //
+
+#define WINDOW_X		16
+#define WINDOW_Y		16
+//#define WINDOW_WIDTH	608
+#define WINDOW_WIDTH	425
+#define WINDOW_HEIGHT	446
+#define GROUP_NAME		"grpOptionsNQ"
+
+// Macros //
+
+#include "ui/menumacros.h"
+
+// Customise Game Menu //
+	
+menuDef {
+	name		"options_nq"
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+	
+	onESC {
+		close options_nq ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+// Window //
+
+	WINDOW( "^?NO QUARTER^7", 94 )
+
+// Subwindows //
+//#define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-22)
+#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
+#define CONTROLS_HEIGHT 	52
+#define DISP_HEIGHT		100
+#define SOUND_HEIGHT		40
+#define CONFIG_HEIGHT		170
+#define CONTROLS_Y 		28
+#define DISP_Y			CONTROLS_Y+CONTROLS_HEIGHT+8
+#define SOUND_Y			DISP_Y+DISP_HEIGHT+8
+#define CONFIG_Y		SOUND_Y+SOUND_HEIGHT+8
+		
+	
+// Player //
+
+	SUBWINDOW( 6, CONTROLS_Y, (SUBWINDOW_WIDTH), CONTROLS_HEIGHT, "ADDITIONAL CONTROLS" )
+	BIND( 8, CONTROLS_Y+14, (SUBWINDOW_WIDTH)-48, 10, "Drop Weapon:", .2, 8, "dropweapon", "Drops Your Main Weapon or Pistol" )
+	BIND( 8, CONTROLS_Y+26, (SUBWINDOW_WIDTH)-48, 10, "Drop Clip:", .2, 8, "dropclip", "Drops Your Main Weapon or Pistol" )
+	BIND( 8, CONTROLS_Y+38, (SUBWINDOW_WIDTH)-48, 10, "Slash Kill:", .2, 8, "kill", "Self Kill" )
+	
+	SUBWINDOW( 6, (DISP_Y), (SUBWINDOW_WIDTH), DISP_HEIGHT, "DISPLAY SETTINGS" )
+	MULTI( 8, (DISP_Y)+14, (SUBWINDOW_WIDTH)-48, 10, "Draw Muzzle Flash:", .2, 8, "cg_drawMuzzleFlash", cvarFloatList { "Off" 0 "On" 1 "Draw Only Barrel Smoke" 2  "Barrel Smoke And Flash" 3 }, "Toggle Muzzle Flash" )
+	YESNO( 8, (DISP_Y)+26, (SUBWINDOW_WIDTH)-48, 10, "Draw Bullet Tracers:", .2, 8, "cg_drawTracers", "Toggle Bullet Tracers" )
+	YESNO( 8, (DISP_Y)+38, (SUBWINDOW_WIDTH)-48, 10, "Draw Gibs:", .2, 8, "cg_gibs", "Toggle Giblets" ) 
+	YESNO( 8, (DISP_Y)+50, (SUBWINDOW_WIDTH)-48, 10, "Draw Smoke:", .2, 8, "cg_smokeparticles", "Toggle Smoke Particles" )
+	YESNO( 8, (DISP_Y)+62, (SUBWINDOW_WIDTH)-48, 10, "Draw Impact Particles:", .2, 8, "cg_impactparticles", "Toggle Impact Particles" ) 
+	YESNO( 8, (DISP_Y)+74, (SUBWINDOW_WIDTH)-48, 10, "Draw Trails:", .2, 8, "cg_trailparticles", "Toggle Grenade, Panzer, and Mortar Trails" )
+	MULTI( 8, (DISP_Y)+86, (SUBWINDOW_WIDTH)-48, 10, "Show Kill Counter:", .2, 8, "cg_drawkillSpree",  cvarFloatList { "Off" 0 "Show Current Spree" 1 "Show Total Kills" 2 "Show Spree and Total kills" 3 "Show Current Bounty" 4 "Show Bounty and Spree" 5 "Show Kills and Bounty" 6  "Show Kills, Spree, and Bounty" 7 }, "Kill Spree Counter Options" )
+
+	SUBWINDOW( 6, (SOUND_Y), (SUBWINDOW_WIDTH), SOUND_HEIGHT, "SOUND SETTINGS" )
+	MULTI( 8, (SOUND_Y)+14, (SUBWINDOW_WIDTH)-48, 10, "Use Hitsounds:", .2, 8, "cg_hitsounds", cvarFloatList { "Off" 0 "Play All Hitsounds" 1 "No Teammate Hitsounds" 3 "No Headshot Hitsounds" 5 "No Body Hitsounds" 9 "Body Shots Only" 7  "Teammate Hits Only" 13  "Headshots Only" 11  }, "Hitsound Flags" )
+	MULTI( 8, (SOUND_Y)+26, (SUBWINDOW_WIDTH)-48, 10, "Use Knife Goat:", .2, 8, "cg_goatSound", cvarFloatList { "Off" 0 "Play For Frontal Stabs" 1 "Play For Backstabs" 2 "Play for All Stabs" 3 }, "Play Goat Sound When Stabbed" )
+
+	SUBWINDOW( 6, (CONFIG_Y), (SUBWINDOW_WIDTH), CONFIG_HEIGHT, "HUD SETTINGS" )
+	YESNO( 8, (CONFIG_Y)+14, (SUBWINDOW_WIDTH)-48, 10, "Draw Graphic Obituaries:", .2, 8, "cg_graphicObituaries", "Draw Graphical Obituaries" )
+	YESNO( 8, (CONFIG_Y)+26, (SUBWINDOW_WIDTH)-48, 10, "Draw Powerups in HUD:", .2, 8, "hud_drawPowerups", "Draw Icons of Powerups Currently Available" )
+	MULTI( 8, (CONFIG_Y)+38, (SUBWINDOW_WIDTH)-48, 10, "Power Up Size:", .2, 8, "hud_powerupSize", cvarFloatList { "Small" 12 "Normal" 18 "Large" 24 }, "Size of Powerup Icons" )
+	YESNO( 8, (CONFIG_Y)+50, (SUBWINDOW_WIDTH)-48, 10, "Use NQ Hud:", .2, 8, "hud_drawAltHud", "Use Alternate No Quarter HUD" )
+	MULTI( 8, (CONFIG_Y)+62, (SUBWINDOW_WIDTH)-48, 10, "HUD Color:", .2, 8, "cg_hudBackgroundColor", cvarStrList { "Default"; ".16 .2 .17 .8"; "White"; "1 1 1 .8"; "Yellow"; "1 1 0 .8"; "Red"; "1 0 0 .8"; "Green"; "0 1 0 .8"; "Blue"; "0 0 1 .8"; "Magenta"; "1 0 1 .8"; "Cyan"; "0 1 1 .8"; "Orange"; "1 .5 0 .8"; "Purple"; "0.5 0 0.5 .8"; "Light Blue"; ".5 .5 1 .8"; "Medium Blue"; "0 0 .5 .8"; "Dark Blue"; "0 0 0.15 .8" ;"Light Red"; "1 .25 .25 .8"; "Medium Red"; ".5 0 0 .8"; "Dark Red"; "0.15 0 0 .8"; "Light Green"; ".25 1 .25 .8"; "Medium Green"; "0 .5 0 .8"; "Dark Green"; "0 .15 0 .8"; "Medium Cyan"; "0 .5 .5 .8"; "Medium Yellow"; ".5 .5 0 .8"; "Medium Orange"; ".5 .25 0 .8"; "Light Grey"; ".6 .6 .6 .8"; "Medium Grey"; ".3 .3 .3 .8"; "Dark Grey"; ".1 .1 .1 .8"; "Black"; "0 0 0 .8" }, "HUD Background Color" )
+	MULTI( 8, (CONFIG_Y)+74, (SUBWINDOW_WIDTH)-48, 10, "HUD Border Color:", .2, 8, "cg_hudBorderColor", cvarStrList { "Default"; ".5 .5 .5 .5"; "White"; "1 1 1 .8"; "Yellow"; "1 1 0 .8"; "Red"; "1 0 0 .8"; "Green"; "0 1 0 .8"; "Blue"; "0 0 1 .8"; "Magenta"; "1 0 1 .8"; "Cyan"; "0 1 1 .8"; "Orange"; "1 .5 0 .8"; "Purple"; "0.5 0 0.5 .8"; "Light Blue"; ".5 .5 1 .8"; "Medium Blue"; "0 0 .5 .8"; "Dark Blue"; "0 0 0.15 .8"; "Light Red"; "1 .25 .25 .8"; "Medium Red"; ".5 0 0 .8"; "Dark Red"; "0.15 0 0 .8"; "Light Green"; ".25 1 .25 .8"; "Medium Green"; "0 .5 0 .8"; "Dark Green"; "0 .15 0 .8"; "Medium Cyan"; "0 .5 .5 .8"; "Medium Yellow"; ".5 .5 0 .8"; "Medium Orange"; ".5 .25 0 .8"; "Light Grey"; ".6 .6 .6 .8"; "Medium Grey"; ".3 .3 .3 .8"; "Dark Grey"; ".1 .1 .1 .8"; "Black"; "0 0 0 .8" }, "HUD Border Color" )
+	SLIDER( 8, (CONFIG_Y)+86, (SUBWINDOW_WIDTH)-48, 10, "HUD Alpha:", .2, 8, "cg_hudAlpha" .8 0 1, "Transparency of HUD" )
+	YESNO( 8, (CONFIG_Y)+100, (SUBWINDOW_WIDTH)-48, 10, "Draw FPS:", .2, 8, "cg_drawFPS", "Draw Frames Per Second" )
+	MULTI( 8, (CONFIG_Y)+114, (SUBWINDOW_WIDTH)-48, 10, "Draw Clock:", .2, 8, "cg_drawTime", cvarFloatList{ "Off" 0 "24hr" 1 "12hr" 2 }, "Draw Clock" )
+	MULTI( 8, (CONFIG_Y)+128, (SUBWINDOW_WIDTH)-48, 10, "Draw Speed:", .2, 8, "cg_drawSpeed", cvarFloatList{ "Off" 0 "Draw Speed" 1 "Draw Speed + Max Acheived" 2 }, "Draw Spped" )
+	MULTI( 8, (CONFIG_Y)+142, (SUBWINDOW_WIDTH)-48, 10, "Speed Units:", .2, 8, "cg_speedunit", cvarFloatList{ "Units per Second (UPS)" 0 "Kilometers per Hour (KPH)" 1 "Miles per Hour (MPH)" 2 }, "Change Units That Speed is Displayed As" )
+	YESNO( 8, (CONFIG_Y)+156, (SUBWINDOW_WIDTH)-48, 10, "Draw Objective Icons:", .2, 8, "cg_drawObjIcons", "Draw Objective Icons" )
+	
+#ifdef FUI
+	BUTTON( 6, WINDOW_HEIGHT-24, SUBWINDOW_WIDTH, 18, "BACK", .3, 14, close options_nq ; open main )
+#else
+	BUTTON( 6, WINDOW_HEIGHT-24, SUBWINDOW_WIDTH, 18, "BACK", .3, 14, close options_nq ; open ingame_main )
+#endif // FUI
+
+}

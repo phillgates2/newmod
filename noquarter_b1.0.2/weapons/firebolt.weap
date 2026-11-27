@@ -1,0 +1,90 @@
+weaponDef
+{
+/*
+valid keys for both and both_altweap
+
+		damage
+		spread
+		coolRate
+		defaultStartingAmmo
+		defaultStartingClip
+		fireDelayTime
+		maxammo
+		maxclip
+		maxHeat
+		mod // well since you have to enter integer it is not perfect yet
+		nextShotTime
+		reloadTime // no need to specify as it is from animation
+		SpreadScaleAdd
+		recoilDuration
+		recoilYaw // float
+		recoilPitch // float
+*/
+	both {
+		nextShotTime  	1200
+		damage 		150
+		GibbingWeapon	no
+		limbokill	yes		
+	}
+
+	// This basically fills out weaponInfo_t
+	client {
+		standModel		"models/weapons2/firebolt/firebolt_3rd.md3"		// weapon pickup 'stand' (do we still use this?)
+		//pickupModel		"models/weapons2/firebolt/firebolt_pickup.md3"
+		//pickupSound		"sound/misc/w_pkup.wav"
+		bounceSound		"sound/weapons/weaponbounce.wav"
+		clipBounceSound		"sound/weapons/clipbounce.wav"
+		
+		weaponConfig		"models/weapons2/firebolt/weapon.cfg"
+		handsModel		"models/weapons2/firebolt/v_firebolt_hand.md3"
+		
+		deathBySound		"sound/weapons/flamethrower/flame_scream1.wav"
+		deathBySound		"sound/weapons/flamethrower/flame_scream2.wav"
+		deathBySound		"sound/weapons/flamethrower/flame_scream3.wav"
+		
+		flashDlightColor	1.0 0.75 0.0
+		flashSound		"sound/weapons/bazooka/bazooka_fire.wav"		// supports up to 4 flash sounds
+		flashEchoSound		"sound/weapons/bazooka/bazooka_far.wav"		// supports up to 4 flash echo sounds
+		//lastShotSound		""							// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""							// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		//overheatSound		""
+		//reloadSound		""	
+		//reloadFastSound	""							// some weapons have fast reloads due to the skill system
+		//spinupSound		""							// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound		""							// sound called if the above is running but player doesn't follow through and fire
+		//switchSound		""							// allow overriding of weaponswitch sound
+		
+		weaponIcon		"icons/iconw_firebolt"
+		weaponSelectedIcon	"icons/iconw_firebolt_1_select"
+		
+		missileModel		"models/weapons2/firebolt/firebolt_ball.md3"
+		missileSound		""
+		//missileTrailFunc	""							// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		missileDlight		300
+		missileDlightColor	1 0.75 0.0						// do we still use this?
+		
+		ejectBrassFunc		""					// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		
+		//modModel 1		""
+		
+		firstPerson {
+			model		"models/weapons2/firebolt/v_firebolt.md3"
+			flashModel	""				
+			axisskin	"models/weapons2/firebolt/firebolt_axis.skin"
+			alliedskin	"models/weapons2/firebolt/firebolt_allied.skin"
+
+			// weapon building
+			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
+			weaponLink
+			{	
+			}
+		}
+		
+		thirdPerson {
+			model		"models/weapons2/firebolt/firebolt_3rd.md3"
+			flashmodel	""
+		}
+	}
+}

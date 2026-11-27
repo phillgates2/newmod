@@ -1,0 +1,132 @@
+weaponDef
+{
+/*
+valid keys for both and both_altweap
+
+		damage	//damage each hit makes
+		spread	//spread of weapon
+		coolRate	//rate at which weapon cools for weapons with heat
+		defaultStartingAmmo	//amount of ammo you start with
+		defaultStartingClip	//amount in first clip you start with
+		fireDelayTime	//amount of time before firing first round
+		maxammo	//maximum amount of ammo you can carry
+		maxclip	//maximum amount of ammo per clip
+		maxHeat	//time it takes for weapon to overheat
+		mod // well since you have to enter integer it is not perfect yet
+		nextShotTime	//time between fired rounds
+		reloadTime // no need to specify as it is from animation
+		SpreadScaleAdd	//amount of spread to add as trigger is held
+		SpreadScaleAddRand	//random amount of spread to add as trigger is held
+		recoilDuration	//amount of time recoil lasts
+		recoilYaw // float
+		recoilPitch // float
+		limboKill	//unrevivable
+		KillMessage	//obituary "was blasted by"
+		KillMessage2	//obituary "'s panzerfaust"
+		selfKillMessage	//self kill obituary
+		HeadshotWeapon //can make headshots
+		GibbingWeapon	//can turn player into gibs
+		movementSpeedScale	//slows down player for heavy weapons
+		bulletReflection	//bullets may reflect off metal
+*/
+	both	{
+		KillMessage	"was ventilated by"
+		KillMessage2	"'s Venom"
+		maxHeat		2500
+		HeadshotWeapon	no
+		//coolrate	
+		}
+	// This basically fills out weaponInfo_t
+	client {
+		standModel			"models/weapons2/venom/venom_stand.mdc"	// weapon pickup 'stand' (do we still use this?)
+		pickupModel			"models/weapons2/venom/pu_venom.mdc"
+		//pickupSound		"sound/misc/w_pkup.wav"
+		bounceSound		"sound/weapons/weaponbounce.wav"
+		clipBounceSound		"sound/weapons/clipbounce.wav"
+		
+		weaponConfig		"models/weapons2/venom/weapon.cfg"
+		handsModel			"models/weapons2/venom/v_venom_hand.md3"
+		
+		flashDlightColor	1.0 0.6 0.23
+		flashSound			"sound/weapons/venom/venomf1.wav"		// supports up to 4 flash sounds
+		flashEchoSound		"sound/weapons/venom/venom_far.wav"		// supports up to 4 flash echo sounds
+		//lastShotSound		""										// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		overheatSound		"sound/weapons/venom/venom_overheat.wav"
+		reloadSound			"sound/weapons/venom/venom_reload.wav"
+		reloadFastSound		"sound/weapons/venom/venom_reload_fast.wav"		// some weapons have fast reloads due to the skill system
+		spinupSound		"sound/weapons/venom/venomsu1.wav"									// sound started when fire button goes down, and stepped on when the first fire event happens
+		spindownSound	"sound/weapons/venom/venomsd1.wav"									// sound called if the above is running but player doesn't follow through and fire
+		//switchSound		""									// allow overriding of weaponswitch sound
+			
+		weaponIcon		"icons/iconw_venom"
+		weaponSelectedIcon	"icons/iconw_venom_1_select"
+		
+		//missileModel		""
+		//missileSound		""
+		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight		0
+		//missileDlightColor	0 0 0							// do we still use this?
+		
+		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		brassModel			 "models/weapons2/shells/venomShell.md3"
+
+		modModel 0			"models/weapons2/venom/venom_barrel.mdc"
+		modModel 1			"models/weapons2/venom/venom_barrel.mdc"
+		modModel 2			"models/weapons2/venom/venom_barrel.mdc"
+
+		
+		firstPerson {
+			model			"models/weapons2/venom/v_venom.md3"
+			flashModel		"models/weapons2/venom/v_venom_flash.mdc"
+
+			// weapon building
+			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
+			weaponLink
+			{
+				part 0
+				{
+					tag		"tag_barrel"
+					model	"models/weapons2/venom/v_venom_barrel.md3"
+				}
+				part 1
+				{
+					tag		"tag_barrel2"
+					model	"models/weapons2/venom/v_venom_barrel2.mdc"
+				}
+				part 2
+				{
+					tag		"tag_barrel3"
+					model	"models/weapons2/venom/v_venom_barrel3.md3"
+				}		
+				part 3
+				{
+					tag		"tag_barrel4"
+					model	"models/weapons2/venom/v_venom_barrel4.mdc"
+				}	
+				part 4
+				{
+					tag		"tag_barrel5"
+					model	"models/weapons2/venom/v_venom_barrel5.mdc"
+				}        
+				part 5
+				{
+					tag		"tag_barrel6"
+					model	"models/weapons2/venom/v_venom_barrel6.mdc"
+				}  
+				part 6
+				{
+					tag		"tag_needle"
+					model	"models/weapons2/venom/venom_needle.md3"
+				}    
+			}
+		}
+		
+		thirdPerson {
+			model			"models/weapons2/venom/venom.mdc"
+			flashmodel		"models/weapons2/venom/venom_flash.mdc"
+		}
+	}
+}
