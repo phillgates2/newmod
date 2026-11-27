@@ -118,6 +118,7 @@ void G_BounceMissile( gentity_t *ent, trace_t *trace ) {
 				case WP_SATCHEL:
 				case WP_SMOKE_BOMB:
 				case WP_POISON_GAS:
+				case WP_MOLOTOV:
 				case WP_SMOKE_MARKER: //forty - canister kicking
 				case WP_GRENADE_LAUNCHER:
 				case WP_GRENADE_PINEAPPLE:
@@ -675,6 +676,7 @@ void G_RunMissile( gentity_t *ent ) {
 		|| ent->s.weapon == WP_GRENADE_LAUNCHER || ent->s.weapon == WP_GRENADE_PINEAPPLE
 		|| ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_LANDMINE_BBETTY || ent->s.weapon == WP_LANDMINE_PGAS
 		|| ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB || ent->s.weapon == WP_POISON_GAS
+		|| ent->s.weapon == WP_MOLOTOV
 		) ) {
 
 		if( !ent->s.pos.trDelta[0] && !ent->s.pos.trDelta[1] && !ent->s.pos.trDelta[2] ) {

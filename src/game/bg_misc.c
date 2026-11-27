@@ -318,6 +318,7 @@ weapontable_t WeaponTable[WP_NUM_WEAPONS] =
 	{	1,	0,	10,	0,	1,	0,	1000,	DELAY_THROW,	1600,	0,	0,	MOD_POISON_GAS,		0,	0,	qfalse,	qtrue,	qfalse	},	// WP_POISON_GAS 65	thrown poison-gas grenade
 	{	1,	0,	1,	0,	1,	0,	100,	DELAY_LOW,	100,	0,	0,	MOD_LANDMINE,			0,	0,	qfalse,	qtrue,	qfalse	},	// WP_LANDMINE_BBETTY 66	bouncing-betty landmine
 	{	1,	0,	1,	0,	1,	0,	100,	DELAY_LOW,	100,	0,	0,	MOD_POISON_GAS,		0,	0,	qfalse,	qtrue,	qfalse	},	// WP_LANDMINE_PGAS 67	poison-gas landmine
+	{	3,	1,	3,	0,	3,	0,	0,	DELAY_THROW,	0,	0,	0,	MOD_MOLOTOV,		0,	0,	qfalse,	qtrue,	qfalse	},	// WP_MOLOTOV 68	Jaymod molotov fire grenade
 };
 
 // core: weapons that overheat
@@ -408,8 +409,9 @@ int weapAlts[] =
 	WP_MEDIC_ADRENALINE,	// 63 WP_ADRENALINE_SHARE
 	WP_NONE,				// 64 WP_M97
 	WP_NONE,				// 65 WP_POISON_GAS
-	WP_NONE,				// 66 WP_LANDMINE_BBETTY
-	WP_NONE,				// 67 WP_LANDMINE_PGAS
+	WP_NONE,			// 66 WP_LANDMINE_BBETTY
+	WP_NONE,			// 67 WP_LANDMINE_PGAS
+	WP_NONE,			// 68 WP_MOLOTOV
 };
 
 
@@ -489,7 +491,8 @@ int weapTeamConversion[] =
 	WP_M97,				// 64 WP_M97
 	WP_POISON_GAS,		// 65 WP_POISON_GAS
 	WP_LANDMINE_BBETTY,	// 66 WP_LANDMINE_BBETTY
-	WP_LANDMINE_PGAS,		// 67 WP_LANDMINE_PGAS
+	WP_LANDMINE_PGAS,	// 67 WP_LANDMINE_PGAS
+	WP_MOLOTOV,		// 68 WP_MOLOTOV
 						//    WP_NUM_WEAPONS
 };
 
@@ -885,8 +888,9 @@ char *WP_names[WP_NUM_WEAPONS] = {
 	"WP_ADRENALINE_SHARE",		// 63 WP_ADRENALINE_SHARE
 	"WP_M97",				// 64 WP_M97
 	"WP_POISON_GAS",			// 65 WP_POISON_GAS
-	"WP_LANDMINE_BBETTY",		// 66 WP_LANDMINE_BBETTY
-	"WP_LANDMINE_PGAS"			// 67 WP_LANDMINE_PGAS
+	"WP_LANDMINE_BBETTY",	// 66 WP_LANDMINE_BBETTY
+	"WP_LANDMINE_PGAS",	// 67 WP_LANDMINE_PGAS
+	"WP_MOLOTOV"			// 68 WP_MOLOTOV
 };
 
 
@@ -2376,6 +2380,12 @@ gitem_t	bg_itemlist[] =
 		{ "models/multiplayer/landmine/landmine.md3", "models/multiplayer/landmine/v_landmine.md3", 0 },
 		"icons/iconw_landmine_1", "icons/ammo9", "Landmine PGas", 7,
 		IT_WEAPON, WP_LANDMINE_PGAS, WP_LANDMINE_PGAS, WP_LANDMINE_PGAS
+	},
+	{
+		"weapon_molotov", 199635, "sound/misc/w_pkup.wav",
+		{ "models/multiplayer/molotov/molotov.md3", "models/multiplayer/molotov/v_molotov.md3", 0 },
+		"models/multiplayer/molotov/icon.tga", "icons/ammo9", "Molotov", 0,
+		IT_WEAPON, WP_MOLOTOV, WP_MOLOTOV, WP_MOLOTOV
 	},
 
 	{

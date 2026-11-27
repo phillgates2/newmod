@@ -2,9 +2,10 @@
 
 This directory (`pak/`) contains game media imported from the WET-NoQuarter
 source and from Jaymod. NewMod imports the full No Quarter weapon set —
-55 `.weap` definition files plus the corresponding model, sound, and icon
-assets — alongside the Jaymod-sourced M97 shotgun and landmine/poison-gas
-variants that extend the base NQ weapon list.
+57 `.weap` definition files plus the corresponding model, sound, and icon
+assets — alongside the Jaymod-sourced M97 shotgun, molotov fire grenade,
+adrenaline-share syringe, and landmine/poison-gas variants that extend the
+base NQ weapon list.
 
 ## WET-NoQuarter (base weapon set)
 
@@ -50,6 +51,11 @@ Source: <https://github.com/budjb/jaymod>, revision
 | M97 weapon sounds | `pak/sound/weapons/m97/` | same |
 | Poison-gas cough sound | `pak/sound/poison_gas/cough.wav` | same |
 | Weapon definitions (`.weap`) | `pak/weapons/{m97,landmine_bbetty,landmine_pgas,poison_gas}.weap` | same |
+| Molotov fire grenade models (`molotov.md3`, `v_molotov.md3`, `weapon.cfg`, `icon.tga`, `fluid.tga`, `smine.tga`, `molotov.tga`) | `pak/models/multiplayer/molotov/` | same |
+| Molotov weapon sounds (`bonk.wav`, `scream01-05.wav`) | `pak/sound/weapons/molotov/` | same |
+| Molotov `.weap` definition | `pak/weapons/molotov.weap` | same |
+| Adrenaline-share syringe shader (`fluid.tga`) | `pak/models/multiplayer/adrenaline_share/` | same |
+| Adrenaline-share `.weap` definition | `pak/weapons/adrenaline_share.weap` | same |
 
 ## Inherited NQ models from base-game pk3
 
@@ -101,3 +107,11 @@ media notice at `licenses/NoQuarter-media-readme.txt`.
   into the air before exploding via `G_BouncingBettyTrip`.
 - **`WP_LANDMINE_PGAS`** (weapon ID 67): landmine variant that spawns a
   poison-gas cloud via `G_PoisonGasTrip` when triggered.
+- **`WP_MOLOTOV`** (weapon ID 68): thrown fire grenade that lands and
+  burns for 8 seconds, applying periodic `MOD_MOLOTOV` radius fire damage
+  every 500ms via `G_MolotovExplode`. Models, sounds, and `.weap`
+  definition imported from Jaymod; explosion handler ported to a
+  C-compatible implementation following the poison-gas timeline pattern.
+- **`WP_ADRENALINE_SHARE`** (weapon ID 63): uses the Jaymod
+  `adrenaline_share.weap` definition, reusing the syringe first-person
+  model and adding the adrenaline-share shader fluid.

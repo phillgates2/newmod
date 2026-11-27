@@ -274,7 +274,7 @@ static void test_registration(void) {
     ((void (*)(int, int, int, qboolean))sym("BG_UpdateConditionValue"))(0, ANIM_COND_WEAPON, WP_ADRENALINE_SHARE, qtrue);
     CHECK(((int (*)(int, int, qboolean))sym("BG_GetConditionValue"))(0, ANIM_COND_WEAPON, qtrue) == WP_MEDIC_SYRINGE);
     ((void (*)(int, qboolean))sym("BG_RegisterWeapon"))(WP_ADRENALINE_SHARE, qtrue);
-    CHECK(pc_loads == 1 && pc_frees == 1 && !strcmp(pc_file, "weapons/syringe.weap"));
+    CHECK(pc_loads == 1 && pc_frees == 1 && !strcmp(pc_file, "weapons/adrenaline_share.weap"));
     CHECK(weapon_info[WP_ADRENALINE_SHARE].registered &&
           !strcmp(weapon_info[WP_ADRENALINE_SHARE].name, "Shared adrenaline"));
 #ifndef GAMEDLL

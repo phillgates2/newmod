@@ -3561,6 +3561,66 @@ void G_PoisonGasExplode( gentity_t *ent ) {
 /*
 ======================================================================
 
+G_MolotovExplode
+
+NewMod, Arena.ai: ported from Jaymod g_molotov.cpp. The molotov is a
+thrown fire grenade: after landing it burns for a duration, applying
+periodic radius fire damage (MOD_MOLOTOV) every 500ms during the burn
+phase. Follows the same smokebomb growth/burn/death timeline as the
+poison-gas cloud but uses shorter burn time and fire damage.
+======================================================================
+*/
+#define MOLOTOV_GROWTIME   1000
+#define MOLOTOV_BURNTIME   8000
+#define MOLOTOV_POSTBURN   2000
+
+void G_MolotovExplode( gentity_t *ent ) {
+	int lived = 0;
+
+	if( !ent->grenadeExplodeTime ) {
+		ent->grenadeExplodeTime = level.time;
+	}
+
+	lived = level.time - ent->grenadeExplodeTime;
+	ent->nextthink = level.time + SERVER_FRAMETIME_DELTA;
+
+	if( lived < MOLOTOV_GROWTIME ) {
+		// Just been thrown, increase radius
+		ent->s.effect1Time = 16 + lived * ((640.f-16.f)/(float)MOLOTOV_GROWTIME);
+	}
+	else if( lived < MOLOTOV_BURNTIME + MOLOTOV_GROWTIME ) {
+		// Burning — apply periodic radius fire damage
+		ent->s.effect1Time = 640;
+
+		if( level.time >= ent->poisonGasAlarm ) {
+			ent->poisonGasAlarm = level.time + 500;
+			etpro_RadiusDamage(
+				ent->r.currentOrigin,
+				ent,
+				ent->parent,
+				20,
+				150,
+				ent,
+				MOD_MOLOTOV,
+				qtrue ); // clients only
+
+			if( ent->parent && ent->parent->client )
+				ent->parent->client->sess.aWeaponStats[BG_WeapStatForWeapon( (weapon_t)ent->s.weapon )].subshots++;
+		}
+	}
+	else if( lived < MOLOTOV_BURNTIME + MOLOTOV_GROWTIME + MOLOTOV_POSTBURN ) {
+		// Dying out
+		ent->s.effect1Time = -1;
+	}
+	else {
+		// Poof and it's gone
+		G_FreeEntity( ent );
+	}
+}
+
+/*
+======================================================================
+
 G_BouncingBettyTrip
 
 NewMod, Arena.ai: ported from Jaymod. The BBetty landmine leaps into the
@@ -4177,6 +4237,7 @@ gentity_t *weapon_grenadelauncher_fire (gentity_t *ent, int grenType) {
 		case WP_SMOKE_MARKER:
 		case WP_SMOKE_BOMB:
 		case WP_POISON_GAS:
+		case WP_MOLOTOV:
 			upangle *= 900;
 			break;
 		default: // WP_DYNAMITE // Gordon: or WP_LANDMINE / WP_SATCHEL
@@ -4254,6 +4315,11 @@ gentity_t *weapon_grenadelauncher_fire (gentity_t *ent, int grenType) {
 			m->poisonGasDamage = 30;
 			m->poisonGasRadius = 300;
 			m->poisonGasWeaponType = WP_POISON_GAS;
+			break;
+		case WP_MOLOTOV:
+			m->s.effect1Time = 16;
+			m->think = G_MolotovExplode;
+			m->poisonGasAlarm = level.time + MOLOTOV_GROWTIME;
 			break;
 		case WP_SMOKE_MARKER:
 			m->s.teamNum = ent->client->sess.sessionTeam;	// store team so we can generate red or blue smoke
@@ -4577,6 +4643,7 @@ void CalcMuzzlePoint ( gentity_t *ent, int weapon, vec3_t forward, vec3_t right,
 		case WP_SATCHEL:
 		case WP_SMOKE_BOMB:
 		case WP_POISON_GAS:
+		case WP_MOLOTOV:
 			VectorMA( muzzlePoint, 20.0f, right, muzzlePoint );
 			break;
 		case WP_AKIMBO_COLT:
@@ -4744,6 +4811,7 @@ qboolean jP_CheckDisguise( gentity_t *ent ) {
 		// check for weapons that will never compromise a disguise
 		case WP_SMOKE_BOMB:
 		case WP_POISON_GAS:
+		case WP_MOLOTOV:
 		case WP_SATCHEL:
 		case WP_SATCHEL_DET:
 		case WP_BINOCULARS:
@@ -5088,6 +5156,7 @@ void FireWeapon( gentity_t *ent ) {
 
 		case WP_SMOKE_BOMB:
 		case WP_POISON_GAS:
+		case WP_MOLOTOV:
 			jP_DoChargeCost(ent, SK_COVERTOPS, BG_GetFromTable(chargeCost_Smoke, ent->client->sess.skillBits, SK_COVERTOPS));
 			pFiredShot = weapon_grenadelauncher_fire( ent, ent->s.weapon );
 			break;
@@ -5446,6 +5515,7 @@ void G_CanisterKick( gentity_t *ent )
 			kickDyna ||
 			traceEnt->s.weapon == WP_SMOKE_BOMB ||
 			traceEnt->s.weapon == WP_POISON_GAS ||
+			traceEnt->s.weapon == WP_MOLOTOV ||
 			traceEnt->s.weapon == WP_SMOKE_MARKER ) {
 
 			VectorCopy(ent->client->ps.viewangles, angles);
