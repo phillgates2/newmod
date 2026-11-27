@@ -1,0 +1,203 @@
+NewMod change log
+=================
+
+2026-11-21 — Arena.ai Agent Mode
+--------------------------------
+NewMod is derived directly from No Quarter by the No Quarter Mod Team and
+contributors, using the baseline and other inspected projects recorded in
+PROVENANCE.md. These are development changes, not a claim of complete
+Jaymod/Oz feature equivalence or release readiness.
+
+Build, identity and native integration
+* Added Makefile and .gitignore for Linux x86-64 ET: Legacy native game,
+  cgame and UI modules, separate Lua/Omni-Bot/optional NQ-key build variants,
+  and test targets. Reject empty, multiple or invalid feature values and
+  unsupported architecture labels. Bundled the Lua 5.1.4 interpreter source
+  from the inspected Jaymod snapshot; no ET: Legacy engine or game media is
+  bundled.
+* src/game/g_local.h and bg_public.h: distinguish NewMod directory and
+  advertised game/version strings; retain NQ's compatibility constant. Added
+  state and declarations needed by the command adapters and match sentinel.
+* src/game/nm_syscall.h and game/g_syscalls.c, cgame/cg_syscalls.c,
+  ui/ui_syscalls.c: use pointer-width native syscall arguments and the ET:
+  Legacy varargs terminator. game/g_main.c, cgame/cg_main.c and ui/ui_main.c
+  use pointer-width native VM entrypoints. Selected 2.86.2 ABI values/layouts
+  and calls are regression-tested; the complete ABI is not proven.
+* game/g_main.c: require a distinct newmod directory and keep the inherited
+  engine-version checks and NQ media warnings; do not advertise an unverified
+  project URL. Make the config filename parameter read-only.
+* game/g_match_tokens.c: emit needed lookup symbols with modern C inline
+  semantics. game/g_crash.c and cgame/cg_crash.c: avoid redefining a GNU
+  feature macro. cgame/cg_local.h: avoid a libc CHAR_WIDTH collision.
+
+Selected Oz/Jaymod-inspired behavior
+* game/g_shrubbot.c and g_shrubbot.h: register putteam/lol aliases, giba,
+  flinga/throwa/launcha, panzerwar/sniperwar/riflewar, spec and report,
+  with NQ permission and relevant target/tyranny checks. War commands operate
+  on NQ's existing bits; mass actions protect higher and immutable targets.
+* Added game/g_newmod.c and declarations in g_shrubbot.h: crazygravity,
+  shake, splat, splata, smite, firegod, news, about, status, lsplayers,
+  spree and tspree. They use NQ state and are adaptations rather than full
+  upstream subsystems. News validates the filename, sound capacity and entity
+  reserve. !firegod is adapted from Oz: it toggles a target's flaming god
+  mode, granting invulnerability for the NQ burn duration on a new fire and
+  restoring mortal damage on a repeat, with optional noclip. It is not Oz's
+  separate firegod timer model.
+* game/g_main.c and g_local.h: schedule and restore saved gravity; game/
+  g_active.c schedules connection-local targeted shake. game/g_combat.c and
+  g_local.h add a splat-only damage flag that bypasses spawn invulnerability
+  while retaining other protection gates. Existing non-splat damage behavior
+  is not globally switched to bypass spawn protection.
+* game/g_main.c, g_cmds.c, g_shrubbot.c and g_local.h: private report routing,
+  dedicated report-file and admin-level cvars, sanitization and per-connection
+  limits. Reports are intercepted before module chat/log/Lua dispatch, but
+  engine debug logs or server-side demos can record raw input earlier.
+* game/g_newmod.c, g_shrubbot.c and g_shrubbot.h: add NQ-backed stats, ftime,
+  chicken, crybaby, banlist, baninfo, levlist, levinfo, userinfo, userlist,
+  page and seen. Pages rebuild live data with permission checks; !seen retains
+  a bounded map-local history only for visible NQ admin records, including
+  GUID lookup keys and names in memory. Neither is Jaymod database parity.
+* game/g_newmod.c, g_shrubbot.c, g_cmds.c, g_client.c, g_main.c and
+  cgame/cg_consolecmds.c: add bounded connection-local !warn/!dewarn and
+  /warnings, with permission, hierarchy, sanitization and lifecycle checks.
+  This is not Oz's persistent, expiring, auto-punishing warning store. Normal
+  chat, admin logs, engine logs, demos or plugins can retain the command text.
+* game/g_combat.c and g_newmod.c: add !spreerecord with an NQ-derived,
+  map-local high watermark updated on enemy-kill streaks during play. It
+  retains a name snapshot until map initialization; it is not Oz's durable
+  per-map/overall records or eligibility rules. cgame/cg_consolecmds.c and
+  game/g_cmds.c add the narrower /knives count command.
+* game/g_newmod.c and g_shrubbot.c: add Oz-inspired !spawn with flag % and
+  tyranny. It uses NQ reinforcement only on eligible limbo players and
+  respects hierarchy, immutability, pause and match-phase checks. It skips
+  wave and respawn/death-animation waits; it is not Oz's direct respawn.
+* game/bg_public.h, bg_misc.c, bg_pmove.c, bg_weapons.c, g_weapon.c,
+  g_client.c, g_items.c, g_active.c and g_cmds.c, plus cgame/cg_consolecmds.c,
+  cg_event.c, cg_playerstate.c, cg_predict.c, cg_snapshot.c and cg_weapons.c:
+  implement opt-in Jaymod-inspired teammate adrenaline weapon ID 63 and a
+  separate Oz-inspired /adrenother command. NewMod g_medics bits 8192 and
+  16384 avoid upstream bit conflicts with NQ. The share tool reuses NQ's
+  self-adrenaline pool and media names; it is not Jaymod parity. Movement
+  fire-event tagging affects other weapons even when it is disabled, so
+  matching NewMod client and server builds are mandatory. Real multiplayer,
+  correction behavior, bot translation, demos and authorized media remain
+  unverified; no other Jaymod/Oz-only weapons are implemented here.
+
+Boundary, portability and safety fixes
+* game/g_cmds.c, g_client.c, g_shrubbot.c, g_svcmds.c and g_lua.c: reserve
+  MAX_CLIENTS+1 integers for lists with a -1 terminator. Match numeric slots
+  without interpreting an empty or overflowed number as a valid slot.
+* game/g_cmds.c: fix Q_SayArgc/Q_SayArgv/Q_SayConcatArgs stepping beyond the
+  static argument buffer's terminating NUL after multiple trailing spaces;
+  consistently handle repeated spaces and reject missing trailing arguments.
+  game/g_shrubbot.c: replace control bytes in formatted admin-log entries and
+  ensure one terminating newline even when the entry is truncated. This does
+  not redact logged arguments or sanitize engine/chat logs.
+* game/q_shared.c: replace Q_StrReplace with bounded, empty-safe substitution;
+  game/g_cmds.c clears stale shortcut values. game/g_shrubbot.c bounds custom
+  command expansion and rejects unsafe player substitutions, malformed UTF-8,
+  ambiguous comment/quote contexts and oversized results. Trusted templates
+  can still execute privileged console commands without nested permission
+  checks; ET: Legacy sanitizes some client text before module dispatch.
+* game/q_shared.c and q_shared.h: bound quoted and unquoted COM_ParseExt
+  tokens, stop at EOF without advancing beyond it, report malformed quotes or
+  block comments, and treat UTF-8 bytes as token bytes. This shared change can
+  affect game/cgame/UI asset parsing; broad compatibility remains unverified.
+* game/g_shrubbot.c, g_shrubbot.h, g_local.h and g_client.c: reserve NULL
+  sentinels in all dense shrub lists, bound and validate custom command levels,
+  stage reloads before replacing live records and reject malformed/oversized
+  config input (32 MiB limit). Handle missing/failed reads without discarding
+  a prior snapshot; disabled sections cannot modify preceding records.
+  Quote/sanitize written data fields, preserve representable trusted templates
+  and refuse unsafe template serialization before opening the file. Disk writes
+  remain non-atomic and are not fully checked. Match active mute records by
+  nonempty GUID, restore them after renames, and reconcile purely shrub-owned
+  mutes after successful reload; combined sources remain conservative. GUIDs
+  are not authentication, and the single-timer model remains limited.
+* game/g_utils.c: terminate the fallback campaign map/devmap command with a
+  newline so an appended console command cannot run into it.
+* game/g_active.c and g_shrubbot.c: widen adrenaline deadline/cooldown and
+  purchase comparisons, and avoid spectator/limbo follower state corruption.
+  These changes affect inherited adrenaline handling even with share disabled;
+  synthetic edge tests are not a complete game-clock or multiplayer audit.
+* game/g_shrubbot.c: harden the inherited ban-creation handlers. Ban
+  durations multiplied by a week/day/hour/minute modifier now saturate the
+  32-bit product and the persisted epoch expiry instead of overflowing them;
+  offline `!banguid` records require exactly PB_GUID_LENGTH characters;
+  offline `!banIP` records accept only well-formed IPv4 addresses (no
+  leading zeros, octets 0-255, exactly four octets) so an arbitrary short
+  string cannot match every address containing it; temporary bans reject
+  non-positive durations; and IP stripping is bounded. This does not make
+  GUIDs or IPs authentication.
+* game/g_shrubbot.c: parse shrubbot flag strings with a bounded walk that
+  honors NQ's `-denial+resumed` syntax and wildcard-exclusion suffixes without
+  walking past a trailing delimiter or the terminating NUL. Empty, `unknown`,
+  `NO_GUID` and `offline` keys still cannot match admin or mute records.
+  This is a permission-lookup fix, not an authentication fix.
+* game/q_math.c: fix LP64 float-bit conversion and zero-vector normalization.
+  game/q_shared.c: bound the two-word bit helpers and va formatting;
+  game/bg_animation.c: initialize the complete two-word animation result.
+* game/g_team.c and cgame/cg_main.c: allocate and validate full 64-player
+  team-info packets, reject short/invalid entries before mutation and avoid
+  unaligned access while retaining NQ's native-endian wire representation.
+  game/g_main.c validates the server packet envelope and optional key/system
+  payload sizes. cgame/cg_main.c initializes optional system-info header
+  padding and writes its integer with memcpy.
+* cgame/cg_uid.c: bound and terminate the inherited NQ key file/packet,
+  initialize packet padding, remove key debug output, and avoid using a
+  shared fallback if the key file cannot be opened for writing. The engine
+  API does not report short writes. The inherited identity remains
+  spoofable, is not authentication and is disabled by default.
+* game/g_session.c: use bounded, writable storage when reading a saved NQ
+  GUID, including builds without AUTO_GUID. game/g_xpsave.c: reject unsafe
+  GUID path components and overlong paths for normal and optional NQ saves.
+* game/g_main.c, g_cmds.c, g_client.c, g_svcmds.c, g_lua.c,
+  cgame/cg_servercmds.c and cg_info.c: repair selected data-as-format calls,
+  bound bindsearch assembly, terminate long log lines, and avoid raw userinfo
+  logging. This is a targeted, not a complete, format or privacy audit.
+* game/g_lua.c and g_lua.h: use bundled headers, pointer-width entity fields,
+  record field capacities and check selected entity/client/array/VM indices,
+  item and string handling. Bound Lua filesystem reads and writes, preserve
+  binary strings, and use Lua-owned zero-initialized read storage. Engine
+  reads do not return an actual byte count. Consume callback return values
+  and error objects so repeated hooks do not accumulate stack entries. Skip
+  empty module-list entries, check allocations and free rejected module code.
+* game/g_sha1.c, g_local.h and g_lua.c: compute module allowlist fingerprints
+  over the full file length, including binary NUL bytes, while retaining the
+  string hash helper. Existing allowlist entries for affected bytecode may
+  need updating. SHA-1 is not proof of trust; Lua remains unsandboxed and the
+  entire Lua interface has not been audited.
+* cgame/cg_debriefing.c and ui/ui_shared.c: test characters instead of
+  pointer addresses and bound edit-field paint offsets. cgame/cg_players.c:
+  copy the entire ladder torso axis. game/g_etbot_interface.cpp: map the
+  Johnson scoped weapon to its game weapon bit, not its Omni-Bot ID.
+
+Tests, documentation and retained terms
+* Added tests/ fake-engine, native ABI, UI, command, permission, report,
+  gravity lifecycle, real damage/death, 64-player/malformed packet, XP path,
+  optional NQ-key, invalid build options, Lua hook stack/allowlist and
+  Omni-Bot regressions. Added an optional ET: Legacy dedicated-server smoke
+  harness that generates disposable synthetic stand-ins and checks Lua,
+  commands, gravity restoration and map restart, with an optional timed
+  gravity test. Added tests for weapon item order, Pmove-produced fire and
+  binocular events, prediction correction, spectators, imported command
+  privacy, warning lifecycle, chat argument parsing, and death-handler spree
+  updates. The populated warning/seen map-init fixture interrupts at the first
+  engine print. Added game/cgame/UI parser boundary and full shrub config
+  read/write/reload tests, including exact capacities, malformed ACLs, hostile
+  data and mute lifecycle. A separate ET: Legacy fixture compiles a synthetic
+  bot-protocol stub and checks client-command, pause/spawn, custom reload/write,
+  mute, warning, death, disconnect and restart paths using placeholder assets.
+  The bot smoke also exercises actual mute/unmute records and their
+  restoration across a reload. Added fake-engine tests for the actual
+  `!firegod` toggle (god-mode, timer, noclip and target eligibility) and for
+  the ban-creation handlers (duration saturation, GUID length, IPv4
+  validation, temporary-ban duration and host/bot/hierarchy rejection).
+  Neither it nor the no-client smoke is real Omni-Bot or a network client.
+  Tests do not replace real client, download, demo or multiplayer validation.
+* Added tools/import_inventory.py and docs/import-inventory.md for a pinned,
+  preprocessor-independent name/ID inventory with parser tests. The scan can
+  omit dynamic and other dispatch surfaces and does not establish parity.
+* Added README.md, PROVENANCE.md, LEGAL, CONTRIB and licenses/ copies/notices;
+  the original NQ license, source notices and asset restrictions remain
+  applicable and require further deployment/distribution review.

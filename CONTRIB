@@ -1,0 +1,18 @@
+NewMod contributors and acknowledgements
+
+2026-11-21 — Arena.ai Agent Mode: NewMod native build and selected NQ/Jaymod/
+Oz-inspired adaptations, targeted safety changes, tests and documentation;
+see CHANGES for the affected files and scope.
+
+NewMod is derived from source by the No Quarter Mod Team and contributors.
+The upstream NQ credits name S.S.Meyerinchains, JaquboSS, S.S.jetPilot,
+*fu*Jaybird, SNL!lucel, IRATA [*], .::redeye::., IlDuca, berzerkr, crapshoot,
+Arkox and core; see licenses/NoQuarter-media-readme.txt for the complete
+upstream list and media notice. The inherited Lua interface credits ETPub,
+especially quad and pheno, and IRATA; the shrubbot implementation credits
+Tony J. White. Original source notices are preserved.
+
+Jaymod credits Bud Byrd and Mike Miscevic. Oz/ETPub, id Software, the
+Omni-Bot contributors, the Lua.org/PUC-Rio team, Paul E. Jones, Colin Plumb,
+and ET: Legacy and its contributors are acknowledged in PROVENANCE.md and
+the retained third-party notices. No affiliation or endorsement is implied.
