@@ -1,0 +1,11 @@
+# Local builds, temporary upstream checkouts, and installed game data
+/build/
+/dist/
+/.arena/
+*.o
+*.so
+*.dll
+*.dylib
+*.pk3
+__pycache__/
+*.pyc

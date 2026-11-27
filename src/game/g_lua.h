@@ -1,0 +1,130 @@
+/* NewMod, Arena.ai, 2026-11-21: changes in this file; see CHANGES. */
+/*
+ * ET <-> *Lua* interface header file.
+ *
+ * This code is taken from ETPub. All credits go to their team especially quad and pheno!
+ * http://etpub.org
+ *
+ * Find the ETPub Lua code by doing a text seach for "*LUA*"
+ *
+ * IRATA [*] 03/2009
+ */
+#ifndef _G_LUA_H
+#define _G_LUA_H
+
+#include "q_shared.h"
+#include "g_local.h"
+
+/* NewMod, Arena.ai, 2026-11-21 (see CHANGES): use the bundled Lua 5.1 source headers. */
+#include "../lua/lua.h"
+#include "../lua/lauxlib.h"
+#include "../lua/lualib.h"
+
+/* NewMod, Arena.ai, 2026-11-21 (see CHANGES): No Quarter extension to standard Lua 5.1. */
+#define luaL_checkbool(L, n) (lua_isboolean((L), (n)) ? lua_toboolean((L), (n)) : luaL_checkint((L), (n)))
+
+#define LUA_NUM_VM 16
+#define LUA_MAX_FSIZE 1024*1024 // 1MB
+
+#define FIELD_INT			0
+#define FIELD_STRING		1
+#define FIELD_FLOAT			2
+#define FIELD_ENTITY		3
+#define FIELD_VEC3			4
+#define FIELD_INT_ARRAY		5
+#define FIELD_TRAJECTORY	6
+#define FIELD_FLOAT_ARRAY	7
+#define FIELD_ITEM          8 /* NewMod, Arena.ai, 2026-11-21 (see CHANGES): gitem_t pointer, not char pointer. */
+
+#define FIELD_FLAG_GENTITY	1 // marks a gentity_s field
+#define FIELD_FLAG_GCLIENT	2 // marks a gclient_s field
+#define FIELD_FLAG_NOPTR	4
+#define FIELD_FLAG_READONLY	8 // read-only access
+
+// define HOSTARCH and EXTENSION depending on host architecture
+#if defined __linux__
+
+#define HOSTARCH	"UNIX"
+#define EXTENSION	"so"
+
+#elif defined WIN32
+
+#define HOSTARCH	"WIN32"
+#define EXTENSION	"dll"
+
+#elif defined __MACOS__
+
+#define HOSTARCH	"MACOS"
+#define EXTENSION	"so"
+
+#endif
+
+// macros to register predefined constants
+#define lua_registerglobal(L, n, v) (lua_pushstring(L, v), lua_setglobal(L, n))
+#define lua_regconstinteger(L, n) (lua_pushstring(L, #n), lua_pushinteger(L, n), lua_settable(L, -3))
+#define lua_regconststring(L, n) (lua_pushstring(L, #n), lua_pushstring(L, n), lua_settable(L, -3))
+
+// macros to add gentity and gclient fields
+/* NewMod, Arena.ai, 2026-11-21 (see CHANGES): retain field sizes to bound Lua arrays and
+ * fixed-size strings. Offsets use size_t instead of a platform-sized long. */
+#define _et_gentity_addfield(n, t, f) {#n, t, offsetof(struct gentity_s, n), FIELD_FLAG_GENTITY + f, sizeof(((struct gentity_s *)0)->n)}
+#define _et_gentity_addfieldalias(n, a, t, f) {#n, t, offsetof(struct gentity_s, a), FIELD_FLAG_GENTITY + f, sizeof(((struct gentity_s *)0)->a)}
+#define _et_gclient_addfield(n, t, f) {#n, t, offsetof(struct gclient_s, n), FIELD_FLAG_GCLIENT + f, sizeof(((struct gclient_s *)0)->n)}
+#define _et_gclient_addfieldalias(n, a, t, f) {#n, t, offsetof(struct gclient_s, a), FIELD_FLAG_GCLIENT + f, sizeof(((struct gclient_s *)0)->a)}
+
+typedef struct
+{
+	int			id;
+	char		file_name[MAX_QPATH];
+	char		mod_name[MAX_CVAR_VALUE_STRING];
+	char		mod_signature[41];
+	char		*code;
+	int			code_size;
+	int			err;
+	lua_State 	*L;
+} lua_vm_t;
+
+typedef struct {
+	const char		*name;
+	int				type;
+	size_t          mapping;
+	int				flags;
+	size_t          size;
+} gentity_field_t;
+
+extern lua_vm_t * lVM[LUA_NUM_VM];
+
+// API
+#ifdef __cplusplus
+extern "C" {
+#endif
+qboolean G_LuaInit();
+qboolean G_LuaCall( lua_vm_t* vm, char *func, int nargs, int nresults );
+qboolean G_LuaGetNamedFunction(lua_vm_t *vm, char *name);
+qboolean G_LuaStartVM(lua_vm_t* vm);
+void G_LuaStopVM(lua_vm_t* vm);
+void G_LuaShutdown();
+void G_LuaStatus(gentity_t *ent);
+lua_vm_t * G_LuaGetVM(lua_State *L);
+
+// Callbacks
+void G_LuaHook_InitGame(int levelTime, int randomSeed, int restart);
+void G_LuaHook_ShutdownGame(int restart);
+void G_LuaHook_RunFrame(int levelTime);
+qboolean G_LuaHook_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot, char *reason);
+void G_LuaHook_ClientDisconnect(int clientNum);
+void G_LuaHook_ClientBegin(int clientNum);
+void G_LuaHook_ClientUserinfoChanged(int clientNum);
+void G_LuaHook_ClientSpawn(int clientNum, qboolean revived, qboolean teamChange, qboolean restoreHealth);
+qboolean G_LuaHook_ClientCommand(int clientNum, char *command);
+qboolean G_LuaHook_ConsoleCommand(char *command);
+qboolean G_LuaHook_UpgradeSkill(int cno, skillType_t skill);
+qboolean G_LuaHook_SetPlayerSkill( int cno, skillType_t skill );
+void G_LuaHook_Print( char *text );
+qboolean G_LuaHook_Obituary( int victim, int killer, int meansOfDeath );
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* ifndef _G_LUA_H */

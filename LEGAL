@@ -1,0 +1,67 @@
+NewMod legal and packaging review — 2026-11-21
+
+This is an engineering inventory, not legal advice or a declaration of
+license compliance. NewMod is derived from No Quarter by the No Quarter Mod
+Team and its contributors, with selected Jaymod/Oz-inspired behavior and
+other third-party components. See PROVENANCE.md and CHANGES. Review the actual
+license texts, their interaction, and all notices before deploying or
+redistributing the source, binaries, or a server package.
+
+Retained texts and notices
+--------------------------
+* licenses/NoQuarter-LICENSE.txt — exact source license text from the NQ
+  snapshot (Modified Reciprocal Public License, modified by the NQ team).
+* licenses/NoQuarter-media-readme.txt — NQ's asset notice and credits.
+* licenses/Jaymod-LICENSE.txt and licenses/Apache-2.0.txt — Jaymod's Apache
+  notice and the full Apache 2.0 text. Jaymod also requires the original id
+  terms, credit and bundling both licenses; see its upstream README.
+* licenses/id-ET-SDK-License.rtf and licenses/ETPub-id-ET-SDK-License.rtf —
+  the id SDK license texts retained from the inspected Jaymod and Oz trees.
+* licenses/Lua-5.1.txt — Lua.org/PUC-Rio permission notice, also in lua.h.
+* licenses/SHA1-Paul-E-Jones.txt and src/sha-1/license.txt — the SHA-1
+  implementation's notice.
+* src/cgame/md5.h and src/cgame/md5.c — RSA Data Security, Inc. MD5 notice
+  and Colin Plumb implementation notice, respectively. The optional key
+  code uses a seeded MD5 derivative. Similar inherited headers and notices
+  occur elsewhere; do not strip them.
+* Omnibot/ contains NQ's Omni-Bot interface headers/loader. Determine and
+  retain any additional upstream notices and terms for the interface and a
+  separately supplied bot library; they have not been fully reviewed here.
+
+Known separate asset restriction
+--------------------------------
+The NQ asset notice states: "Use of files WITHIN No Quarter pk3s is prohibited
+without consent." Its notice attributes original content to the No Quarter
+mod team (2005–2011) and suggests contacting the NQ community. Contact the
+rights holders and obtain appropriate permission before using or redistributing
+those files. Necessary base-game data, maps, models, sounds and textures also
+have their own rights/terms. No NQ pk3 or other game media is included here;
+the local synthetic server fixture was for testing only and is not a playable
+asset package. Permission to use source does not itself clear the media.
+
+Outstanding deployment/distribution conditions
+-----------------------------------------------
+* The NQ license describes reciprocal source availability, a distinct name,
+  dated/attributed modification records both in source and CHANGES, retained
+  notices, and notification of the licensor (section 6 contains details and
+  time limits). It also includes a restriction against removing checks or
+  manipulating the product to run on older ET versions such as 2.55. Preserve
+  those checks and review the exact language. The inherited server/client
+  engine-version checks have not been removed.
+* The supplied NQ license refers to an EXHIBIT A notice but the retained
+  upstream license text does not itself contain an EXHIBIT A section. Identify
+  the intended notice and ensure all file-level notice and change-location
+  cross-reference requirements are met before distributing. Existing comments
+  and CHANGES are an engineering record, not a legal-compliance certification.
+* Provide a durable, complete source download and future updates as required,
+  including build inputs and required components; notify the NQ licensor or
+  use the alternative notice method specified in the license if direct notice
+  is impossible. No publication or notification is represented as completed.
+* Resolve whether the NQ reciprocal terms, Jaymod's Apache 2.0 notice,
+  original id SDK terms, Lua terms, Omni-Bot terms and any asset conditions
+  are compatible for the intended distribution. Request permissions or
+  further legal review where needed; do not assume one license supersedes the
+  others. Retain the unmodified upstream license texts and copyrights.
+* Choose an authorized and technically validated packaging method for both
+  server and client modules and necessary media. This repository is not a
+  complete distributable/playable mod package.
