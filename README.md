@@ -31,7 +31,8 @@ NewMod is not an official No Quarter, Jaymod, Oz or ET: Legacy release.
   imported from the WET-NoQuarter source into `pak/` and calibrated to
   match the `.weap` file references. The M97 shotgun, molotov fire
   grenade, adrenaline-share syringe, bouncing-betty and poison-gas
-  landmines, and poison-gas grenade are Jaymod-sourced additions. NQ's
+  landmines, poison-gas grenade, trip mine, and map mortar are
+  Jaymod-sourced additions. NQ's
   64 weapon slots are now full; see
   [pak/MEDIA-PROVENANCE.md](pak/MEDIA-PROVENANCE.md) for asset provenance.
 * `!spree` and `!tspree` use NQ's current streaks; `!spreerecord` is only a

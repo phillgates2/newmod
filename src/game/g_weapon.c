@@ -3621,6 +3621,124 @@ void G_MolotovExplode( gentity_t *ent ) {
 /*
 ======================================================================
 
+G_TripMineThink
+
+NewMod, Arena.ai: ported from Jaymod g_missile.cpp. The armed tripmine
+periodically casts a trace along its facing direction; when it hits a
+player, it explodes immediately.
+======================================================================
+*/
+void G_TripMineThink( gentity_t* ent ) {
+	trace_t trace;
+	vec3_t start, end;
+	gentity_t* traceEnt;
+
+	VectorMA(ent->r.currentOrigin, 2, ent->s.origin2, start);
+	VectorMA(start, 2048, ent->s.origin2, end);
+
+	trap_Trace(&trace, start, NULL, NULL, end, ent->s.number, MASK_SHOT);
+
+	ent->nextthink = level.time + SERVER_FRAMETIME_DELTA;
+
+	if(trace.fraction == 1.0f) {
+		// Nothing in the way — keep waiting
+		return;
+	}
+
+	if(trace.entityNum >= ENTITYNUM_NONE) {
+		return;
+	}
+
+	traceEnt = &g_entities[trace.entityNum];
+
+	if(!Q_stricmp(traceEnt->classname, "player")) {
+		ent->think = G_ExplodeMissile;
+	}
+}
+
+/*
+======================================================================
+
+G_TripMinePrime
+
+NewMod, Arena.ai: ported from Jaymod g_missile.cpp. After the 2000ms
+arming delay, the tripmine switches from priming to thinking (active
+detection).
+======================================================================
+*/
+void G_TripMinePrime( gentity_t* ent ) {
+	ent->think = G_TripMineThink;
+	ent->nextthink = level.time + 500;
+}
+
+/*
+======================================================================
+
+G_PlaceTripmine
+
+NewMod, Arena.ai: ported from Jaymod g_weapon.cpp. Spawns an ET_BOMB
+entity at the player's feet with a 2000ms arming delay. The bomb uses
+dynamite models and explodes with 300 splash damage / MOD_TRIPMINE when
+a player crosses its tripwire.
+======================================================================
+*/
+void G_PlaceTripmine( gentity_t* ent ) {
+	gentity_t* bomb;
+	trace_t tr;
+	vec3_t spot;
+
+	// Trace a short distance in front of the player to find where to place
+	VectorCopy(ent->r.currentOrigin, spot);
+	spot[2] += 16;
+
+	trap_Trace(&tr, ent->r.currentOrigin, NULL, NULL, spot, ent->s.number, MASK_SHOT);
+
+	if(tr.fraction < 1.0f) {
+		// Something in the way — place at the impact point
+		VectorCopy(tr.endpos, spot);
+	}
+
+	spot[2] = tr.plane.normal[2] * 2;
+
+	bomb = G_Spawn();
+	bomb->s.eType = ET_BOMB;
+	bomb->s.eFlags = 0;
+	bomb->s.weapon = WP_TRIPMINE;
+	bomb->parent = ent;
+	bomb->think = G_TripMinePrime;
+	bomb->nextthink = level.time + 2000;
+
+	// Set origin to the ground position
+	VectorCopy(spot, bomb->r.currentOrigin);
+	VectorCopy(spot, bomb->s.pos.trBase);
+	VectorCopy(spot, bomb->s.origin);
+
+	// Tripwire direction: facing the player's view forward
+	AngleVectors(ent->client->ps.viewangles, bomb->s.origin2, NULL, NULL);
+
+	bomb->splashDamage = 300;
+	bomb->splashRadius = 300;
+	bomb->methodOfDeath = MOD_TRIPMINE;
+	bomb->splashMethodOfDeath = MOD_TRIPMINE;
+	bomb->r.contents = CONTENTS_CORPSE;	// player can walk through
+
+	// Set bbox
+	bomb->r.mins[0] = -12;
+	bomb->r.mins[1] = -12;
+	bomb->r.mins[2] = 0;
+	bomb->r.maxs[0] = 12;
+	bomb->r.maxs[1] = 12;
+	bomb->r.maxs[2] = 20;
+
+	// Copy the model from the player's current weapon
+	bomb->s.modelindex = ent->s.modelindex;
+
+	trap_LinkEntity( bomb );
+}
+
+/*
+======================================================================
+
 G_BouncingBettyTrip
 
 NewMod, Arena.ai: ported from Jaymod. The BBetty landmine leaps into the
@@ -4238,10 +4356,11 @@ gentity_t *weapon_grenadelauncher_fire (gentity_t *ent, int grenType) {
 		case WP_SMOKE_BOMB:
 		case WP_POISON_GAS:
 		case WP_MOLOTOV:
+		case WP_TRIPMINE:
 			upangle *= 900;
 			break;
 		default: // WP_DYNAMITE // Gordon: or WP_LANDMINE / WP_SATCHEL
-				upangle *= 400;
+			upangle *= 400;
 			break;
 	}
 
@@ -4320,6 +4439,9 @@ gentity_t *weapon_grenadelauncher_fire (gentity_t *ent, int grenType) {
 			m->s.effect1Time = 16;
 			m->think = G_MolotovExplode;
 			m->poisonGasAlarm = level.time + MOLOTOV_GROWTIME;
+			break;
+		case WP_TRIPMINE:
+			// tripmine is placed on the ground and armed by G_PlaceTripmine
 			break;
 		case WP_SMOKE_MARKER:
 			m->s.teamNum = ent->client->sess.sessionTeam;	// store team so we can generate red or blue smoke
@@ -4644,6 +4766,7 @@ void CalcMuzzlePoint ( gentity_t *ent, int weapon, vec3_t forward, vec3_t right,
 		case WP_SMOKE_BOMB:
 		case WP_POISON_GAS:
 		case WP_MOLOTOV:
+		case WP_TRIPMINE:
 			VectorMA( muzzlePoint, 20.0f, right, muzzlePoint );
 			break;
 		case WP_AKIMBO_COLT:
@@ -4812,6 +4935,7 @@ qboolean jP_CheckDisguise( gentity_t *ent ) {
 		case WP_SMOKE_BOMB:
 		case WP_POISON_GAS:
 		case WP_MOLOTOV:
+		case WP_TRIPMINE:
 		case WP_SATCHEL:
 		case WP_SATCHEL_DET:
 		case WP_BINOCULARS:
@@ -5159,6 +5283,15 @@ void FireWeapon( gentity_t *ent ) {
 		case WP_MOLOTOV:
 			jP_DoChargeCost(ent, SK_COVERTOPS, BG_GetFromTable(chargeCost_Smoke, ent->client->sess.skillBits, SK_COVERTOPS));
 			pFiredShot = weapon_grenadelauncher_fire( ent, ent->s.weapon );
+			break;
+
+		case WP_TRIPMINE:
+			// place a tripmine on the ground at the player's feet
+			G_PlaceTripmine( ent );
+			break;
+
+		case WP_MAPMORTAR:
+			// map mortar is fired by map entities, not the player
 			break;
 
 		case WP_FLAMETHROWER:

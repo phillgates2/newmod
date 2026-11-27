@@ -118,8 +118,10 @@ void G_BounceMissile( gentity_t *ent, trace_t *trace ) {
 				case WP_SATCHEL:
 				case WP_SMOKE_BOMB:
 				case WP_POISON_GAS:
-				case WP_MOLOTOV:
-				case WP_SMOKE_MARKER: //forty - canister kicking
+			case WP_MOLOTOV:
+			case WP_TRIPMINE:
+			case WP_MAPMORTAR:
+			case WP_SMOKE_MARKER: //forty - canister kicking
 				case WP_GRENADE_LAUNCHER:
 				case WP_GRENADE_PINEAPPLE:
 					ent->r.ownerNum = ENTITYNUM_WORLD;
@@ -424,6 +426,7 @@ void G_ExplodeMissile( gentity_t *ent ) {
 			case WP_LANDMINE:
 			case WP_LANDMINE_BBETTY:
 			case WP_LANDMINE_PGAS:
+			case WP_TRIPMINE:
 				{
 					// remove from map/radar..
 					G_RemoveTeamMapData( ent, qfalse, qtrue, qtrue );
@@ -522,6 +525,8 @@ void G_ExplodeMissile( gentity_t *ent ) {
 			case WP_MORTAR2:
 			case WP_MORTAR_SET:
 			case WP_MORTAR2_SET:
+			case WP_MAPMORTAR:
+			case WP_TRIPMINE:
 				{
 					gentity_t* tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
 					tent->s.onFireStart = ent->splashDamage * 4;
@@ -677,6 +682,8 @@ void G_RunMissile( gentity_t *ent ) {
 		|| ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_LANDMINE_BBETTY || ent->s.weapon == WP_LANDMINE_PGAS
 		|| ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB || ent->s.weapon == WP_POISON_GAS
 		|| ent->s.weapon == WP_MOLOTOV
+		|| ent->s.weapon == WP_TRIPMINE
+		|| ent->s.weapon == WP_MAPMORTAR
 		) ) {
 
 		if( !ent->s.pos.trDelta[0] && !ent->s.pos.trDelta[1] && !ent->s.pos.trDelta[2] ) {
