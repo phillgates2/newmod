@@ -319,6 +319,8 @@ weapontable_t WeaponTable[WP_NUM_WEAPONS] =
 	{	1,	0,	1,	0,	1,	0,	100,	DELAY_LOW,	100,	0,	0,	MOD_LANDMINE,			0,	0,	qfalse,	qtrue,	qfalse	},	// WP_LANDMINE_BBETTY 66	bouncing-betty landmine
 	{	1,	0,	1,	0,	1,	0,	100,	DELAY_LOW,	100,	0,	0,	MOD_POISON_GAS,		0,	0,	qfalse,	qtrue,	qfalse	},	// WP_LANDMINE_PGAS 67	poison-gas landmine
 	{	3,	1,	3,	0,	3,	0,	0,	DELAY_THROW,	0,	0,	0,	MOD_MOLOTOV,		0,	0,	qfalse,	qtrue,	qfalse	},	// WP_MOLOTOV 68	Jaymod molotov fire grenade
+	{	6,	1,	1,	0,	0,	0,	2000,	DELAY_HW,	2000,	0,	0,	MOD_TRIPMINE,		0,	0,	qfalse,	qtrue,	qfalse	},	// WP_TRIPMINE 69	Jaymod trip mine
+	{	999,	0,	999,	0,	0,	0,	0,	50,	0,	0,	0,	0,		0,	0,	qfalse,	qfalse,	qfalse	},	// WP_MAPMORTAR 70	Jaymod map mortar (no ammo, map entity)
 };
 
 // core: weapons that overheat
@@ -411,7 +413,9 @@ int weapAlts[] =
 	WP_NONE,				// 65 WP_POISON_GAS
 	WP_NONE,			// 66 WP_LANDMINE_BBETTY
 	WP_NONE,			// 67 WP_LANDMINE_PGAS
-	WP_NONE,			// 68 WP_MOLOTOV
+	WP_NONE,				// 68 WP_MOLOTOV
+	WP_NONE,				// 69 WP_TRIPMINE
+	WP_NONE,				// 70 WP_MAPMORTAR
 };
 
 
@@ -493,7 +497,9 @@ int weapTeamConversion[] =
 	WP_LANDMINE_BBETTY,	// 66 WP_LANDMINE_BBETTY
 	WP_LANDMINE_PGAS,	// 67 WP_LANDMINE_PGAS
 	WP_MOLOTOV,		// 68 WP_MOLOTOV
-						//    WP_NUM_WEAPONS
+	WP_TRIPMINE,		// 69 WP_TRIPMINE (self-ammo, Add_Ammo)
+	WP_NONE,		// 70 WP_MAPMORTAR (no ammo)
+					//    WP_NUM_WEAPONS
 };
 
 // core: weapons that can be disabled..
@@ -890,7 +896,9 @@ char *WP_names[WP_NUM_WEAPONS] = {
 	"WP_POISON_GAS",			// 65 WP_POISON_GAS
 	"WP_LANDMINE_BBETTY",	// 66 WP_LANDMINE_BBETTY
 	"WP_LANDMINE_PGAS",	// 67 WP_LANDMINE_PGAS
-	"WP_MOLOTOV"			// 68 WP_MOLOTOV
+	"WP_MOLOTOV",			// 68 WP_MOLOTOV
+	"WP_TRIPMINE",			// 69 WP_TRIPMINE
+	"WP_MAPMORTAR"			// 70 WP_MAPMORTAR
 };
 
 
@@ -2386,6 +2394,18 @@ gitem_t	bg_itemlist[] =
 		{ "models/multiplayer/molotov/molotov.md3", "models/multiplayer/molotov/v_molotov.md3", 0 },
 		"models/multiplayer/molotov/icon.tga", "icons/ammo9", "Molotov", 0,
 		IT_WEAPON, WP_MOLOTOV, WP_MOLOTOV, WP_MOLOTOV
+	},
+	{
+		"weapon_tripmine", 199635, "",
+		{ "models/multiplayer/dynamite/dynamite.md3", "models/multiplayer/dynamite/dynamite_3rd.md3", 0 },
+		"icons/iconw_dynamite_1", "icons/ammo9", "Tripmine", 0,
+		IT_WEAPON, WP_TRIPMINE, WP_TRIPMINE, WP_TRIPMINE
+	},
+	{
+		"weapon_mapmortar", 199635, "",
+		{ "models/weapons2/grenade/grenade.md3", "models/weapons2/grenade/v_grenade.md3", 0 },
+		"icons/iconw_grenade_1", "icons/icona_grenade", "Map Mortar", 6,
+		IT_WEAPON, WP_MAPMORTAR, WP_MAPMORTAR, WP_MAPMORTAR
 	},
 
 	{

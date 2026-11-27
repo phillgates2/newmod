@@ -115,3 +115,14 @@ media notice at `licenses/NoQuarter-media-readme.txt`.
 - **`WP_ADRENALINE_SHARE`** (weapon ID 63): uses the Jaymod
   `adrenaline_share.weap` definition, reusing the syringe first-person
   model and adding the adrenaline-share shader fluid.
+- **`WP_TRIPMINE`** (weapon ID 69): placed trip mine that arms after a
+  2000ms delay, then periodically casts a tripwire trace via
+  `G_TripMineThink`; detonates on player contact via `G_ExplodeMissile`.
+  Reuses the dynamite models (`dynamite.md3`, `dynamite_3rd.md3`) — no
+  separate `.weap` file (code-only weapon, ported from Jaymod
+  `g_weapon.cpp` / `g_missile.cpp`).
+- **`WP_MAPMORTAR`** (weapon ID 70): map-entity artillery mortar shell,
+  fired by map triggers (not player inventory). Reuses grenade models
+  (`grenade.md3`, `v_grenade.md3`) and the `mortarf1.wav` sound — no
+  separate `.weap` file (code-only weapon, ported from Jaymod
+  `g_missile.cpp`).

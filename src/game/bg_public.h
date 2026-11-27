@@ -826,6 +826,8 @@ typedef enum weapon_s
 	WP_LANDMINE_BBETTY,	// 66 - Jaymod bouncing-betty landmine
 	WP_LANDMINE_PGAS,	// 67 - Jaymod poison-gas landmine
 	WP_MOLOTOV,			// 68 - Jaymod molotov fire grenade
+	WP_TRIPMINE,			// 69 - Jaymod trip mine
+	WP_MAPMORTAR,			// 70 - Jaymod map mortar (artillery shell)
 
 	WP_NUM_WEAPONS		// engine player inventory bit count (see MAX_WEAPONS)
 } weapon_t;
@@ -1482,6 +1484,7 @@ typedef enum {
 	MOD_M97,				// 76 - M97 shotgun
 	MOD_POISON_GAS,		// 77 - poison gas (thrown grenade or landmine)
 	MOD_MOLOTOV,			// 78 - Jaymod molotov fire grenade
+	MOD_TRIPMINE,			// 79 - Jaymod trip mine
 
 	MOD_NUM_MODS
 
@@ -1666,6 +1669,8 @@ typedef enum {
 	IL_AMMO_LANDMINE_BBETTY,
 	IL_AMMO_LANDMINE_PGAS,
 	IL_WEAPON_MOLOTOV,
+	IL_WEAPON_TRIPMINE,
+	IL_WEAPON_MAPMORTAR,
 	IL_NUM_ITEMS
 } itemIndex_t;
 

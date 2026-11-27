@@ -112,6 +112,7 @@ int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip) {
 		case WP_GRENADE_PINEAPPLE:
 		case WP_DYNAMITE:
 		case WP_SATCHEL_DET:
+		case WP_TRIPMINE:
 			fillClip = qtrue;	// grenades always filter into the "clip"
 			// no break here..
 		case WP_KNIFE:

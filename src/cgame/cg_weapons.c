@@ -3378,6 +3378,8 @@ void CG_FinishWeaponChange(int lastweap, int newweap) {
 		case WP_SMOKE_BOMB:
 		case WP_POISON_GAS:
 		case WP_MOLOTOV:
+		case WP_TRIPMINE:
+		case WP_MAPMORTAR:
 		case WP_SATCHEL:
 		case WP_SATCHEL_DET:
 		case WP_PANZERFAUST:
@@ -4309,6 +4311,8 @@ void CG_OutOfAmmoChange( qboolean allowforceswitch ) {
 			case WP_SMOKE_BOMB:
 			case WP_POISON_GAS:
 			case WP_MOLOTOV:
+			case WP_TRIPMINE:
+			case WP_MAPMORTAR:
 				// CHRUKER: b021 - Actually use a SMG first if we got it
 				// CHRUKER: b021 - Make sure we don't reselect the panzer. (That took me a while to figure that out :-)
 				switch( cg_favWeaponBank.integer ) {
@@ -4856,6 +4860,8 @@ void CG_FireWeapon( centity_t *cent, int event, qboolean arty ) {
 		case WP_SMOKE_BOMB:
 		case WP_POISON_GAS:
 		case WP_MOLOTOV:
+		case WP_TRIPMINE:
+		case WP_MAPMORTAR:
 			if ( es->apos.trBase[0] > 0) {
 				return;
 			}
