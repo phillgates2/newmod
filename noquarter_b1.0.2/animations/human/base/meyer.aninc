@@ -1,0 +1,12 @@
+// <animation name>	<first frame> <length> <looping> <fps> <move speed> <transition> <reversed>
+
+// Flame Death
+death_flame_1		0	84	0	30	0	0	0
+
+// Prone Realism
+diving			85	20	0	30	0	0	0
+prone_to_crch		106	30	0	30	0	0	0
+
+//Knife Deaths
+death_knife_1		136	50	0	22	0	0	0
+death_knife_2		188	52	0	22	0	0	0
