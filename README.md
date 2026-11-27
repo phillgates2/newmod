@@ -19,10 +19,20 @@ NewMod is not an official No Quarter, Jaymod, Oz or ET: Legacy release.
   listed below is adapted to its existing state and permission system.
 * An **experimental**, Jaymod-inspired shared-adrenaline tool and an
   Oz-inspired `/adrenother` command are available as opt-in NQ adaptations;
-  neither is upstream-equivalent. The rest of Jaymod/Oz weapon inventories,
-  prediction/protocols, databases and feature sets have **not** been merged.
-  NQ's 64 weapon slots are now full. More weapons need coordinated server,
-  client, movement, protocol, bot, demo and authorized-media work.
+  neither is upstream-equivalent. Jaymod/Oz weapon inventories,
+  prediction/protocols, databases and feature sets beyond the NQ base set
+  have **not** been merged.
+* **All NQ weapons are implemented**: 55 `.weap` definition files cover
+  every weapon in the `WP_*` enum — pistols, SMGs, rifles, rifles with
+  grenade launchers, the Panzerfaust, flamethrower, mortar, MG42, knife,
+  dynamite, satchel, landmine, syringe, binoculars, medkit, ammo pack,
+  and more. Their first-person and 3rd-person models (`.md3`/`.mdc`),
+  skins, weapon configs, sound effects, and weapon icons have been
+  imported from the WET-NoQuarter source into `pak/` and calibrated to
+  match the `.weap` file references. The M97 shotgun, bouncing-betty and
+  poison-gas landmines, and poison-gas grenade are Jaymod-sourced
+  additions. NQ's 64 weapon slots are now full; see
+  [pak/MEDIA-PROVENANCE.md](pak/MEDIA-PROVENANCE.md) for asset provenance.
 * `!spree` and `!tspree` use NQ's current streaks; `!spreerecord` is only a
   map-local NQ-derived high watermark, not Oz's persistent map and overall
   records. `!status -all` has no Jaymod database statistics. See the
@@ -42,6 +52,11 @@ NewMod is not an official No Quarter, Jaymod, Oz or ET: Legacy release.
   build on an Internet-facing production server without further review.
 
 ## Build and test
+
+All modules compile as **C++** (g++, `-std=gnu++11`): every `.c` source is
+compiled with `$(CXX) $(CXXFLAGS)` and linked with `$(CXX)`. The codebase
+uses `-fpermissive` to absorb implicit enum/pointer conversions inherited
+from the original C; no sources are compiled as C.
 
 On Linux x86-64, install a C/C++ compiler, GNU Make and Python 3; then:
 
@@ -147,6 +162,56 @@ are combined with the server's existing settings; these numbers intentionally
   it is unavailable while spectating, following or in limbo. It is not Oz's
   full throwing-knife implementation.
 
+## Admin system
+
+The shrubbot admin system has been extended with **fine-grained permission
+flags** so individual privileges can be granted or denied independently of
+the existing level hierarchy. Seven new `SBF_CAN_*` flags control whether
+an admin of a given level may:
+
+| Flag | Grants |
+| --- | --- |
+| `SBF_CAN_KICK` | Kick players |
+| `SBF_CAN_MUTE` | Mute players |
+| `SBF_CAN_WARN` | Issue warnings |
+| `SBF_CAN_UNBAN` | Remove bans |
+| `SBF_CAN_VIEW_USERINFO` | View detailed userinfo (GUID/IP) |
+| `SBF_CAN_SETLEVEL` | Change player levels |
+| `SBF_CAN_PUTTEAM` | Move players between teams |
+
+The permission check is **deny-only**: a flag that is absent from an
+admin's config does not restrict them (the default is allow). A flag
+that is present denies the action. The server console is always permitted
+regardless of flags. Existing `SBF_*` flags (`SBF_IMMUNITY`, `SBF_NOVOTE`,
+etc.) are unchanged.
+
+Two new console commands manage the engine IP-ban list:
+
+* `/ban <name|client#> [reason]` — temporarily ban a player via
+  `Svcmd_Ban_f`, creating a shrubbot temp-ban record with a reason.
+* `/unban <ban#>` — remove a ban by its shrubbot ban number via
+  `Svcmd_Unban_f`, expiring it immediately and writing the config.
+
+`G_nm_firegod` accepts an optional duration argument:
+`!firegod [slot-or-name] [duration|noclip]`. A positive integer in the
+third argument sets a duration in seconds (clamped to 3600) for flaming
+god mode; `noclip` (or no third argument) retains the legacy toggle.
+
+## Bot callvote commands
+
+Two bot-related commands are available in the normal `!vote` list when
+Omni-Bot support is compiled in (`WITH_OMNIBOT=1`):
+
+| Command | Behavior |
+| --- | --- |
+| `!vote bots <on\|off>` | Toggles `omnibot_enable`, turning bot presence on or off. |
+| `!vote difficulty <0-100>` | Sets `g_botDifficulty` (default 50), controlling bot skill level. |
+
+Both are gated by permission cvars: `vote_allow_bots` and
+`vote_allow_difficulty` (both default to `1`). Referees can always
+use these commands regardless of the cvar. Bot difficulty applies to
+`client->sess.skill[SK_*]` levels used by the Omni-Bot interface.
+
 ## Selected commands
 
 These use the existing NQ shrubbot dispatcher, level hierarchy and flags.
@@ -168,7 +233,7 @@ mass actions. Permissions are case-sensitive.
 | `!spawn [slot-or-name\|all\|-1]` | `%` | Immediately reinforce eligible active-team players **already in limbo**; no argument means all. Tyranny. Not Oz's direct respawn. |
 | `!splat <slot-or-name>`, `!splata` | `g`, `Q` | Apply splat damage to eligible player(s); tyranny. Splat bypasses spawn invulnerability, not god mode or noclip. |
 | `!smite [slot-or-name]` | `U` | Apply NQ fire to eligible players; tyranny. |
-| `!firegod [slot-or-name] [noclip]` | `e` | Toggle flaming god mode for a player: a new fire grants invulnerability for the burn duration, a repeat toggles it back to mortal damage; tyranny. Adapted from Oz; NQ applies burn damage from its short timer, so it is not Oz's separate timer model. |
+| `!firegod [slot-or-name] [duration\|noclip]` | `e` | Toggle flaming god mode for a player: a new fire grants invulnerability for the burn duration, a repeat toggles it back to mortal damage. The optional third argument sets a duration in seconds (clamped to 3600) or `noclip` for the legacy toggle; tyranny. Adapted from Oz; NQ applies burn damage from its short timer, so it is not Oz's separate timer model. |
 | `!news [map]` | `W` | Play an existing `sound/vo/<map>/news_<map>.wav`, with a 10-second cooldown and resource checks. |
 | `!about`, `!status [-all]`, `!lsplayers`, `!spree`, `!tspree [count]` | `h`, `i`, `i`, `h`, `h` | Display selected mod, player, resource or current-streak information. |
 | `!spreerecord` | `E` | NQ-derived map-local high watermark recorded on enemy kills during play; resets on map init. Warmup streaks may contribute to an NQ streak carried into play. |
@@ -279,13 +344,15 @@ lists and reload failures, custom templates, mute restoration, reports,
 command permissions, warning lifecycle, gravity, death-handler paths, UI
 bounds, Lua, XP paths and optional key packets. It also exercises shared
 adrenaline and weapon prediction/event paths with fake engine callbacks, the
-actual `!firegod` toggle and the actual ban-creation handlers (duration
-saturation, GUID length, IPv4 validation, temporary-ban duration and
-host/bot/hierarchy rejection). The populated warning/seen map-init test
-deliberately interrupts the initializer after its entry resets; it is not a
-completed map load. The optional engine fixtures complete a restart using
-unplayable stand-ins and synthetic bots, and exercise actual mute/unmute
-records across a reload. These are **not** end-to-end multiplayer tests.
+actual `!firegod` toggle (including the duration argument) and the actual
+ban-creation handlers (duration saturation, GUID length, IPv4 validation,
+temporary-ban duration and host/bot/hierarchy rejection). The populated
+warning/seen map-init test deliberately interrupts the initializer after its
+entry resets; it is not a completed map load. The optional engine fixtures
+complete a restart using unplayable stand-ins and synthetic bots, and
+exercise actual mute/unmute records across a reload. The build matrix runs
+all four Lua/Omni-Bot combinations. These are **not** end-to-end
+multiplayer tests.
 
 To regenerate [the inventory](docs/import-inventory.md), acquire clean Git
 checkouts at the revisions in [PROVENANCE.md](PROVENANCE.md) as
@@ -294,7 +361,7 @@ checkouts at the revisions in [PROVENANCE.md](PROVENANCE.md) as
 The scanner verifies the checked-out revisions and reports name/ID differences
 only; conditional or dynamically registered surfaces may be missed.
 
-Before a release: finish feature and weapon integration, review inherited
+Before a release: finish remaining feature work, review inherited
 code and Lua for security, validate real compatible assets and actual clients,
 run gameplay/download/demo tests, resolve all licensing and provenance issues,
 retain required notices, make source available and notify the relevant
