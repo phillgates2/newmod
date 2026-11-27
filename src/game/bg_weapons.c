@@ -1069,10 +1069,10 @@ void BG_RegisterWeapon( int weaponNum, qboolean force ) {
 		case WP_SMOKE_MARKER:			filename = "smokemarker.weap"; break;
 		case WP_DYNAMITE:				filename = "dynamite.weap"; break;
 		case WP_MEDIC_ADRENALINE:		filename = "adrenaline.weap"; break;
-		/* NewMod, Arena.ai, 2026-11-21: reuse the installed revival-needle
-		 * definition; no Jaymod/NQ media is copied into this source tree. */
-		case WP_ADRENALINE_SHARE:
-		case WP_MEDIC_SYRINGE:			filename = "syringe.weap"; break;
+		/* NewMod, Arena.ai, 2026-11-21: imported Jaymod adrenaline_share.weap
+		 * definition; reuses the installed syringe media for first-person. */
+		case WP_ADRENALINE_SHARE:	filename = "adrenaline_share.weap"; break;
+		case WP_MEDIC_SYRINGE:		filename = "syringe.weap"; break;
 		case WP_POISON_SYRINGE:			filename = "poison.weap"; break;
 		case WP_BINOCULARS:				filename = "binocs.weap"; break;
 		case WP_KAR98:					filename = "kar98.weap"; break;
@@ -1090,7 +1090,8 @@ void BG_RegisterWeapon( int weaponNum, qboolean force ) {
 		case WP_SATCHEL_DET:		filename = "satchel_det.weap"; break;
 		case WP_SMOKE_BOMB:			filename = "smokegrenade.weap"; break;
 		case WP_POISON_GAS:		filename = "poison_gas.weap"; break;
-		case WP_M97:				filename = "m97.weap"; break;
+		case WP_M97:			filename = "m97.weap"; break;
+		case WP_MOLOTOV:		filename = "molotov.weap"; break;
 		case WP_MOBILE_MG42_SET:		altWeap  = qtrue;
 		case WP_MOBILE_MG42:			filename = "mg42.weap"; break;
 		case WP_SILENCER:				filename = "silenced_luger.weap"; break;

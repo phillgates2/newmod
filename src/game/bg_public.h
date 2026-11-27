@@ -822,11 +822,12 @@ typedef enum weapon_s
 	 * weapon IDs following the widening of the engine inventory to 128 bits.
 	 */
 	WP_M97,				// 64 - Jaymod M97 shotgun (models + M97 fire tuning)
-	WP_POISON_GAS,			// 65 - Jaymod thrown poison-gas grenade
-	WP_LANDMINE_BBETTY,		// 66 - Jaymod bouncing-betty landmine
-	WP_LANDMINE_PGAS,		// 67 - Jaymod poison-gas landmine
+	WP_POISON_GAS,		// 65 - Jaymod thrown poison-gas grenade
+	WP_LANDMINE_BBETTY,	// 66 - Jaymod bouncing-betty landmine
+	WP_LANDMINE_PGAS,	// 67 - Jaymod poison-gas landmine
+	WP_MOLOTOV,			// 68 - Jaymod molotov fire grenade
 
-	WP_NUM_WEAPONS			// engine player inventory bit count (see MAX_WEAPONS)
+	WP_NUM_WEAPONS		// engine player inventory bit count (see MAX_WEAPONS)
 } weapon_t;
 /* Fail compilation rather than silently exceed the engine-shared inventory. */
 typedef char nm_weapon_count_fits_engine[(WP_NUM_WEAPONS <= MAX_WEAPONS) ? 1 : -1];
@@ -1478,8 +1479,9 @@ typedef enum {
 	MOD_JOHNSON_SCOPE,		// 75
 
 	/* NewMod, Arena.ai, 2026-11-21: imported Jaymod means of death. */
-	MOD_M97,					// 76 - M97 shotgun
-	MOD_POISON_GAS,			// 77 - poison gas (thrown grenade or landmine)
+	MOD_M97,				// 76 - M97 shotgun
+	MOD_POISON_GAS,		// 77 - poison gas (thrown grenade or landmine)
+	MOD_MOLOTOV,			// 78 - Jaymod molotov fire grenade
 
 	MOD_NUM_MODS
 
@@ -1663,6 +1665,7 @@ typedef enum {
 	IL_AMMO_POISON_GAS,
 	IL_AMMO_LANDMINE_BBETTY,
 	IL_AMMO_LANDMINE_PGAS,
+	IL_WEAPON_MOLOTOV,
 	IL_NUM_ITEMS
 } itemIndex_t;
 
