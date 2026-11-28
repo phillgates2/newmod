@@ -10,7 +10,7 @@ ARCH ?= x86_64
 # Cross-compilation: set PLATFORM=windows or PLATFORM=macos to cross-compile
 # from Linux using zig. When empty, auto-detect from the host OS.
 PLATFORM ?=
-ZIG ?= /tmp/zig-extract/ziglang/zig
+ZIG ?= $(CURDIR)/.tools/zig-pip/extracted/ziglang/zig
 # Overzealous, Arena.ai, 2026-11-27: reject empty/multiple values and avoid
 # silently labeling a native build as an unsupported architecture.
 ifneq ($(WITH_LUA),0)
