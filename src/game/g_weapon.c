@@ -764,7 +764,7 @@ qboolean Weapon_Syringe(gentity_t *ent) {
 
 		if ( !(ent->r.svFlags & SVF_BOT) || ((ent->r.svFlags & SVF_BOT) && (g_logOptions.integer & LOGOPTS_BOTS)) ) {
 			if(ent && ent->client) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 				G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 #else
 				G_LogPrintf("Medic_Revive: %d %d\n", ent - g_entities, traceEnt - g_entities);
@@ -1951,7 +1951,7 @@ qboolean Engineer_MG42( gentity_t *ent, gentity_t *traceEnt ) {
 		}
 
 		if ( !(ent->r.svFlags & SVF_BOT) || ((ent->r.svFlags & SVF_BOT) && (g_logOptions.integer & LOGOPTS_BOTS)) ) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 			G_LogPrintf("Repair: %d\n", (int) (ent - g_entities));	// OSP
 #else
 			G_LogPrintf("Repair: %d\n", ent - g_entities);	// OSP
@@ -2392,7 +2392,7 @@ evilbanigoto:
 								AddScore(traceEnt->parent, WOLF_DYNAMITE_PLANT); // give drop score to guy who dropped it
 								if ( !(traceEnt->parent->r.svFlags & SVF_BOT) || ((traceEnt->parent->r.svFlags & SVF_BOT) && (g_logOptions.integer & LOGOPTS_BOTS)) ) {
 									if(traceEnt->parent && traceEnt->parent->client) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 										G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));	// OSP
 #else
 										G_LogPrintf("Dynamite_Plant: %d\n", traceEnt->parent - g_entities);	// OSP
@@ -2478,7 +2478,7 @@ evilbanigoto:
 								AddScore(traceEnt->parent, WOLF_DYNAMITE_PLANT); // give drop score to guy who dropped it
 								if ( !(traceEnt->parent->r.svFlags & SVF_BOT) || ((traceEnt->parent->r.svFlags & SVF_BOT) && (g_logOptions.integer & LOGOPTS_BOTS)) ) {
 									if( traceEnt->parent && traceEnt->parent->client ) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 										G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));	// OSP
 #else
 										G_LogPrintf("Dynamite_Plant: %d\n", traceEnt->parent - g_entities);	// OSP
@@ -2641,7 +2641,7 @@ evilbanigoto:
 								if ( hit->s.teamNum == TEAM_AXIS && (!scored)) {
 									AddScore(ent,WOLF_DYNAMITE_DIFFUSE);
 									if ( !(ent->r.svFlags & SVF_BOT) || ((ent->r.svFlags & SVF_BOT) && (g_logOptions.integer & LOGOPTS_BOTS)) ) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 										if(ent && ent->client) G_LogPrintf("Dynamite_Defuse: %d\n", (int) (ent - g_entities));	// OSP
 #else
 										if(ent && ent->client) G_LogPrintf("Dynamite_Defuse: %d\n", ent - g_entities);	// OSP
@@ -2664,7 +2664,7 @@ evilbanigoto:
 								if ( hit->s.teamNum == TEAM_ALLIES && (!scored)) {
 									AddScore(ent,WOLF_DYNAMITE_DIFFUSE);
 									if ( !(ent->r.svFlags & SVF_BOT) || ((ent->r.svFlags & SVF_BOT) && (g_logOptions.integer & LOGOPTS_BOTS)) ) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 										if(ent && ent->client) G_LogPrintf("Dynamite_Defuse: %d\n", (int)(ent - g_entities));	// OSP
 #else
 										if(ent && ent->client) G_LogPrintf("Dynamite_Defuse: %d\n", ent - g_entities);	// OSP
@@ -5444,7 +5444,7 @@ void C_CheckKickedDyna( gentity_t *player, gentity_t *dynaEnt ) {
 				if ( !(hit->spawnflags & OBJECTIVE_DESTROYED) ) {
 					AddScore(dynaEnt->parent, WOLF_DYNAMITE_PLANT); // give drop score to guy who dropped it
 					if ( !(player->r.svFlags & SVF_BOT) || ((player->r.svFlags & SVF_BOT) && (g_logOptions.integer & LOGOPTS_BOTS)) ) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 						G_LogPrintf("Dynamite_KickPlant: %d\n", (int)(player - g_entities));	// OSP
 #else
 						G_LogPrintf("Dynamite_KickPlant: %d\n", player - g_entities);
@@ -5535,7 +5535,7 @@ void C_CheckKickedDyna( gentity_t *player, gentity_t *dynaEnt ) {
 					hit->s.teamNum && (hit->s.teamNum == dynaEnt->s.teamNum) ) {	// ==, as it's inverse
 					AddScore(dynaEnt->parent, WOLF_DYNAMITE_PLANT); // give drop score to guy who dropped it
 					if ( !(player->r.svFlags & SVF_BOT) || ((player->r.svFlags & SVF_BOT) && (g_logOptions.integer & LOGOPTS_BOTS)) ) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 						G_LogPrintf("Dynamite_KickPlant: %d\n", (int)(player - g_entities));	// OSP
 #else
 						G_LogPrintf("Dynamite_KickPlant: %d\n", player - g_entities);	// OSP

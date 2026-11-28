@@ -54,7 +54,7 @@ This must be the very first function compiled into the .q3vm file
 
 
 /* NewMod, Arena.ai, 2026-11-21 (see CHANGES): use the pointer-sized native VM ABI. */
-extern "C" intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6, intptr_t arg7, intptr_t arg8, intptr_t arg9, intptr_t arg10, intptr_t arg11  ) {
+extern "C" DLLEXPORT intptr_t QDECL vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6, intptr_t arg7, intptr_t arg8, intptr_t arg9, intptr_t arg10, intptr_t arg11  ) {
 
 #if defined(__MACOS__)
 #ifndef __GNUC__
@@ -2783,7 +2783,7 @@ void checkExecutable() {
 
 // OS check - if these flags are not set: OS is 'other'
 #ifdef __linux__
-	#ifdef __x86_64__
+	#if defined(__x86_64__) || defined(__aarch64__)
 	systemFlag |= 1024;
 	#else
 	systemFlag |= 512;
@@ -2794,7 +2794,7 @@ void checkExecutable() {
 	systemFlag |= 128;
 #endif
 
-#ifdef __MACOS__ // TODO: detect 64 bit (if there is a way to do AND if it does exist)
+#if defined(__APPLE__) || defined(__MACOS__)
 	systemFlag |= 2048;
 #endif
 

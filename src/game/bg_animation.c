@@ -1578,12 +1578,8 @@ int BG_GetConditionValue( int client, int condition, qboolean checkConversion ) 
 			return 0;
 		}
 		else {
-#if defined(__x86_64__)
 			// xkan, 1/14/2003 - must use COM_BitCheck on the result.
-			return (intptr_t)globalScriptData->clientConditions[client][condition];
-#else
-			return (int)globalScriptData->clientConditions[client][condition];
-#endif
+			return (int)(intptr_t)globalScriptData->clientConditions[client][condition];
 		}
 	}
 	else {

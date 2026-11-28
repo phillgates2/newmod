@@ -3,8 +3,9 @@
 Overzealous is an **experimental, incomplete** Enemy Territory mod derived from
 No Quarter. It incorporates selected Jaymod- and Oz-inspired administrative
 commands, not a complete merge of the three mods. The source builds native
-Linux x86-64 game, cgame and UI modules for an ET: Legacy-based deployment;
-it is **not yet a playable, packaged release**.
+Linux (`x86_64` and `i386`), Windows (`x64` and `x86`), and macOS (`universal`
+`x86_64` + `arm64`) game, cgame and UI modules for ET: Legacy deployments;
+it is **not yet a complete, production-verified release**.
 
 No Quarter's source, the No Quarter Mod Team and its contributors are the
 foundation of this work. Jaymod's Bud Byrd and Mike Miscevic, the Oz/ETPub
@@ -70,13 +71,48 @@ make -j8 test-matrix WITH_AUTO_GUID=1  # repeat with experimental key fallback
 make -j8 all WITH_AUTO_GUID=0          # restore default outputs
 ```
 
-The outputs are `build/overzealous/qagame.mp.x86_64.so`,
-`build/overzealous/cgame.mp.x86_64.so`, and `build/overzealous/ui.mp.x86_64.so`.
-`build/` is generated and ignored. `make clean` removes it.
+The outputs for a default Linux x86-64 build are
+`build/overzealous/qagame.mp.x86_64.so`, `build/overzealous/cgame.mp.x86_64.so`,
+and `build/overzealous/ui.mp.x86_64.so`. `build/` is generated and ignored.
+`make clean` removes it.
+
+### Multi-architecture and cross-platform builds
+
+ET: Legacy resolves native module filenames by platform and CPU architecture
+(`Sys_GetDLLName`):
+
+* Linux 64-bit (`PLATFORM=linux ARCH=x86_64`): `<mod>.mp.x86_64.so`
+* Linux 32-bit (`PLATFORM=linux ARCH=i386`): `<mod>.mp.i386.so`
+* Windows 64-bit (`PLATFORM=windows ARCH=x86_64`): `<mod>_mp_x64.dll`
+* Windows 32-bit (`PLATFORM=windows ARCH=i386`): `<mod>_mp_x86.dll`
+* macOS Universal (`PLATFORM=macos ARCH=universal`, combining `x86_64` + `arm64`
+  Apple Silicon slices): `<mod>_mac`
+
+On Linux x86-64, cross-targets (`linux-i386`, `windows-x86_64`, `windows-i386`,
+`macos-x86_64`, `macos-arm64`, `macos-universal`) compile via `zig c++` (auto-bootstrapped
+into `.cache/zig-pip/` if `zig` is not already on `PATH`). Linux cross-builds
+target `glibc 2.17` with static C++ runtime linkage so `qagame.mp.i386.so` runs
+on 32-bit `etlded` hosts without requiring `libstdc++6:i386`.
+
+```sh
+make -j8 PLATFORM=linux ARCH=i386        # 32-bit Linux server/client (.mp.i386.so)
+make -j8 PLATFORM=windows ARCH=x86_64    # 64-bit Windows (_mp_x64.dll)
+make -j8 PLATFORM=windows ARCH=i386      # 32-bit Windows (_mp_x86.dll)
+make -j8 PLATFORM=macos ARCH=universal   # Universal macOS x86_64+arm64 (_mac)
+make -j8 pk3-all                         # Universal client pk3 + loose server VMs
+make -j8 server-dist                     # build/overzealous-server-linux.tar.gz
+```
+
+`make pk3-all` builds all five targets, packs all 10 client binaries (`cgame*`
+and `ui*` for Linux x86_64/i386, Windows x64/x86, and macOS universal) plus
+`pak/` assets into `build/overzealous-all.pk3`, and stages all loose `qagame*`
+server modules into `build/overzealous/`. `make server-dist` bundles
+`overzealous-all.pk3`, `qagame.mp.i386.so`, and `qagame.mp.x86_64.so` into
+`build/overzealous-server-linux.tar.gz`.
 
 `WITH_LUA=0` and `WITH_OMNIBOT=0` disable the respective adapter, e.g.
 `make -j8 test WITH_LUA=0 WITH_OMNIBOT=0`. All `WITH_*` values must be
-exactly `0` or `1`; other architectures are not currently supported.
+exactly `0` or `1`.
 Omni-Bot support is an interface only; the separate bot library is not
 included. **Only load trusted Lua scripts**: Lua has filesystem and engine
 access and is not sandboxed. The Lua API has received targeted fixes, not a
@@ -123,13 +159,36 @@ media. Use `--show-log` to inspect output and `--port` to select a port.
 
 ## Deployment prerequisites
 
-For controlled local development, use ET: Legacy 2.86.2 on Linux x86-64,
-a separate `overzealous` game directory, authorized base-game data, compatible
-mod media and matching Overzealous client modules. The game advertises
-`gamename=overzealous`, `mod_version=0.3.0-dev` and `GAME_VERSION` `Overzealous 0.3`;
-an NQ, Jaymod or Oz client is not a matching Overzealous client. Client packaging and distribution are still
-open work: merely copying the three `.so` files does not create a usable
-client package. Respect the original engine/version checks and the license
+For dedicated-server deployment (including LinuxGSM `etserver`, which runs the
+32-bit `linux-i386` `etlded` binary by default, as well as 64-bit `etlded`),
+note two ET / ET: Legacy engine rules:
+
+1. **Dedicated servers never extract `qagame` from `.pk3` archives.** `etlded`
+   loads `qagame` directly from the mod directory on disk (`<fs_homepath>/<fs_game>/`
+   or `<fs_basepath>/<fs_game>/`). Placing only `.pk3` files in the mod folder
+   causes `Sys_LoadDll(.../qagame.mp.i386.so)... failed: cannot open shared object file`.
+2. **Architecture must match the `etlded` binary.** A 32-bit `linux-i386`
+   dedicated server requires `qagame.mp.i386.so`; a 64-bit `linux-x86_64`
+   dedicated server requires `qagame.mp.x86_64.so`. Shipping both loose `.so`
+   files alongside `overzealous-all.pk3` allows either server binary to load the
+   mod, while clients on Linux (32/64-bit), Windows (32/64-bit), and macOS
+   (Intel/Apple Silicon) extract their matching `cgame`/`ui` modules from
+   `overzealous-all.pk3`.
+
+Example Linux dedicated-server deployment into a mod folder (such as
+`overzealous` or `ozmod`; `etmain` is rejected):
+
+```sh
+tar -xzf build/overzealous-server-linux.tar.gz -C /path/to/server/ozmod/
+# Ensures ozmod/ contains:
+#   overzealous-all.pk3
+#   qagame.mp.i386.so
+#   qagame.mp.x86_64.so
+```
+
+The game advertises `gamename=overzealous`, `mod_version=0.3.0-dev` and
+`GAME_VERSION` `Overzealous 0.3`; an NQ, Jaymod or Oz client is not a matching
+Overzealous client. Respect the original engine/version checks and the license
 conditions in `LEGAL`; do not bypass them to make incompatible clients load.
 
 Do not distribute NQ pk3 contents or other assets without the necessary

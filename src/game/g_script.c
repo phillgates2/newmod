@@ -1335,7 +1335,7 @@ void SP_script_mover(gentity_t *ent)
 
 		if( G_SpawnString( "description", "", &s ) ) {
 			trap_GetConfigstring( CS_SCRIPT_MOVER_NAMES, cs, sizeof(cs) );
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 			Info_SetValueForKey( cs, va("%i",(int)(ent-g_entities)), s );
 #else
 			Info_SetValueForKey( cs, va("%i",ent-g_entities), s );

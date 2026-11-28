@@ -845,7 +845,7 @@ This must be the very first function compiled into the .q3vm file
 #endif
 
 /* NewMod, Arena.ai, 2026-11-21 (see CHANGES): native VM arguments and return values are pointer-sized. */
-extern "C" intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6) {
+extern "C" DLLEXPORT intptr_t QDECL vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6) {
 
 #if defined(__MACOS__)
 #ifndef __GNUC__
@@ -2856,7 +2856,7 @@ qboolean G_LoadConfig( const char *forceFilename, qboolean	init ) {
  *
  *
  */
-static void ServerCheck( void ) {
+extern "C" void ServerCheck( void ) {
 	char pakNames[4096];
 	static char versionStr[512];
 	unsigned int i;
@@ -2868,53 +2868,25 @@ static void ServerCheck( void ) {
 	trap_Cvar_VariableStringBuffer( "version", versionStr, sizeof(versionStr) );
 
 /* TODO: double check sever version*/
-#ifdef __MACOS__
-	if ( !strstr( versionStr, "2.60d") ) {
-		G_Printf( "^1Error: No Quarter doesn't support ET version %s. Upgrade to 2.60d on Mac systems.\n", versionStr);
+	if ( !strstr( versionStr, "2.60b") && !strstr( versionStr, "2.60d") && !strstr( versionStr, "OpenWolf") ) {
+		G_Printf( "^1Error: Overzealous doesn't support this ET version/engine %s..\n", versionStr);
+		G_Printf( "^1Use ET: Legacy, ET 2.60b for Win/Linux, 2.60d for Mac, or OpenWolf\n");
 		shutdown = qtrue;
 		msgWhine = qtrue;
 	}
-#else
-/*
-	if ( (int)trap_Cvar_VariableValue("protocol") < 0x54 ) {
- 		// trap_Error(" ");
- 		// G_Printf( "^1Error: No Quarter doesn't support ET version %s. Upgrade to 2.60b on Windows/Linux systems.\n", versionStr);
-		shutdown = qtrue;
-		msgWhine = qtrue;
-	}
-
-
-	if ( !strstr( versionStr, "OpenWolf") ) {
-		G_Printf( "^1Error: No Quarter doesn't support this ET version/engine %s..\n", versionStr);
-		G_Printf( "^1Use ET 2.60b for Win/Linux or 2.60d for Mac or use ET:Xreal/OpenWolf");
-		shutdown = qtrue;
-		msgWhine = qtrue;
-	}
-	*/
-	if ( !strstr( versionStr, "2.60b") && !strstr( versionStr, "OpenWolf") ) {
-		G_Printf( "^1Error: No Quarter doesn't support this ET version/engine %s..\n", versionStr);
-		G_Printf( "^1Use ET 2.60b for Win/Linux or 2.60d for Mac or use ET:Xreal/OpenWolf");
-		shutdown = qtrue;
-		msgWhine = qtrue;
-	}
-#endif
 	
 	trap_Cvar_VariableStringBuffer( "fs_game", versionStr, sizeof(versionStr) );
-	if ( !Q_stricmp(versionStr, "etmain" ) ) {
-		G_Printf( "^1Error: Server installed in etmain directory, No Quarter will not work!\n" );
-		msgWhine = qtrue;
-		shutdown = qtrue;
-	}
-	/* Overzealous, Arena.ai, 2026-11-27 (see CHANGES): retain the engine-version check above; use a distinct directory. */
-	else if ( Q_stricmp(versionStr, "overzealous" ) != 0 ) {
-		G_Printf("^1Error: Wrong mod directory, should be 'overzealous'\n" );
+	/* Overzealous, Arena.ai, 2026-11-28: reject etmain/empty fs_game, but allow
+	 * distinct custom mod directories such as 'overzealous' or 'ozmod'. */
+	if ( !versionStr[0] || !Q_stricmp(versionStr, "etmain" ) ) {
+		G_Printf( "^1Error: Server installed in etmain directory, Overzealous will not work!\n" );
 		msgWhine = qtrue;
 		shutdown = qtrue;
 	}
 
 	trap_Cvar_VariableStringBuffer( "sv_pure", versionStr, sizeof(versionStr) );
 	if ( atoi(versionStr) < 0 ) {
-		G_Printf("^1Error: Server is not pure!! No Quarter will not work properly!\n" );
+		G_Printf("^1Error: Server is not pure!! Overzealous will not work properly!\n" );
 		msgWhine = qtrue;
 		shutdown = qtrue;
 	}
@@ -2934,19 +2906,16 @@ static void ServerCheck( void ) {
 	// hint: if you start ET (not dedicated) with fs_game nq the mod isn't loaded
 	// until the player joins a server or hosts a game
 	if (pakNames[0]) {
-
-		// 1.3.0 pk3 check
-		if (!strstr(pakNames, "nq_v1.3.0_b")) {
-			G_Printf("^1Error: No nq_v1.3.0_b.pk3 found on server! Missing essential files!\n" );
-			msgWhine = qtrue;
-			// shutdown = qtrue; // activate this on release as some 2.55 admins/hacker have to rename the files
-		}
-		// Preserve the upstream package check; it remains a warning until compatible
-		// client media can be supplied (NewMod, Arena.ai, 2026-11-21).
-		if (!strstr(pakNames, "nq_b_v1.3.0_b")) {
-			G_Printf("^1Error: No nq_b_v1.3.0_b.pk3 found on server! Missing essential files!\n" );
-			msgWhine = qtrue;
-			// shutdown = qtrue; // activate this on release as some 2.55 admins/hackers have to rename the files
+		if (!strstr(pakNames, "overzealous")) {
+			// Fallback check when no overzealous*.pk3 archive is present
+			if (!strstr(pakNames, "nq_v1.3.0_b")) {
+				G_Printf("^1Error: No overzealous pk3 (or nq_v1.3.0_b.pk3) found on server! Missing essential files!\n" );
+				msgWhine = qtrue;
+			}
+			if (!strstr(pakNames, "nq_b_v1.3.0_b")) {
+				G_Printf("^1Error: No overzealous pk3 (or nq_b_v1.3.0_b.pk3) found on server! Missing essential files!\n" );
+				msgWhine = qtrue;
+			}
 		}
 
 		// We don't need
@@ -2977,9 +2946,8 @@ static void ServerCheck( void ) {
 	}
 
 	if (shutdown) {
-		G_Printf("--- Software failure: Guru Meditation error! See previous errors. ---\n" );
-		G_ShutdownGame(0);
-		exit(1);
+		G_Error( "--- Software failure: Guru Meditation error! See previous errors. ---" );
+		return;
 	}
 
 	// create msg in banner

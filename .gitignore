@@ -2,10 +2,13 @@
 /build/
 /dist/
 /.arena/
+/.cache/
+/.tools/
 *.o
 *.so
 *.dll
 *.dylib
+*_mac
 *.pk3
 __pycache__/
 *.pyc

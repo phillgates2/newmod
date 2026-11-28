@@ -243,7 +243,7 @@ int G_GetWeaponClassForMOD( meansOfDeath_t mod );
 
 #define MAX_NETNAME			36
 
-#define	CFOFS(x) ((int)&(((gclient_t *)0)->x))
+#define	CFOFS(x) ((int)(intptr_t)&(((gclient_t *)0)->x))
 
 #define MAX_COMMANDER_TEAM_SOUNDS 16
 
@@ -1992,11 +1992,7 @@ extern g_campaignInfo_t g_campaigns[];
 extern int				saveGamePending;
 
 
-#if defined(__x86_64__)
-#define	FOFS(x) ((intptr_t)&(((gentity_t *)0)->x))
-#else
-#define	FOFS(x) ((int)&(((gentity_t *)0)->x))
-#endif
+#define	FOFS(x) ((int)(intptr_t)&(((gentity_t *)0)->x))
 
 #ifdef OMNIBOTS
 extern	vmCvar_t	g_OmniBotPath;

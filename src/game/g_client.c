@@ -1624,24 +1624,35 @@ core:
 */
 qboolean CGAMEFileExists( void ) {
 	char homepath[MAX_OSPATH]; // was 512 before ... but can't be greater than MAX_OSPATH
+	char fsgame[MAX_QPATH];
 
 	trap_Cvar_VariableStringBuffer("fs_homepath", homepath, sizeof(homepath));
-#ifdef __MACOS__
-	strcat(homepath, "/nq/cgame_mac");
+	trap_Cvar_VariableStringBuffer("fs_game", fsgame, sizeof(fsgame));
+	if ( !fsgame[0] ) {
+		Q_strncpyz(fsgame, GAMEVERSION, sizeof(fsgame));
+	}
+#if defined(__APPLE__) || defined(__MACOS__)
+	Q_strcat(homepath, sizeof(homepath), va("/%s/cgame_mac", fsgame));
 	if ( !FileExists(homepath) ) return qfalse;
 #endif
 
 #ifdef __linux__
 #if defined(__x86_64__)
-	strcat(homepath, "/nq/cgame.mp.x86_64.so");
+	Q_strcat(homepath, sizeof(homepath), va("/%s/cgame.mp.x86_64.so", fsgame));
+#elif defined(__aarch64__)
+	Q_strcat(homepath, sizeof(homepath), va("/%s/cgame.mp.aarch64.so", fsgame));
 #else
-	strcat(homepath, "/nq/cgame.mp.i386.so");
+	Q_strcat(homepath, sizeof(homepath), va("/%s/cgame.mp.i386.so", fsgame));
 #endif
 	if ( !FileExists(homepath) ) return qfalse;
 #endif
 
 #ifdef WIN32
-	strcat(homepath, "/nq/cgame_mp_x86.dll");
+#ifdef _WIN64
+	Q_strcat(homepath, sizeof(homepath), va("/%s/cgame_mp_x64.dll", fsgame));
+#else
+	Q_strcat(homepath, sizeof(homepath), va("/%s/cgame_mp_x86.dll", fsgame));
+#endif
 	if ( !FileExists(homepath) ) return qfalse;
 #endif
 	return qtrue;
@@ -2427,7 +2438,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 		// Gordon: porting q3f flag bug fix
 		// If a player reconnects quickly after a disconnect, the client disconnect may never be called, thus flag can get lost in the ether
 		if( ent->inuse ) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 			G_LogPrintf( "Forcing disconnect on active client: %i\n", (int)(ent-g_entities) );
 #else
 			G_LogPrintf( "Forcing disconnect on active client: %i\n", ent-g_entities );

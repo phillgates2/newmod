@@ -1532,7 +1532,7 @@ void SP_misc_constructiblemarker( gentity_t *ent ) {
 		char cs[MAX_INFO_STRING];
 
 		trap_GetConfigstring( CS_CONSTRUCTION_NAMES, cs, sizeof(cs) );
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 		Info_SetValueForKey( cs, va("%i",(int)(ent-g_entities)), s );
 #else
 		Info_SetValueForKey( cs, va("%i",ent-g_entities), s );

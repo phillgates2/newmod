@@ -2601,7 +2601,7 @@ void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, const char 
 		else if(mode == SAY_TEAM || mode == SAY_BUDDY) {
 			Q_strncpyz(cmd, "tchat", sizeof(cmd));
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 			trap_SendServerCommand( (int)(other-g_entities),
 				va("%s \"%c%c%s%s\" %i %i %i %i %i",
 				cmd,
@@ -2627,7 +2627,7 @@ void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, const char 
 		else {
 			Q_strncpyz(cmd, "chat", sizeof(cmd));
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 			trap_SendServerCommand((int)(other-g_entities),
 				va("%s \"%s%c%c%s%s\" %i %i",
 				cmd, name, Q_COLOR_ESCAPE, color,
@@ -2878,7 +2878,7 @@ void G_VoiceTo( gentity_t *ent, gentity_t *other, int mode, const char *id, qboo
 		voiceonly = qfalse;
 	}
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 	if ( mode == SAY_TEAM || mode == SAY_BUDDY ) {
 		CPx( (int)(other-g_entities), va("%s %d %d %d %s %i %i %i %f %i", cmd, voiceonly, (int)(ent - g_entities), color, id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], randomNum, disguise ));
 	}
@@ -3215,7 +3215,7 @@ qboolean Cmd_CallVote_f( gentity_t *ent, unsigned int dwCommand, qboolean fRefCo
 			level.voteInfo.voteYes = 0;
 		}
 		AP(va("print \"[lof]%s^7 [lon]called a vote.[lof]  Voting for: %s\n\"", ent->client->pers.netname, level.voteInfo.voteString));
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 		G_LogPrintf("callvote: %i %s\n", (int)(ent-g_entities), level.voteInfo.voteString);
 #else
 		G_LogPrintf("callvote: %i %s\n", ent-g_entities, level.voteInfo.voteString);

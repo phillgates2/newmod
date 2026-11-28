@@ -3201,7 +3201,7 @@ qboolean G_shrubbot_listplayers(gentity_t *ent, int skiparg) {
 		DecolorString(lname, cleanLevelName);
 		spaces = lname_max - strlen(cleanLevelName);
 		//Com_sprintf(lname_fmt, sizeof(lname_fmt), "%%%is", spaces + strlen(lname));
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 		Com_sprintf(lname_fmt, sizeof(lname_fmt), "%%%ds", spaces + (int)strlen(lname)); // IRATA: int might overflow - but we shouldnt have these high values
 #else
 		Com_sprintf(lname_fmt, sizeof(lname_fmt), "%%%ds", spaces + strlen(lname));

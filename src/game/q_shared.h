@@ -144,6 +144,7 @@ extern "C" {
 
 // for windows fastcall option
 #define	QDECL
+#define	DLLEXPORT
 
 
 //bani
@@ -157,44 +158,61 @@ extern "C" {
 
 //======================= WIN32 DEFINES =================================
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
+
+#ifndef WIN32
+#define WIN32 1
+#endif
 
 #define	MAC_STATIC
 
 #undef QDECL
 #define	QDECL	__cdecl
 
-#endif
+#undef DLLEXPORT
+#define	DLLEXPORT	__declspec(dllexport)
 
-// buildstring will be incorporated into the version string
 #ifdef NDEBUG
-#ifdef _M_IX86
-#define	CPUSTRING	"win-x86"
-#elif defined _M_X64
+#if defined(_M_X64) || defined(__x86_64__)
 #define	CPUSTRING	"win-x86_64"
+#elif defined(_M_IX86) || defined(__i386__)
+#define	CPUSTRING	"win-x86"
 #elif defined _M_ALPHA
 #define	CPUSTRING	"win-AXP"
-#elif defined __APPLE__
-#define	CPUSTRING	"macos"
-#elif defined __linux__
-#define	CPUSTRING	"linux"
+#else
+#define	CPUSTRING	"win-other"
 #endif
 #else
-#ifdef _M_IX86
-#define	CPUSTRING	"win-x86-debug" // FIXME: is this right? it doesn't appear to be for client ...
-#elif defined _M_X64
+#if defined(_M_X64) || defined(__x86_64__)
 #define	CPUSTRING	"win-x86_64-debug"
+#elif defined(_M_IX86) || defined(__i386__)
+#define	CPUSTRING	"win-x86-debug"
 #elif defined _M_ALPHA
 #define	CPUSTRING	"win-AXP-debug"
-#elif defined __APPLE__
-#define	CPUSTRING	"macos-debug"
-#elif defined __linux__
-#define	CPUSTRING	"linux-debug"
+#else
+#define	CPUSTRING	"win-other-debug"
 #endif
 #endif
-
 
 #define	PATH_SEP '\\'
+
+#endif
+
+//======================= MAC OS X DEFINES ==============================
+
+#if defined(__APPLE__) && !defined(MACOS_X) && !defined(__MACOS__)
+#define MAC_STATIC
+#if defined(__aarch64__) || defined(__arm64__)
+#define CPUSTRING	"macos-arm64"
+#elif defined(__x86_64__)
+#define CPUSTRING	"macos-x86_64"
+#elif defined(__i386__)
+#define CPUSTRING	"macos-i386"
+#else
+#define CPUSTRING	"macos"
+#endif
+#define PATH_SEP	'/'
+#endif
 
 //======================= MAC OS X SERVER DEFINES =====================
 
@@ -270,6 +288,8 @@ void Sys_PumpEvents( void );
 	#define	CPUSTRING	"linux-i386"
 #elif defined __x86_64__
 	#define CPUSTRING "linux-x86_64"
+#elif defined __aarch64__
+	#define CPUSTRING "linux-aarch64"
 #elif defined __axp__
 	#define	CPUSTRING	"linux-alpha"
 #else
@@ -722,23 +742,9 @@ void ByteToDir( int b, vec3_t dir );
 // TODO: We need to activate and profile this finally.
 //
 // note: the arguments must all be variables (no constants)
-#if id386 && ( defined __GNUC__ ) && ( defined __linux__ || defined __FreeBSD__ )
-// WIP !
-#define SinCos(rad,s,c)	    \
-	__asm__ ("fsincos;" : "=t" (c), "=u" (s) : "0" (rad) : "st(7)");
-#else
-#if id386 && (defined WIN32) && !( defined __GNUC__ )
-#define SinCos(rad,s,c)		\
-	__asm fld (rad)			\
-	__asm fsincos			\
-	__asm fstp (c)			\
-	__asm fstp (s)
-#else
 #define SinCos(rad,s,c)		\
 	(s) = sin( (rad) );		\
 	(c) = cos( (rad) );
-#endif
-#endif
 
 
 #ifdef __LCC__
@@ -974,6 +980,12 @@ char *Q_CleanDirName( char *dirname );
 // tjw: replace all occuraces in haystack if needle with new
 char *Q_StrReplace(char *haystack, char *needle, char *newVal);
 
+#ifdef _vsnprintf
+#undef _vsnprintf
+#endif
+#ifdef vsnprintf
+#undef vsnprintf
+#endif
 #define _vsnprintf use_Q_vsnprintf
 #define vsnprintf use_Q_vsnprintf
 int Q_vsnprintf( char *dest, int size, const char *fmt, va_list argptr );
