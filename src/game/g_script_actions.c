@@ -209,7 +209,7 @@ qboolean PreParse_ScriptAction_Accum( gentity_t *ent, char *params, g_script_pre
 			}
 
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+			preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[0], token, len );
 			preparsed_params->data_int[3] = BG_StringHashValue( token );
 
@@ -218,7 +218,7 @@ qboolean PreParse_ScriptAction_Accum( gentity_t *ent, char *params, g_script_pre
 				G_Error(S_COLOR_RED "G_ScriptAction_Accum(): accum must have (a scriptname and) a trigger identifier: %s\n", params );
 			}
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+			preparsed_params->data_char[1] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[1], token, len );
 			break;
 
@@ -234,7 +234,7 @@ qboolean PreParse_ScriptAction_Accum( gentity_t *ent, char *params, g_script_pre
 				G_Error(S_COLOR_RED "G_ScriptAction_Accum(): accum %s requires a targetname parameter\n", lastToken );
 			}
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+			preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[0], token, len );
 			break;
 
@@ -632,7 +632,7 @@ qboolean PreParse_ScriptAction_GlobalAccum( gentity_t *ent, char *params, g_scri
 			}
 
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+			preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[0], token, len );
 			preparsed_params->data_int[3] = BG_StringHashValue( token );
 
@@ -642,7 +642,7 @@ qboolean PreParse_ScriptAction_GlobalAccum( gentity_t *ent, char *params, g_scri
 			}
 
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+			preparsed_params->data_char[1] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[1], token, len );
 			break;
 
@@ -660,7 +660,7 @@ qboolean PreParse_ScriptAction_GlobalAccum( gentity_t *ent, char *params, g_scri
 			}
 
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+			preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[0], token, len );
 			break;
 
@@ -953,13 +953,13 @@ qboolean PreParse_ScriptAction_Trigger( gentity_t *ent, char *params, g_script_p
 	}
 
 	len = strlen( name ) + 1;
-	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+	preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[0], name, len );
 	preparsed_params->data_int[0] = BG_StringHashValue_Lwr( name );
 	preparsed_params->data_int[1] = BG_StringHashValue( name );
 
 	len = strlen( trigger ) + 1;
-	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+	preparsed_params->data_char[1] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[1], trigger, len );
 
 	return qtrue;
@@ -1011,7 +1011,7 @@ qboolean PreParse_ScriptAction_SetState( gentity_t *ent, char *params, g_script_
 	}
 
 	len = strlen( name ) + 1;
-	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+	preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[0], name, len );
 	preparsed_params->data_int[0] = BG_StringHashValue( name );
 
@@ -1045,7 +1045,7 @@ qboolean PreParse_ScriptAction_ToggleSpeaker( gentity_t *ent, char *params, g_sc
 	{
 		int len;
 		len = strlen( params ) + 1;
-		preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+		preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 		Q_strncpyz( preparsed_params->data_char[0], params, len );
 	}
 	*/
@@ -1078,7 +1078,7 @@ qboolean PreParse_ScriptAction_DisableSpeaker( gentity_t *ent, char *params, g_s
 	{
 		int len;
 		len = strlen( params ) + 1;
-		preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+		preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 		Q_strncpyz( preparsed_params->data_char[0], params, len );
 	}
 	*/
@@ -1111,7 +1111,7 @@ qboolean PreParse_ScriptAction_EnableSpeaker( gentity_t *ent, char *params, g_sc
 	{
 		int len;
 		len = strlen( params ) + 1;
-		preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+		preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 		Q_strncpyz( preparsed_params->data_char[0], params, len );
 	}
 	*/
@@ -1188,7 +1188,7 @@ qboolean PreParse_ScriptAction_ShaderRemap( gentity_t *ent, char *params, g_scri
 	}
 
 	len = strlen( token ) + 1;
-	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+	preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[0], token, len );
 
 	token = COM_ParseExt( &pString, qfalse );
@@ -1197,7 +1197,7 @@ qboolean PreParse_ScriptAction_ShaderRemap( gentity_t *ent, char *params, g_scri
 	}
 
 	len = strlen( token ) + 1;
-	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+	preparsed_params->data_char[1] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[1], token, len );
 
 	return qtrue;
@@ -1283,7 +1283,7 @@ qboolean PreParse_ScriptAction_FollowSpline( gentity_t *ent, char *params, g_scr
 	}
 
 	len = strlen( token ) + 1;
-	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+	preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[0], token, len );
 
 	//--- speed
@@ -1378,7 +1378,7 @@ qboolean PreParse_ScriptAction_GotoMarker( gentity_t *ent, char *params, g_scrip
 	}
 
 	len = strlen( token ) + 1;
-	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+	preparsed_params->data_char[0] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[0], token, len );
 
 	// speed
@@ -1418,7 +1418,7 @@ qboolean PreParse_ScriptAction_GotoMarker( gentity_t *ent, char *params, g_scrip
 				}
 
 				len = strlen( token ) + 1;
-				preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
+				preparsed_params->data_char[1] = (char*)G_Alloc( len + 1 );
 				Q_strncpyz( preparsed_params->data_char[1], token, len );
 
 			}

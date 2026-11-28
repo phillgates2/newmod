@@ -190,6 +190,45 @@ class NativeRegressionTests(unittest.TestCase):
     def test_shared_parser_boundaries(self):
         self.compile_and_run("parse_boundaries.c", MODULES)
 
+    def test_preparsed_script_params_functional(self):
+        # Functional: call the real PreParse_* functions in qagame with
+        # mapscript-style parameters (gotomarker included, the oasis
+        # crash case) and verify the strings land in the slots the
+        # runtime actions read. Segfaults on the buggy build.
+        defs = ["GAMEDLL"]
+        if WITH_LUA:
+            defs.append("ET_LUA")
+        if WITH_BOT:
+            defs.append("OMNIBOTS")
+        if WITH_AUTO_GUID:
+            defs.append("AUTO_GUID")
+        self.compile_and_run("preparse_params.c", MODULES[:1], definitions=defs)
+
+    def test_preparsed_script_params_alloc_matches_copy(self):
+        # Regression: every PreParse_* in g_script_actions.c allocated its
+        # first string into data_char[01] -- an octal literal, i.e. index 1,
+        # not 0 -- then Q_strncpyz() copied into the still-NULL data_char[0],
+        # segfaulting in libc strncpy at map start (e.g. gotomarker on
+        # oasis). The allocation slot must match the copy slot.
+        source = (ROOT / "src/game/g_script_actions.c").read_text()
+        self.assertNotIn("data_char[01]", source)
+        pairs = re.findall(
+            r"data_char\[(\d+)\]\s*=\s*\(char\*\)G_Alloc\(\s*len \+ 1\s*\);\s*"
+            r"Q_strncpyz\(\s*preparsed_params->data_char\[(\d+)\]",
+            source,
+        )
+        self.assertEqual(len(pairs), 17, pairs)
+        for alloc_idx, copy_idx in pairs:
+            self.assertEqual(
+                alloc_idx, copy_idx,
+                f"preparsed_params string allocated into data_char[{alloc_idx}] "
+                f"but copied into data_char[{copy_idx}]",
+            )
+        # Q_strncpyz must turn a NULL destination into a clean fatal error
+        # instead of a segfault inside strncpy.
+        qshared = (ROOT / "src/game/q_shared.c").read_text()
+        self.assertIn("Q_strncpyz: NULL dest", qshared)
+
     def test_game_commands_report_privacy_and_math(self):
         defs = ["GAMEDLL"]
         if WITH_LUA:
