@@ -342,3 +342,18 @@ pk3: all
 	cd pak && zip -r -q ../$(PK3) . -x '.*'
 	zip -j -q $(PK3) $(VARIANT_DIR)/*.dll $(VARIANT_DIR)/*.so $(VARIANT_DIR)/*.dylib $(VARIANT_DIR)/*.bundle 2>/dev/null || true
 	@echo "Created $(PK3) ($$(du -h $(PK3) | cut -f1))"
+
+# Build all three platforms and pack everything into a single pk3.
+# The engine picks the correct module (.so / .dll / .dylib) per platform.
+PK3_ALL := build/overzealous-all-$(ARCH).pk3
+pk3-all:
+	@mkdir -p build
+	@rm -f $(PK3_ALL)
+	$(MAKE) --no-print-directory all
+	cd pak && zip -r -q ../$(PK3_ALL) . -x '.*'
+	$(MAKE) --no-print-directory all PLATFORM=windows
+	zip -j -q $(PK3_ALL) build/variant-windows-$(ARCH)-lua$(WITH_LUA)-bot$(WITH_OMNIBOT)-uid$(WITH_AUTO_GUID)/*.dll
+	$(MAKE) --no-print-directory all PLATFORM=macos
+	zip -j -q $(PK3_ALL) build/variant-macos-$(ARCH)-lua$(WITH_LUA)-bot$(WITH_OMNIBOT)-uid$(WITH_AUTO_GUID)/*.dylib
+	zip -j -q $(PK3_ALL) build/variant-linux-$(ARCH)-lua$(WITH_LUA)-bot$(WITH_OMNIBOT)-uid$(WITH_AUTO_GUID)/*.so
+	@echo "Created $(PK3_ALL) ($$(du -h $(PK3_ALL) | cut -f1))"
