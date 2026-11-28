@@ -68,6 +68,10 @@ typedef struct {
 } grefEntity_t;
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void mdx_cleanup(void);
 
 extern qhandle_t trap_R_RegisterModel(const char *filename);
@@ -79,11 +83,6 @@ extern int trap_R_LerpTag( orientation_t *tag, /*const*/ grefEntity_t *refent, c
 
 extern void mdx_head_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent, vec3_t org);
 extern void mdx_legs_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent, vec3_t org);
-
-
-#define	RHTAG_CHEST 1
-#define	RHTAG_WEAPON 2
-#define RHTAG_WEAPON2 3
 
 extern void mdx_tag_position( gentity_t *ent, grefEntity_t *refent, vec3_t org, char *tagName, float up_offset, float forward_offset);
 
@@ -107,5 +106,13 @@ enum {
 extern qhandle_t mdx_RegisterHits(animModelInfo_t *animModelInfo, const char *filename);
 extern qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent, int *hit_type, vec_t *fraction, animScriptImpactPoint_t *impactpoint);
 #endif
+
+#ifdef __cplusplus
+}
+#endif
+
+#define	RHTAG_CHEST 1
+#define	RHTAG_WEAPON 2
+#define RHTAG_WEAPON2 3
 
 #endif

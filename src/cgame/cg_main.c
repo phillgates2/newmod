@@ -63,7 +63,7 @@ extern "C" intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intp
 #endif
 	switch ( command ) {
 	case CG_DRAW_ACTIVE_FRAME:
-		CG_DrawActiveFrame( arg0, arg1, arg2 );
+		CG_DrawActiveFrame( (int)arg0, (stereoFrame_t)arg1, (qboolean)arg2 );
 		return 0;
 	case CG_MOUSE_EVENT:
 		cgDC.cursorx = cgs.cursorX;

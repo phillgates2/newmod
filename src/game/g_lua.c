@@ -525,7 +525,7 @@ static int _et_trap_FS_FOpenFile(lua_State *L)
 	int len;
 	const char *filename = luaL_checkstring(L, 1);
 	int mode = luaL_checkint(L, 2);
-	len = trap_FS_FOpenFile(filename, &fd, mode);
+	len = trap_FS_FOpenFile(filename, &fd, (fsMode_t)mode);
 	lua_pushinteger(L, fd);
 	lua_pushinteger(L, len);
 	return 2;
@@ -541,7 +541,7 @@ static int _et_trap_FS_Read(lua_State *L)
 	 * Lua-owned buffer, and zero-fill because the engine reports no read
 	 * length. Preserve embedded NUL bytes rather than leaking memory. */
 	luaL_argcheck(L, count >= 0 && count <= 16 * 1024 * 1024, 2, "invalid read length");
-	filedata = lua_newuserdata(L, count ? (size_t)count : 1);
+	filedata = (char*)lua_newuserdata(L, count ? (size_t)count : 1);
 	memset(filedata, 0, (size_t)count);
 	if (count) trap_FS_Read(filedata, (int)count, fd);
 	lua_pushlstring(L, filedata, (size_t)count);
@@ -661,7 +661,7 @@ static int _et_G_AddSkillPoints(lua_State *L)
 	int skill = NM_LuaIndex(L, 2, SK_NUM_SKILLS); /* CHANGES: Lua bounds */
 	float points = luaL_checknumber(L, 3);
 	luaL_argcheck(L, ent->client != NULL, 1, "not a client entity");
-	G_AddSkillPoints(ent, skill, points);
+	G_AddSkillPoints(ent, (skillType_t)skill, points);
 	return 0;
 }
 
@@ -672,7 +672,7 @@ static int _et_G_LoseSkillPoints( lua_State *L )
 	int skill = NM_LuaIndex(L, 2, SK_NUM_SKILLS); /* CHANGES: Lua bounds */
 	float points = luaL_checknumber( L, 3 );
 	luaL_argcheck(L, ent->client != NULL, 1, "not a client entity");
-	G_LoseSkillPoints( ent, skill, points );
+	G_LoseSkillPoints( ent, (skillType_t)skill, points );
 	return 0;
 }
 
@@ -1193,7 +1193,7 @@ static char *NM_LuaLevelString(lua_State *L, const char *value)
 		luaL_error(L, "entity string is too long");
 		return NULL;
 	}
-	copy = G_Alloc((int)len + 1);
+	copy = (char*)G_Alloc((int)len + 1);
 	memcpy(copy, value, len + 1);
 	return copy;
 }
@@ -1729,7 +1729,7 @@ extern "C" qboolean G_LuaInit()
 			} else {
 				/* NewMod, Arena.ai, 2026-11-21 (see CHANGES): initialize short
 				 * reads, hash all bytes (including NULs), and handle allocation failure. */
-				code = calloc((size_t)flen + 1, 1);
+				code = (char*)calloc((size_t)flen + 1, 1);
 				if (!code) {
 					trap_FS_FCloseFile(f);
 					LOG("Lua API: unable to allocate code for %s\n", crt);

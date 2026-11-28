@@ -102,7 +102,7 @@ Add_Ammo
 int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip) {
 	int ammoweap = WeaponTable[weapon].ammoindex;
 	int originalCount;
-	int maxammo = BG_MaxAmmoForWeapon( ammoweap, ent->client->sess.skillBits, ent->client->sess.playerType );
+	int maxammo = BG_MaxAmmoForWeapon( (weapon_t)ammoweap, ent->client->sess.skillBits, ent->client->sess.playerType );
 
 	originalCount = ent->client->ps.ammo[ammoweap];
 
@@ -710,7 +710,7 @@ int Pickup_Weapon( gentity_t *ent, gentity_t *other ) {
 
 	// always only one
 	if ( ent->item->giTag == WP_KNIFE || ent->item->giTag == WP_KNIFE_KABAR ){
-		if ( other->client->ps.ammoclip[ent->item->giTag] < BG_MaxAmmoForWeapon( ent->item->giTag, other->client->sess.skillBits, other->client->ps.stats[STAT_PLAYER_CLASS] ) ){
+		if ( other->client->ps.ammoclip[ent->item->giTag] < BG_MaxAmmoForWeapon( (weapon_t)ent->item->giTag, other->client->sess.skillBits, other->client->ps.stats[STAT_PLAYER_CLASS] ) ){
 			Add_Ammo( other, ent->item->giTag, 1, qfalse );
 			return RESPAWN_NEVER;
 		}
@@ -775,7 +775,7 @@ int Pickup_Weapon( gentity_t *ent, gentity_t *other ) {
 
 
 		// See if we can pick it up
-		if( G_CanPickupWeapon( ent->item->giTag, other )) {
+		if( G_CanPickupWeapon( (weapon_t)ent->item->giTag, other )) {
 			qboolean soldier4			= (other->client->sess.playerType == PC_SOLDIER && other->client->sess.skillBits[SK_SOLDIER] & (1<<4));
 			qboolean soldier8			= (other->client->sess.playerType == PC_SOLDIER && other->client->sess.skillBits[SK_SOLDIER] & (1<<8));
 			weapon_t primaryWeapon		= G_GetPrimaryWeaponForClient( other->client );

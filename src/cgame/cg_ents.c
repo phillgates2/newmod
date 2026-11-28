@@ -978,10 +978,10 @@ static void CG_Missile( centity_t *cent ) {
 		team_t missileTeam;
 
 		if ( cent->currentState.weapon == WP_LANDMINE || cent->currentState.weapon == WP_DYNAMITE ){
-			missileTeam = cent->currentState.teamNum % 4;
+			missileTeam = (team_t)(cent->currentState.teamNum % 4);
 		}
 		else {
-			missileTeam = cent->currentState.teamNum;
+			missileTeam = (team_t)cent->currentState.teamNum;
 		}
 
 		ent.hModel = weapon->missileModel[0];

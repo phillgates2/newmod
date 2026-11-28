@@ -199,7 +199,7 @@ void CG_NewClientInfo( int clientNum ) {
 			break;
 		case TOK_t:
 			// team
-			newInfo.team = atoi(cs_value);
+			newInfo.team = (team_t)atoi(cs_value);
 			break;
 		case TOK_c:
 			// class
@@ -2755,7 +2755,7 @@ void CG_Player( centity_t *cent ) {
 		float dist = VectorDistance(cent->currentState.pos.trBase, cg.refdef_current->vieworg);
 
 		if ( dist < 1024 ) {
-			hudHeadAnimNumber_t anim = cent->pe.idleAnim;
+			hudHeadAnimNumber_t anim = (hudHeadAnimNumber_t)cent->pe.idleAnim;
 			animateHead = qtrue;
 
 			if ( cent->pe.weaponFireTime > SECOND_HALF && !(cent->currentState.eFlags & EF_DEAD) ) {

@@ -2760,7 +2760,7 @@ weapon_t CG_LimboPanel_GetWeaponForNumber( int number, int slot, qboolean ignore
 			}
 		}
 
-		return 0;
+		return (weapon_t)0;
 	}
 }
 

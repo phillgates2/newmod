@@ -557,7 +557,7 @@ static qboolean NM_DefaultLevels(g_shrubbot_level_t **out) {
 	static const char *flags[] = {"iahC", "iahCp", "iahCpP", "i1ahCpPkm", "i1ahCpPkmBb", "i1ahCpPkmBbs"};
 	int i;
 	for (i = 0; i < (int)(sizeof(flags) / sizeof(flags[0])); ++i) {
-		out[i] = calloc(1, sizeof(*out[i]));
+		out[i] = (g_shrubbot_level_t*)calloc(1, sizeof(*out[i]));
 		if (!out[i]) {
 			while (i > 0) { --i; free(out[i]); out[i] = NULL; }
 			return qfalse;
@@ -945,7 +945,7 @@ qboolean G_shrubbot_restore_mute(gentity_t *ent) {
 char *G_shrubbot_mute_name(char const *ip, char const *guid) {
 	const g_shrubbot_ban_t *mute = NM_FindActiveMute(guid, time(NULL));
 	(void)ip;
-	return mute ? va("%s", mute->name) : "";
+	return mute ? va("%s", mute->name) : (char*)"";
 }
 
 qboolean G_shrubbot_native_cmd_check( gentity_t *ent, char *cmd, int skip ) {
@@ -1246,8 +1246,8 @@ qboolean G_shrubbot_readconfig(gentity_t *ent, int skiparg) {
 		SP("readconfig: config exceeds the 32 MiB limit; previous configuration retained\n");
 		return qfalse;
 	}
-	cnf2 = calloc((size_t)len + 1, 1);
-	config = calloc(1, sizeof(*config));
+	cnf2 = (char*)calloc((size_t)len + 1, 1);
+	config = (nm_shrub_config_t*)calloc(1, sizeof(*config));
 	if (!cnf2 || !config) {
 		trap_FS_FCloseFile(f);
 		goto fail;
@@ -1279,7 +1279,7 @@ qboolean G_shrubbot_readconfig(gentity_t *ent, int skiparg) {
 		if(!Q_stricmp(t, "[level]")) {
 			ignoring_section = qfalse;
 			if (lc >= MAX_SHRUBBOT_LEVELS) { failure = "too many levels"; goto fail; }
-			L = calloc(1, sizeof(g_shrubbot_level_t));
+			L = (g_shrubbot_level_t*)calloc(1, sizeof(g_shrubbot_level_t));
 			if (!L) goto fail;
 			L->level	= 0;
 			*L->name	= '\0';
@@ -1299,7 +1299,7 @@ qboolean G_shrubbot_readconfig(gentity_t *ent, int skiparg) {
 				continue;
 			}
 
-			a = calloc(1, sizeof(g_shrubbot_admin_t));
+			a = (g_shrubbot_admin_t*)calloc(1, sizeof(g_shrubbot_admin_t));
 			if (!a) goto fail;
 			*a->name	= '\0';
 			*a->guid	= '\0';
@@ -1320,7 +1320,7 @@ qboolean G_shrubbot_readconfig(gentity_t *ent, int skiparg) {
 				continue;
 			}
 
-			b = calloc(1, sizeof(g_shrubbot_ban_t));
+			b = (g_shrubbot_ban_t*)calloc(1, sizeof(g_shrubbot_ban_t));
 			if (!b) goto fail;
 			*b->name	= '\0';
 			*b->guid	= '\0';
@@ -1346,7 +1346,7 @@ qboolean G_shrubbot_readconfig(gentity_t *ent, int skiparg) {
 				continue;
 			}
 
-			m = calloc(1, sizeof(g_shrubbot_ban_t));
+			m = (g_shrubbot_ban_t*)calloc(1, sizeof(g_shrubbot_ban_t));
 			if (!m) goto fail;
 			*m->name	= '\0';
 			*m->guid	= '\0';
@@ -1362,7 +1362,7 @@ qboolean G_shrubbot_readconfig(gentity_t *ent, int skiparg) {
 		else if(!Q_stricmp(t, "[command]")) {
 			ignoring_section = qfalse;
 			if (cc >= MAX_SHRUBBOT_COMMANDS) { failure = "too many commands"; goto fail; }
-			c = calloc(1, sizeof(g_shrubbot_command_t));
+			c = (g_shrubbot_command_t*)calloc(1, sizeof(g_shrubbot_command_t));
 			if (!c) goto fail;
 			*c->command = '\0';
 			*c->exec = '\0';
@@ -1625,7 +1625,7 @@ qboolean G_shrubbot_setlevel(gentity_t *ent, int skiparg) {
 			SP("setlevel: too many admins\n");
 			return qfalse;
 		}
-		a = malloc(sizeof(g_shrubbot_admin_t));
+		a = (g_shrubbot_admin_t*)malloc(sizeof(g_shrubbot_admin_t));
 		if (!a) {
 			SP("setlevel: out of memory\n");
 			return qfalse;
@@ -1711,7 +1711,7 @@ qboolean G_shrubbot_setlevel_lua(int slot, int shrubbotlevel) {
 				G_Printf("G_shrubbot_setlevel_lua: too many admins\n");
 				return qfalse;
 			}
-			a = malloc(sizeof(g_shrubbot_admin_t));
+			a = (g_shrubbot_admin_t*)malloc(sizeof(g_shrubbot_admin_t));
 			if (!a) {
 				G_Printf("G_shrubbot_setlevel_lua: out of memory\n");
 				return qfalse;
@@ -1830,7 +1830,7 @@ qboolean G_shrubbot_tempban(int clientnum, char *reason, int length) {
 	hwguid 	= vic->client->pers.cg_hwguid;
 #endif // HW_BAN
 	ip 		= vic->client->pers.client_ip;
-	b 		= malloc(sizeof(g_shrubbot_ban_t));
+	b 		= (g_shrubbot_ban_t*)malloc(sizeof(g_shrubbot_ban_t));
 
 	if(!b) {
 		return qfalse;
@@ -1989,7 +1989,7 @@ qboolean G_shrubbot_ban(gentity_t *ent, int skiparg) {
 	hwguid 	= vic->client->pers.cg_hwguid;
 #endif // HW_BAN
 	ip 		= vic->client->pers.client_ip;
-	b 		= malloc(sizeof(g_shrubbot_ban_t));
+	b 		= (g_shrubbot_ban_t*)malloc(sizeof(g_shrubbot_ban_t));
 
 	if(!b) {
 		return qfalse;
@@ -2197,7 +2197,7 @@ qboolean G_shrubbot_banguid(gentity_t *ent, int skiparg) {
 		ip 			= vic->client->pers.client_ip;
 	}
 
-	b = malloc(sizeof(g_shrubbot_ban_t));
+	b = (g_shrubbot_ban_t*)malloc(sizeof(g_shrubbot_ban_t));
 	if(!b)
 		return qfalse;
 
@@ -2393,7 +2393,7 @@ qboolean G_shrubbot_banIP(gentity_t *ent, int skiparg) {
 		ipOnline	= vic->client->pers.client_ip;
 	}
 
-	b = malloc(sizeof(g_shrubbot_ban_t));
+	b = (g_shrubbot_ban_t*)malloc(sizeof(g_shrubbot_ban_t));
 	if(!b) {
 		return qfalse;
 	}
@@ -2606,7 +2606,7 @@ qboolean G_shrubbot_mute(gentity_t *ent, int skiparg) {
 	}
 	lt = localtime(&now);
 	if (!lt) { SP("^dmute: ^9clock unavailable\n"); return qfalse; }
-	m = calloc(1, sizeof(*m));
+	m = (g_shrubbot_ban_t*)calloc(1, sizeof(*m));
 	if (!m) { SP("^dmute: ^9out of memory\n"); return qfalse; }
 	Q_strncpyz(m->name, victim->client->pers.netname, sizeof(m->name));
 	Q_strncpyz(m->guid, guid, sizeof(m->guid));
@@ -2771,7 +2771,7 @@ qboolean G_shrubbot_putteam(gentity_t *ent, int skiparg) {
 		return qfalse;
 	}
 	vic = &g_entities[pids[0]];
-	if(!SetTeam(vic, team, qtrue, -1, -1, qfalse)) {
+	if(!SetTeam(vic, team, qtrue, (weapon_t)-1, (weapon_t)-1, qfalse)) {
 		SP("^dput: ^9Put team failed^7\n");
 		return qfalse;
 	}
@@ -2868,7 +2868,7 @@ qboolean G_shrubbot_spec(gentity_t *ent, int skiparg) {
 		return qfalse;
 	}
 	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR &&
-	    !SetTeam(ent, "s", qtrue, -1, -1, qfalse)) {
+	    !SetTeam(ent, "s", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse)) {
 		SP("^dspec: ^9could not join spectators\n");
 		return qfalse;
 	}
@@ -3624,7 +3624,7 @@ qboolean G_shrubbot_spec999(gentity_t *ent, int skiparg) {
 		if(vic->client->sess.sessionTeam == TEAM_SPECTATOR) continue; // IRATA
 		// if(vic->r.svFlags & SVF_BOT) continue; // IRATA: might happen if server is busy
 		if(vic->client->ps.ping >= 500 && vic->client->ps.ping <= 999) {
-			SetTeam(vic, "s", qtrue, -1, -1, qfalse);
+			SetTeam(vic, "s", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse);
 			AP(va("chat \"^dspec999: ^*%s^9 moved to spectators^7\" -1",
 				vic->client->pers.netname));
 		}
@@ -4592,7 +4592,7 @@ qboolean G_shrubbot_give(gentity_t *ent, int skiparg) {
 		return qfalse;
 	}
 
-	if ( ExecGive( vic, item, amt?amt:"", amt2?amt2:"") ) {
+	if ( ExecGive( vic, item, amt?amt:(char*)"", amt2?amt2:(char*)"") ) {
 		if (ent && ent->client && ent->client->ps.clientNum == vic->client->ps.clientNum) {
 			AP(va( "chat \"^dgive: ^7%s ^7%s^9 This admin cheats! ^7\"", vic->client->pers.netname, item ));
 		}
@@ -5589,7 +5589,7 @@ qboolean G_shrubbot_weapons(gentity_t *ent, int skiparg) {
 			}
 
 			if (ent) {
-				SBP(va("%-13s %s %s %s %s\n", BG_Weapons[i].statname, minplayers, maxweap, percentage, G_IsWeaponDisabled( ent, i, qtrue )? "^1weapon is restricted by rule^7":"^2weapon is available^7"));
+				SBP(va("%-13s %s %s %s %s\n", BG_Weapons[i].statname, minplayers, maxweap, percentage, G_IsWeaponDisabled( ent, (weapon_t)i, qtrue )? "^1weapon is restricted by rule^7":"^2weapon is available^7"));
 			}
 			else {
 				SBP(va("%-13s %s %s %s %s\n", BG_Weapons[i].statname, minplayers, maxweap, percentage, "cant check rule - not connected"));

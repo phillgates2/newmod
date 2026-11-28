@@ -425,7 +425,7 @@ void G_Script_ScriptLoad( void )
 
 	// END Mad Doc - TDF
 	// Arnout: make sure we terminate the script with a '\0' to prevent parser from choking
-	level.scriptEntity = G_Alloc( len + 1 );
+	level.scriptEntity = (char*)G_Alloc( len + 1 );
 	trap_FS_Read( level.scriptEntity, len, f );
 	*(level.scriptEntity + len) = '\0';
 
@@ -604,7 +604,7 @@ void G_Script_ScriptParse( gentity_t *ent )
 
 			len = strlen(params);
 			if (len) {	// copy the params into the event
-				curEvent->params = G_Alloc( len + 1 );
+				curEvent->params = (char*)G_Alloc( len + 1 );
 				Q_strncpyz( curEvent->params, params, len+1 );
 			}
 
@@ -691,7 +691,7 @@ void G_Script_ScriptParse( gentity_t *ent )
 				len = strlen(params);
 				if (len) {
 					// copy the params into the event
-					curEvent->stack.items[curEvent->stack.numItems].params = G_Alloc( len + 1 );
+					curEvent->stack.items[curEvent->stack.numItems].params = (char*)G_Alloc( len + 1 );
 					Q_strncpyz( curEvent->stack.items[curEvent->stack.numItems].params, params, len+1 );
 
 					// core: parse the params now, so most processing is done at mapstart..
@@ -699,57 +699,57 @@ void G_Script_ScriptParse( gentity_t *ent )
 					// because those entities do not exists yet (not spawned into the map).
 					switch( action->hash ) {
 						case ACCUM_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_Accum( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
 						case GLOBALACCUM_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_GlobalAccum( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
 						case TRIGGER_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_Trigger( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
 						case SETSTATE_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_SetState( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
 						case TOGGLESPEAKER_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_ToggleSpeaker( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
 						case DISABLESPEAKER_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_DisableSpeaker( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
 						case ENABLESPEAKER_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_EnableSpeaker( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
 						case WAIT_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_Wait( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
 						case REMAPSHADER_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_ShaderRemap( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
 						case FOLLOWSPLINE_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_FollowSpline( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
 						case GOTOMARKER_HASH:
-							curEvent->stack.items[curEvent->stack.numItems].parsed_params = G_Alloc(sizeof(g_script_preparsed_params_t));
+							curEvent->stack.items[curEvent->stack.numItems].parsed_params = (g_script_preparsed_params_t*)G_Alloc(sizeof(g_script_preparsed_params_t));
 							PreParse_ScriptAction_GotoMarker( ent, curEvent->stack.items[curEvent->stack.numItems].params, curEvent->stack.items[curEvent->stack.numItems].parsed_params );
 							break;
 
@@ -786,7 +786,7 @@ void G_Script_ScriptParse( gentity_t *ent )
 
 	// alloc and copy the events into the gentity_t for this cast
 	if (numEventItems > 0) {
-		ent->scriptEvents = G_Alloc( sizeof(g_script_event_t) * numEventItems );
+		ent->scriptEvents = (g_script_event_t*)G_Alloc( sizeof(g_script_event_t) * numEventItems );
 		memcpy( ent->scriptEvents, events, sizeof(g_script_event_t) * numEventItems );
 		ent->numScriptEvents = numEventItems;
 	}

@@ -600,7 +600,7 @@ char *G_NewString( const char *string ) {
 	int		i;
 	int 	l = strlen(string) + 1;
 
-	newb = G_Alloc( l );
+	newb = (char*)G_Alloc( l );
 
 	new_p = newb;
 

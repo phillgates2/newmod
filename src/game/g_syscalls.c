@@ -50,7 +50,7 @@ This should not usually be used directly by the user -
 the G_Printf function provides its functionality and more.
 =================
 */
-void	trap_Printf( const char *fmt ) {
+extern "C" void trap_Printf( const char *fmt ) {
 	NM_SYSCALL( G_PRINT, fmt ); /* CHANGES: native ABI */
 }
 
@@ -65,7 +65,7 @@ this will halt execution of the module it is called from.
 Usually the user shouldn't call this directly, but using G_Error instead.
 =================
 */
-void	trap_Error( const char *fmt ) {
+extern "C" void trap_Error( const char *fmt ) {
 	NM_SYSCALL( G_ERROR, fmt ); /* CHANGES: native ABI */
 	exit(1);
 }
@@ -79,7 +79,7 @@ A Quake 3, multi-platform version of the Win32 function timeGetTime,
 which also returns the number of milliseconds since the program was executed.
 =================
 */
-int		trap_Milliseconds( void ) {
+extern "C" int trap_Milliseconds( void ) {
 	return NM_SYSCALL( G_MILLISECONDS ); /* CHANGES: native ABI */
 }
 
@@ -95,7 +95,7 @@ for main:
 int main( int argc, char **argv )
 =================
 */
-int		trap_Argc( void ) {
+extern "C" int trap_Argc( void ) {
 	return NM_SYSCALL( G_ARGC ); /* CHANGES: native ABI */
 }
 
@@ -113,7 +113,7 @@ argument to return. 0 is the command itself, 1 is the first argument and so on..
 similiar to char **argv in a C program.
 =================
 */
-void	trap_Argv( int n, char *buffer, int bufferLength ) {
+extern "C" void trap_Argv( int n, char *buffer, int bufferLength ) {
 	NM_SYSCALL( G_ARGV, n, buffer, bufferLength ); /* CHANGES: native ABI */
 }
 
@@ -135,7 +135,7 @@ FS_APPEND_SYNC is similar to FS_APPEND except you can read from the file at the 
 An int is returned representing the length of the file being opened.
 =================
 */
-int		trap_FS_FOpenFile( const char *qpath, fileHandle_t *f, fsMode_t mode ) {
+extern "C" int trap_FS_FOpenFile( const char *qpath, fileHandle_t *f, fsMode_t mode ) {
 	return NM_SYSCALL( G_FS_FOPEN_FILE, qpath, f, mode ); /* CHANGES: native ABI */
 }
 
@@ -151,7 +151,7 @@ fileHandle_t: A file handle provided by trap_FS_FOpenFile.
 This reads len bytes of data from the file specified by f and fills buffer with it.
 =================
 */
-void	trap_FS_Read( void *buffer, int len, fileHandle_t f ) {
+extern "C" void trap_FS_Read( void *buffer, int len, fileHandle_t f ) {
 	NM_SYSCALL( G_FS_READ, buffer, len, f ); /* CHANGES: native ABI */
 }
 
@@ -167,7 +167,7 @@ fileHandle_t: A file handle provided by trap_FS_FOpenFile.
 This writes len bytes of data from buffer to the file specified by f.
 =================
 */
-int		trap_FS_Write( const void *buffer, int len, fileHandle_t f ) {
+extern "C" int trap_FS_Write( const void *buffer, int len, fileHandle_t f ) {
 	return NM_SYSCALL( G_FS_WRITE, buffer, len, f ); /* CHANGES: native ABI */
 }
 
@@ -176,7 +176,7 @@ int		trap_FS_Write( const void *buffer, int len, fileHandle_t f ) {
 trap_FS_Rename
 =================
 */
-int		trap_FS_Rename( const char *from, const char *to ) {
+extern "C" int trap_FS_Rename( const char *from, const char *to ) {
 	return NM_SYSCALL( G_FS_RENAME, from, to ); /* CHANGES: native ABI */
 }
 
@@ -189,7 +189,7 @@ fileHandle_t f: The file to be closed.
 Closes the file specified by f.
 =================
 */
-void	trap_FS_FCloseFile( fileHandle_t f ) {
+extern "C" void trap_FS_FCloseFile( fileHandle_t f ) {
 	NM_SYSCALL( G_FS_FCLOSE_FILE, f ); /* CHANGES: native ABI */
 }
 
@@ -207,7 +207,7 @@ This fills listbuf with a NULL delimited list of all the files in the directory 
 The number of files listed is returned.
 =================
 */
-int trap_FS_GetFileList(  const char *path, const char *extension, char *listbuf, int bufsize ) {
+extern "C" int trap_FS_GetFileList(  const char *path, const char *extension, char *listbuf, int bufsize ) {
 	return NM_SYSCALL( G_FS_GETFILELIST, path, extension, listbuf, bufsize ); /* CHANGES: native ABI */
 }
 
@@ -234,7 +234,7 @@ exec_when takes an element of the cbufExec_t enumeration:
 
 =================
 */
-void	trap_SendConsoleCommand( int exec_when, const char *text ) {
+extern "C" void trap_SendConsoleCommand( int exec_when, const char *text ) {
 	NM_SYSCALL( G_SEND_CONSOLE_COMMAND, exec_when, text ); /* CHANGES: native ABI */
 }
 
@@ -346,7 +346,7 @@ It sends all the information to the engine's main database and then it stores a 
 the vmCvar_t passed as the first argument.
 =================
 */
-void	trap_Cvar_Register( vmCvar_t *cvar, const char *var_name, const char *value, int flags ) {
+extern "C" void trap_Cvar_Register( vmCvar_t *cvar, const char *var_name, const char *value, int flags ) {
         if(!G_CvarUpdateSafe(var_name, value)) {
 				NM_SYSCALL( G_CVAR_REGISTER, cvar, var_name, "", flags ); /* CHANGES: native ABI */
 		}
@@ -366,7 +366,7 @@ This function first parses out the name of the vmCvar and then searches for the 
 Once it finds the vmCvar it will copy the "master copy" of the vmCvar into the local address provided.
 =================
 */
-void	trap_Cvar_Update( vmCvar_t *cvar ) {
+extern "C" void trap_Cvar_Update( vmCvar_t *cvar ) {
 	NM_SYSCALL( G_CVAR_UPDATE, cvar ); /* CHANGES: native ABI */
 }
 
@@ -383,7 +383,7 @@ fields of the corresponding vmCvar entry. The only way to effectly change the va
 this function, the ANSI storage operator only modifies the local buffer and not the "master copy".
 =================
 */
-void trap_Cvar_Set( const char *var_name, const char *value ) {
+extern "C" void trap_Cvar_Set( const char *var_name, const char *value ) {
 	NM_SYSCALL( G_CVAR_SET, var_name, value ); /* CHANGES: native ABI */
 }
 
@@ -397,7 +397,7 @@ const char *var_name: A null-terminated string containing the name of the vmCvar
 This function returns the integer value of var_name that is currently stored in the "master copy".
 =================
 */
-int trap_Cvar_VariableIntegerValue( const char *var_name ) {
+extern "C" int trap_Cvar_VariableIntegerValue( const char *var_name ) {
 	return NM_SYSCALL( G_CVAR_VARIABLE_INTEGER_VALUE, var_name ); /* CHANGES: native ABI */
 }
 
@@ -423,7 +423,7 @@ Thus, this trap is not sufficient to determine if a cvar actually exists or not.
 This trap does not create a new cvar; to create a new cvar during run-time, you can use trap_Cvar_Set or trap_SendConsoleCommand.
 =================
 */
-void trap_Cvar_VariableStringBuffer( const char *var_name, char *buffer, int bufsize ) {
+extern "C" void trap_Cvar_VariableStringBuffer( const char *var_name, char *buffer, int bufsize ) {
 	NM_SYSCALL( G_CVAR_VARIABLE_STRING_BUFFER, var_name, buffer, bufsize ); /* CHANGES: native ABI */
 }
 
@@ -433,7 +433,7 @@ void trap_Cvar_VariableStringBuffer( const char *var_name, char *buffer, int buf
 trap_Cvar_LatchedVariableStringBuffer
 =================
 */
-void trap_Cvar_LatchedVariableStringBuffer( const char *var_name, char *buffer, int bufsize ) {
+extern "C" void trap_Cvar_LatchedVariableStringBuffer( const char *var_name, char *buffer, int bufsize ) {
 	NM_SYSCALL( G_CVAR_LATCHEDVARIABLESTRINGBUFFER, var_name, buffer, bufsize ); /* CHANGES: native ABI */
 }
 
@@ -453,7 +453,7 @@ than those outlined above. Its purpose it to notify the Q3 binary when new entit
 In the Q3 source it is used twice - once on level load and in G_Spawn where it is called whenever an entity is created.
 =================
 */
-void trap_LocateGameData( gentity_t *gEnts, int numGEntities, int sizeofGEntity_t,
+extern "C" void trap_LocateGameData( gentity_t *gEnts, int numGEntities, int sizeofGEntity_t,
 						 playerState_t *clients, int sizeofGClient ) {
 	NM_SYSCALL( G_LOCATE_GAME_DATA, gEnts, numGEntities, sizeofGEntity_t, clients, sizeofGClient ); /* CHANGES: native ABI */
 }
@@ -470,7 +470,7 @@ This provides a mechanism to unconditionally drop a client from a server via the
 The reason is displayed to the client when they are dropped.
 =================
 */
-void trap_DropClient( int clientNum, const char *reason, int length ) {
+extern "C" void trap_DropClient( int clientNum, const char *reason, int length ) {
 	NM_SYSCALL( G_DROP_CLIENT, clientNum, reason, length ); /* CHANGES: native ABI */
 }
 
@@ -487,7 +487,7 @@ This includes the commands evaluated in g_cmds.c. Its main use in the Q3 source 
 client's console via the "print" command. Passing -1 as the clientNum sends the command to every client.
 =================
 */
-void trap_SendServerCommand( int clientNum, const char *text )
+extern "C" void trap_SendServerCommand( int clientNum, const char *text )
 {
 	// rain - #433 - commands over 1022 chars will crash the
 	// client engine upon receipt, so ignore them
@@ -564,7 +564,7 @@ This trap call sets one of these strings to a value.
 Config strings should usually be used to communicate complex data that changes relatively rarely.
 =================
 */
-void trap_SetConfigstring( int num, const char *string ) {
+extern "C" void trap_SetConfigstring( int num, const char *string ) {
 //	if ( CS_UpdateSafe(num, string) )
 		NM_SYSCALL( G_SET_CONFIGSTRING, num, string ); /* CHANGES: native ABI */
 }
@@ -583,7 +583,7 @@ It is only used once in the q3 source, by the G_FindConfigstringIndex function
 which in turn is used by the G_ModelIndex and G_SoundIndex functions.
 =================
 */
-void trap_GetConfigstring( int num, char *buffer, int bufferSize ) {
+extern "C" void trap_GetConfigstring( int num, char *buffer, int bufferSize ) {
 	NM_SYSCALL( G_GET_CONFIGSTRING, num, buffer, bufferSize ); /* CHANGES: native ABI */
 }
 
@@ -602,7 +602,7 @@ userinfo of the client referenced by num.
 Key values are then retrieved using Info_ValueForKey( buffer, keyname ).
 =================
 */
-void trap_GetUserinfo( int num, char *buffer, int bufferSize ) {
+extern "C" void trap_GetUserinfo( int num, char *buffer, int bufferSize ) {
 	NM_SYSCALL( G_GET_USERINFO, num, buffer, bufferSize ); /* CHANGES: native ABI */
 }
 
@@ -619,7 +619,7 @@ However, it is not used much in the Q3 source, where config strings seem to be t
 prefered method to transfer userinfo to the client.
 =================
 */
-void trap_SetUserinfo( int num, const char *buffer ) {
+extern "C" void trap_SetUserinfo( int num, const char *buffer ) {
 	//if ( CS_UpdateSafe(CS_PLAYERS+num, buffer) )
 		NM_SYSCALL( G_SET_USERINFO, num, buffer ); /* CHANGES: native ABI */
 }
@@ -636,7 +636,7 @@ The "server info" string is a backslash delimited list of server variables such 
 Besides the bot code, its only other use in the Q3 source is to print to the value of serverinfo to the logfile.
 =================
 */
-void trap_GetServerinfo( char *buffer, int bufferSize ) {
+extern "C" void trap_GetServerinfo( char *buffer, int bufferSize ) {
 	NM_SYSCALL( G_GET_SERVERINFO, buffer, bufferSize ); /* CHANGES: native ABI */
 }
 
@@ -670,7 +670,7 @@ And thats' the last function in the game list!!
 
 =================
 */
-void trap_SetBrushModel( gentity_t *ent, const char *name ) {
+extern "C" void trap_SetBrushModel( gentity_t *ent, const char *name ) {
 	NM_SYSCALL( G_SET_BRUSH_MODEL, ent, name ); /* CHANGES: native ABI */
 }
 
@@ -705,7 +705,7 @@ collision between solid entities. For example, tracing directly downwards onto a
 respectively starting at some point above the floor will result in a trace_t with an endpoint 15 units from the floor.
 =================
 */
-void trap_Trace( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
+extern "C" void trap_Trace( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
 	NM_SYSCALL(G_TRACE, results, start, mins, maxs, end, passEntityNum, contentmask); /* CHANGES: native ABI */
 }
 
@@ -715,7 +715,7 @@ void trap_Trace( trace_t *results, const vec3_t start, const vec3_t mins, const 
 trap_TraceNoEnts
 =================
 */
-void trap_TraceNoEnts( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
+extern "C" void trap_TraceNoEnts( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
 	NM_SYSCALL( G_TRACE, results, start, mins, maxs, end, -2, contentmask ); /* CHANGES: native ABI */
 }
 
@@ -725,7 +725,7 @@ void trap_TraceNoEnts( trace_t *results, const vec3_t start, const vec3_t mins, 
 trap_TraceCapsule
 =================
 */
-void trap_TraceCapsule( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
+extern "C" void trap_TraceCapsule( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
 	NM_SYSCALL( G_TRACECAPSULE, results, start, mins, maxs, end, passEntityNum, contentmask ); /* CHANGES: native ABI */
 }
 
@@ -735,7 +735,7 @@ void trap_TraceCapsule( trace_t *results, const vec3_t start, const vec3_t mins,
 trap_TraceCapsuleNoEnts
 =================
 */
-void trap_TraceCapsuleNoEnts( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
+extern "C" void trap_TraceCapsuleNoEnts( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
 	NM_SYSCALL( G_TRACECAPSULE, results, start, mins, maxs, end, -2, contentmask ); /* CHANGES: native ABI */
 }
 
@@ -753,7 +753,7 @@ The second parameter specifies an entityNum (ent->s.number)
 which is ignored when evaluating the contents for a point.
 =================
 */
-int trap_PointContents( const vec3_t point, int passEntityNum ) {
+extern "C" int trap_PointContents( const vec3_t point, int passEntityNum ) {
 	return NM_SYSCALL( G_POINT_CONTENTS, point, passEntityNum ); /* CHANGES: native ABI */
 }
 
@@ -774,7 +774,7 @@ and areaportal data generated during the BSP compiling of a map.
 Note: This function might not be cheap if many players are on server
 =================
 */
-qboolean trap_InPVS( const vec3_t p1, const vec3_t p2 ) {
+extern "C" qboolean trap_InPVS( const vec3_t p1, const vec3_t p2 ) {
 	return NM_SYSCALL( G_IN_PVS, p1, p2 ); /* CHANGES: native ABI */
 }
 
@@ -790,7 +790,7 @@ Returns true if point1 can _potentially_ see point2. This function does not chec
 Points hidden by closed doors (and other areaportals) will still return true.
 =================
 */
-qboolean trap_InPVSIgnorePortals( const vec3_t p1, const vec3_t p2 ) {
+extern "C" qboolean trap_InPVSIgnorePortals( const vec3_t p1, const vec3_t p2 ) {
 	return NM_SYSCALL( G_IN_PVS_IGNORE_PORTALS, p1, p2 ); /* CHANGES: native ABI */
 }
 
@@ -809,7 +809,7 @@ when the door is closed; "open" is set false and trap_InPVS will not see entitie
 See Use_BinaryMover in the game source for an example.
 =================
 */
-void trap_AdjustAreaPortalState( gentity_t *ent, qboolean open ) {
+extern "C" void trap_AdjustAreaPortalState( gentity_t *ent, qboolean open ) {
 	NM_SYSCALL( G_ADJUST_AREA_PORTAL_STATE, ent, open ); /* CHANGES: native ABI */
 }
 
@@ -825,7 +825,7 @@ This functions tests whether or not the areas (presumably leaf nodes of the bsp 
 FIXME: the values of area1 and area2 are unknown, however.
 =================
 */
-qboolean trap_AreasConnected( int area1, int area2 ) {
+extern "C" qboolean trap_AreasConnected( int area1, int area2 ) {
 	return NM_SYSCALL( G_AREAS_CONNECTED, area1, area2 ); /* CHANGES: native ABI */
 }
 
@@ -847,7 +847,7 @@ Linking an entity that is already linked into the world has no effect unless the
  * Its brush model has changed (again, sets ent->s.solid)
 =================
 */
-void trap_LinkEntity( gentity_t *ent ) {
+extern "C" void trap_LinkEntity( gentity_t *ent ) {
 	NM_SYSCALL( G_LINKENTITY, ent ); /* CHANGES: native ABI */
 }
 
@@ -863,7 +863,7 @@ This is useful for temporarily deleting an entity or when performing major alter
 Unlinking an entity that is already unlinked has no effect.
 =================
 */
-void trap_UnlinkEntity( gentity_t *ent ) {
+extern "C" void trap_UnlinkEntity( gentity_t *ent ) {
 	NM_SYSCALL( G_UNLINKENTITY, ent ); /* CHANGES: native ABI */
 }
 
@@ -887,7 +887,7 @@ because the range also limits the worldsectors which are touched recursively - s
 
 =================
 */
-int trap_EntitiesInBox( const vec3_t mins, const vec3_t maxs, int *list, int maxcount ) {
+extern "C" int trap_EntitiesInBox( const vec3_t mins, const vec3_t maxs, int *list, int maxcount ) {
 	return NM_SYSCALL( G_ENTITIES_IN_BOX, mins, maxs, list, maxcount ); /* CHANGES: native ABI */
 }
 
@@ -897,7 +897,7 @@ int trap_EntitiesInBox( const vec3_t mins, const vec3_t maxs, int *list, int max
 trap_EntityContact
 =================
 */
-qboolean trap_EntityContact( const vec3_t mins, const vec3_t maxs, const gentity_t *ent ) {
+extern "C" qboolean trap_EntityContact( const vec3_t mins, const vec3_t maxs, const gentity_t *ent ) {
 	return NM_SYSCALL( G_ENTITY_CONTACT, mins, maxs, ent ); /* CHANGES: native ABI */
 }
 
@@ -914,24 +914,24 @@ If the entity pointed to by ent is physically within the bounds specified by min
 returns qtrue.
 =================
 */
-qboolean trap_EntityContactCapsule( const vec3_t mins, const vec3_t maxs, const gentity_t *ent ) {
+extern "C" qboolean trap_EntityContactCapsule( const vec3_t mins, const vec3_t maxs, const gentity_t *ent ) {
 	return NM_SYSCALL( G_ENTITY_CONTACTCAPSULE, mins, maxs, ent ); /* CHANGES: native ABI */
 }
 
 #ifdef OMNIBOTS
-int trap_BotAllocateClient( int clientNum ) {
+extern "C" int trap_BotAllocateClient( int clientNum ) {
 	return NM_SYSCALL( G_BOT_ALLOCATE_CLIENT, clientNum ); /* CHANGES: native ABI */
 }
 
-int trap_BotGetServerCommand(int clientNum, char *message, int size) {
+extern "C" int trap_BotGetServerCommand(int clientNum, char *message, int size) {
 	return NM_SYSCALL( BOTLIB_GET_CONSOLE_MESSAGE, clientNum, message, size ); /* CHANGES: native ABI */
 }
 
-void trap_BotUserCommand(int clientNum, usercmd_t *ucmd) {
+extern "C" void trap_BotUserCommand(int clientNum, usercmd_t *ucmd) {
 	NM_SYSCALL( BOTLIB_USER_COMMAND, clientNum, ucmd ); /* CHANGES: native ABI */
 }
 
-void trap_EA_Command(int client, char *command) {
+extern "C" void trap_EA_Command(int client, char *command) {
 	NM_SYSCALL( BOTLIB_EA_COMMAND, client, command ); /* CHANGES: native ABI */
 }
 #endif
@@ -942,7 +942,7 @@ void trap_EA_Command(int client, char *command) {
 trap_GetSoundLength
 =================
 */
-int trap_GetSoundLength(sfxHandle_t sfxHandle) {
+extern "C" int trap_GetSoundLength(sfxHandle_t sfxHandle) {
 	return NM_SYSCALL( G_GET_SOUND_LENGTH, sfxHandle ); /* CHANGES: native ABI */
 }
 
@@ -952,7 +952,7 @@ int trap_GetSoundLength(sfxHandle_t sfxHandle) {
 trap_RegisterSound
 =================
 */
-sfxHandle_t	trap_RegisterSound( const char *sample, qboolean compressed ) {
+extern "C" sfxHandle_t trap_RegisterSound( const char *sample, qboolean compressed ) {
 	return NM_SYSCALL( G_REGISTERSOUND, sample, compressed ); /* CHANGES: native ABI */
 }
 
@@ -979,7 +979,7 @@ This function will retrieve the usercmd_t generated by the client portion of
 the Q3 binary and place it in what it pointed to by cmd.
 =================
 */
-void trap_GetUsercmd( int clientNum, usercmd_t *cmd ) {
+extern "C" void trap_GetUsercmd( int clientNum, usercmd_t *cmd ) {
 	NM_SYSCALL( G_GET_USERCMD, clientNum, cmd ); /* CHANGES: native ABI */
 
 #ifdef FAKELAG
@@ -1037,7 +1037,7 @@ The string returned has a very similar format to that of the tail end of a GTKRa
 it is compiled to a bsp. It is unlikely that a user would ever need to call this since it is handled already
 in g_spawn.c
 */
-qboolean trap_GetEntityToken( char *buffer, int bufferSize ) {
+extern "C" qboolean trap_GetEntityToken( char *buffer, int bufferSize ) {
 	return NM_SYSCALL( G_GET_ENTITY_TOKEN, buffer, bufferSize ); /* CHANGES: native ABI */
 }
 
@@ -1060,7 +1060,7 @@ Calling trap_DebugPolygonCreate() to draw a second polygon causes none of them t
 Delete the old polygon before trying to draw the new one.
 =================
 */
-int trap_DebugPolygonCreate(int color, int numPoints, vec3_t *points) {
+extern "C" int trap_DebugPolygonCreate(int color, int numPoints, vec3_t *points) {
 	return NM_SYSCALL( G_DEBUG_POLYGON_CREATE, color, numPoints, points ); /* CHANGES: native ABI */
 }
 
@@ -1074,7 +1074,7 @@ int id: a value previously returned by trap_DebugPolygonCreate
 Removes a polygon that was previously created via trap_DebugPolygonCreate.
 =================
 */
-void trap_DebugPolygonDelete(int id) {
+extern "C" void trap_DebugPolygonDelete(int id) {
 	NM_SYSCALL( G_DEBUG_POLYGON_DELETE, id ); /* CHANGES: native ABI */
 }
 
@@ -1088,7 +1088,7 @@ qtime_t *qtime: Point in time - look at q_shared.h qtime_t for details.
 Returns current system time and date at server.
 =================
 */
-int trap_RealTime( qtime_t *qtime ) {
+extern "C" int trap_RealTime( qtime_t *qtime ) {
 	return NM_SYSCALL( G_REAL_TIME, qtime ); /* CHANGES: native ABI */
 }
 
@@ -1105,7 +1105,7 @@ the changes in state of a struct.
 A changing vector will change less frequently if only the integral part is taken into account.
 =================
 */
-void trap_SnapVector( float *v ) {
+extern "C" void trap_SnapVector( float *v ) {
 	NM_SYSCALL( G_SNAPVECTOR, v ); /* CHANGES: native ABI */
 	return;
 }
@@ -1116,7 +1116,7 @@ void trap_SnapVector( float *v ) {
 trap_GetTag
 =================
 */
-qboolean trap_GetTag( int clientNum, int tagFileNumber, char *tagName, orientation_t *orientation ) {
+extern "C" qboolean trap_GetTag( int clientNum, int tagFileNumber, char *tagName, orientation_t *orientation ) {
 	return NM_SYSCALL( G_GETTAG, clientNum, tagFileNumber, tagName, orientation ); /* CHANGES: native ABI */
 }
 
@@ -1125,27 +1125,27 @@ qboolean trap_GetTag( int clientNum, int tagFileNumber, char *tagName, orientati
 trap_LoadTag
 =================
 */
-qboolean trap_LoadTag( const char* filename ) {
+extern "C" qboolean trap_LoadTag( const char* filename ) {
 	return NM_SYSCALL( G_REGISTERTAG, filename ); /* CHANGES: native ABI */
 }
 
-int trap_PC_LoadSource( const char *filename ) {
+extern "C" int trap_PC_LoadSource( const char *filename ) {
 	return NM_SYSCALL( BOTLIB_PC_LOAD_SOURCE, filename ); /* CHANGES: native ABI */
 }
 
-int trap_PC_FreeSource( int handle ) {
+extern "C" int trap_PC_FreeSource( int handle ) {
 	return NM_SYSCALL( BOTLIB_PC_FREE_SOURCE, handle ); /* CHANGES: native ABI */
 }
 
-int trap_PC_ReadToken( int handle, pc_token_t *pc_token ) {
+extern "C" int trap_PC_ReadToken( int handle, pc_token_t *pc_token ) {
 	return NM_SYSCALL( BOTLIB_PC_READ_TOKEN, handle, pc_token ); /* CHANGES: native ABI */
 }
 
-int trap_PC_SourceFileAndLine( int handle, char *filename, int *line ) {
+extern "C" int trap_PC_SourceFileAndLine( int handle, char *filename, int *line ) {
 	return NM_SYSCALL( BOTLIB_PC_SOURCE_FILE_AND_LINE, handle, filename, line ); /* CHANGES: native ABI */
 }
 
-int trap_PC_UnReadToken( int handle ) {
+extern "C" int trap_PC_UnReadToken( int handle ) {
 	return NM_SYSCALL( BOTLIB_PC_UNREAD_TOKEN, handle ); /* CHANGES: native ABI */
 }
 
@@ -1156,7 +1156,7 @@ int trap_PC_UnReadToken( int handle ) {
 trap_PbStat
 =================
 */
-void trap_PbStat ( int clientNum , char *category , char *values ) {
+extern "C" void trap_PbStat ( int clientNum , char *category , char *values ) {
 	NM_SYSCALL( PB_STAT_REPORT , clientNum , category , values ) ; /* CHANGES: native ABI */
 }
 #endif
@@ -1198,7 +1198,7 @@ trap_SendMessage
  buflen: length of the message to send
 =================
 */
-void trap_SendMessage( int clientNum, char *buf, int buflen ) {
+extern "C" void trap_SendMessage( int clientNum, char *buf, int buflen ) {
 	NM_SYSCALL( G_SENDMESSAGE, clientNum, buf, buflen ); /* CHANGES: native ABI */
 }
 
@@ -1214,6 +1214,6 @@ trap_MessageStatus
 
 =================
 */
-messageStatus_t trap_MessageStatus( int clientNum ) {
-	return NM_SYSCALL( G_MESSAGESTATUS, clientNum ); /* CHANGES: native ABI */
+extern "C" messageStatus_t trap_MessageStatus( int clientNum ) {
+	return (messageStatus_t)NM_SYSCALL( G_MESSAGESTATUS, clientNum ); /* CHANGES: native ABI */
 }

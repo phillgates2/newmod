@@ -283,7 +283,7 @@ char *ExceptionName(DWORD exceptioncode){
 
 void win32_exceptioninfo(LPEXCEPTION_POINTERS e) {
 	G_CrashLogPrintf("Exception: %s (0x%08lx)\n", ExceptionName(e->ExceptionRecord->ExceptionCode), e->ExceptionRecord->ExceptionCode);
-	G_CrashLogPrintf("Exception Address: 0x%08x\n", (unsigned int)e->ExceptionRecord->ExceptionAddress);
+	G_CrashLogPrintf("Exception Address: 0x%08llx\n", (unsigned long long)(ULONG_PTR)e->ExceptionRecord->ExceptionAddress);
 }
 
 void win32_dllinfo() {
@@ -303,9 +303,15 @@ void win32_backtrace(LPEXCEPTION_POINTERS e) {
 	pSym = (PIMAGEHLP_SYMBOL)GlobalAlloc(GMEM_FIXED, 16384);
 
 	ZeroMemory(&sf, sizeof(sf));
+#if defined(_M_X64)
+	sf.AddrPC.Offset = e->ContextRecord->Rip;
+	sf.AddrStack.Offset = e->ContextRecord->Rsp;
+	sf.AddrFrame.Offset = e->ContextRecord->Rbp;
+#else
 	sf.AddrPC.Offset = e->ContextRecord->Eip;
 	sf.AddrStack.Offset = e->ContextRecord->Esp;
 	sf.AddrFrame.Offset = e->ContextRecord->Ebp;
+#endif
 	sf.AddrPC.Mode = AddrModeFlat;
 	sf.AddrStack.Mode = AddrModeFlat;
 	sf.AddrFrame.Mode = AddrModeFlat;

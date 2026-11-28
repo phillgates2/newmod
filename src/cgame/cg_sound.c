@@ -1190,7 +1190,7 @@ qboolean CG_SpeakerEditor_Looped_KeyUp( panel_button_t* button, int key ) {
 				rect.y += 12.f;
 
 				if( BG_CursorInRect( &rect ) ) {
-					button->data[1] = editSpeaker->loop = i;
+					button->data[1] = editSpeaker->loop = (speakerLoopType_t)i;
 					break;
 				}
 			}
@@ -1226,7 +1226,7 @@ qboolean CG_SpeakerEditor_Broadcast_KeyUp( panel_button_t* button, int key ) {
 				rect.y += 12.f;
 
 				if( BG_CursorInRect( &rect ) ) {
-					button->data[1] = editSpeaker->broadcast = i;
+					button->data[1] = editSpeaker->broadcast = (speakerBroadcastType_t)i;
 					break;
 				}
 			}

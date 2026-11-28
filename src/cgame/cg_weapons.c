@@ -483,7 +483,7 @@ void CG_PyroSmokeTrail( centity_t *ent, const weaponInfo_t *wi ) {
 			team = TEAM_ALLIES;
 	}
 	else {
-		team = ent->currentState.teamNum;
+		team = (team_t)ent->currentState.teamNum;
 	}
 
 	{
@@ -1803,7 +1803,7 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 	qboolean			drawpart;
 
 	qboolean isPlayer			= (qboolean)(cent->currentState.clientNum == cg.snap->ps.clientNum);
-	weapon_t weaponNum			= cent->currentState.weapon;
+	weapon_t weaponNum			= (weapon_t)cent->currentState.weapon;
 	weaponInfo_t *weapon		= &cg_weapons[weaponNum];
 
 #ifdef __SSYSTEM_WIP__ // just ready assets..
@@ -1927,7 +1927,7 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 
 	// First Person View
 	if( ps ) {
-		team_t team = ps->persistant[PERS_TEAM];
+		team_t team = (team_t)ps->persistant[PERS_TEAM];
 
 		// Switch team numbers (unless using a satchel) while disguised, so the right hands will hold the weapon
 		if(( ( weaponNum != WP_SATCHEL ) && ( cent->currentState.powerups & (1 << PW_OPS_DISGUISED) ) ))
@@ -2690,7 +2690,7 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 				// Draw the blue pilot light
 				vec3_t angles;
 				AxisToAngles( flash.axis, angles );
-				weaponNum = WeaponTable[WP_FLAMETHROWER].ammoindex;
+				weaponNum = (weapon_t)WeaponTable[WP_FLAMETHROWER].ammoindex;
 				if (ps) { // First Person
 					if (ps->ammoclip[weaponNum])
 						CG_FireFlameChunks( cent, flash.origin, angles, 1.0, qfalse, qfalse );
@@ -2707,7 +2707,7 @@ void CG_AddPlayerFoot ( refEntity_t *parent, centity_t *cent, float fovOffset, p
 	refEntity_t		foot;
 	vec3_t			kickangle;
 	weaponInfo_t	*weapon = &cg_weapons[WP_FOOTKICK];
-	team_t			team =	cg.snap->ps.persistant[PERS_TEAM];
+	team_t			team =	(team_t)cg.snap->ps.persistant[PERS_TEAM];
 	float			s;
 
 	if( cent->currentState.powerups & (1 << PW_OPS_DISGUISED) ) {

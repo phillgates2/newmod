@@ -250,7 +250,7 @@ void SP_misc_gamemodel( gentity_t *ent )
 
 	// Gordon: hmmmmm, think this flag is prolly b0rked
 	if(ent->spawnflags & 1) {
-		ent->s.apos.trType = 1;	// misc_gamemodels (since they have no movement) will use type = 0 for static models, type = 1 for auto-aligning models
+		ent->s.apos.trType = (trType_t)1;	// misc_gamemodels (since they have no movement) will use type = 0 for static models, type = 1 for auto-aligning models
 	}
 
 	trap_LinkEntity (ent);

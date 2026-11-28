@@ -209,7 +209,7 @@ qboolean PreParse_ScriptAction_Accum( gentity_t *ent, char *params, g_script_pre
 			}
 
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[0] = G_Alloc( len + 1 );
+			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[0], token, len );
 			preparsed_params->data_int[3] = BG_StringHashValue( token );
 
@@ -218,7 +218,7 @@ qboolean PreParse_ScriptAction_Accum( gentity_t *ent, char *params, g_script_pre
 				G_Error(S_COLOR_RED "G_ScriptAction_Accum(): accum must have (a scriptname and) a trigger identifier: %s\n", params );
 			}
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[1] = G_Alloc( len + 1 );
+			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[1], token, len );
 			break;
 
@@ -234,7 +234,7 @@ qboolean PreParse_ScriptAction_Accum( gentity_t *ent, char *params, g_script_pre
 				G_Error(S_COLOR_RED "G_ScriptAction_Accum(): accum %s requires a targetname parameter\n", lastToken );
 			}
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[0] = G_Alloc( len + 1 );
+			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[0], token, len );
 			break;
 
@@ -632,7 +632,7 @@ qboolean PreParse_ScriptAction_GlobalAccum( gentity_t *ent, char *params, g_scri
 			}
 
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[0] = G_Alloc( len + 1 );
+			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[0], token, len );
 			preparsed_params->data_int[3] = BG_StringHashValue( token );
 
@@ -642,7 +642,7 @@ qboolean PreParse_ScriptAction_GlobalAccum( gentity_t *ent, char *params, g_scri
 			}
 
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[1] = G_Alloc( len + 1 );
+			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[1], token, len );
 			break;
 
@@ -660,7 +660,7 @@ qboolean PreParse_ScriptAction_GlobalAccum( gentity_t *ent, char *params, g_scri
 			}
 
 			len = strlen( token ) + 1;
-			preparsed_params->data_char[0] = G_Alloc( len + 1 );
+			preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 			Q_strncpyz( preparsed_params->data_char[0], token, len );
 			break;
 
@@ -953,13 +953,13 @@ qboolean PreParse_ScriptAction_Trigger( gentity_t *ent, char *params, g_script_p
 	}
 
 	len = strlen( name ) + 1;
-	preparsed_params->data_char[0] = G_Alloc( len + 1 );
+	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[0], name, len );
 	preparsed_params->data_int[0] = BG_StringHashValue_Lwr( name );
 	preparsed_params->data_int[1] = BG_StringHashValue( name );
 
 	len = strlen( trigger ) + 1;
-	preparsed_params->data_char[1] = G_Alloc( len + 1 );
+	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[1], trigger, len );
 
 	return qtrue;
@@ -1011,7 +1011,7 @@ qboolean PreParse_ScriptAction_SetState( gentity_t *ent, char *params, g_script_
 	}
 
 	len = strlen( name ) + 1;
-	preparsed_params->data_char[0] = G_Alloc( len + 1 );
+	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[0], name, len );
 	preparsed_params->data_int[0] = BG_StringHashValue( name );
 
@@ -1045,7 +1045,7 @@ qboolean PreParse_ScriptAction_ToggleSpeaker( gentity_t *ent, char *params, g_sc
 	{
 		int len;
 		len = strlen( params ) + 1;
-		preparsed_params->data_char[0] = G_Alloc( len + 1 );
+		preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 		Q_strncpyz( preparsed_params->data_char[0], params, len );
 	}
 	*/
@@ -1078,7 +1078,7 @@ qboolean PreParse_ScriptAction_DisableSpeaker( gentity_t *ent, char *params, g_s
 	{
 		int len;
 		len = strlen( params ) + 1;
-		preparsed_params->data_char[0] = G_Alloc( len + 1 );
+		preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 		Q_strncpyz( preparsed_params->data_char[0], params, len );
 	}
 	*/
@@ -1111,7 +1111,7 @@ qboolean PreParse_ScriptAction_EnableSpeaker( gentity_t *ent, char *params, g_sc
 	{
 		int len;
 		len = strlen( params ) + 1;
-		preparsed_params->data_char[0] = G_Alloc( len + 1 );
+		preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 		Q_strncpyz( preparsed_params->data_char[0], params, len );
 	}
 	*/
@@ -1188,7 +1188,7 @@ qboolean PreParse_ScriptAction_ShaderRemap( gentity_t *ent, char *params, g_scri
 	}
 
 	len = strlen( token ) + 1;
-	preparsed_params->data_char[0] = G_Alloc( len + 1 );
+	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[0], token, len );
 
 	token = COM_ParseExt( &pString, qfalse );
@@ -1197,7 +1197,7 @@ qboolean PreParse_ScriptAction_ShaderRemap( gentity_t *ent, char *params, g_scri
 	}
 
 	len = strlen( token ) + 1;
-	preparsed_params->data_char[1] = G_Alloc( len + 1 );
+	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[1], token, len );
 
 	return qtrue;
@@ -1283,7 +1283,7 @@ qboolean PreParse_ScriptAction_FollowSpline( gentity_t *ent, char *params, g_scr
 	}
 
 	len = strlen( token ) + 1;
-	preparsed_params->data_char[0] = G_Alloc( len + 1 );
+	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[0], token, len );
 
 	//--- speed
@@ -1378,7 +1378,7 @@ qboolean PreParse_ScriptAction_GotoMarker( gentity_t *ent, char *params, g_scrip
 	}
 
 	len = strlen( token ) + 1;
-	preparsed_params->data_char[0] = G_Alloc( len + 1 );
+	preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 	Q_strncpyz( preparsed_params->data_char[0], token, len );
 
 	// speed
@@ -1418,7 +1418,7 @@ qboolean PreParse_ScriptAction_GotoMarker( gentity_t *ent, char *params, g_scrip
 				}
 
 				len = strlen( token ) + 1;
-				preparsed_params->data_char[1] = G_Alloc( len + 1 );
+				preparsed_params->data_char[01] = (char*)G_Alloc( len + 1 );
 				Q_strncpyz( preparsed_params->data_char[1], token, len );
 
 			}
@@ -2732,7 +2732,7 @@ qboolean C_ScriptAction_GotoMarker( gentity_t *ent, char *params )
 			if (trType != TR_LINEAR_STOP) {
 				// allow for acceleration/decceleration
 				ent->s.pos.trDuration = 1000.0 * dist / (speed / 2.0);
-				ent->s.pos.trType = trType;
+				ent->s.pos.trType = (trType_t)trType;
 			}
 			ent->reached = NULL;
 
@@ -2770,7 +2770,7 @@ qboolean C_ScriptAction_GotoMarker( gentity_t *ent, char *params )
 				ent->s.apos.trType = TR_LINEAR_STOP;
 				if (trType != TR_LINEAR_STOP) {	// allow for acceleration/decceleration
 					ent->s.pos.trDuration = 1000.0 * dist / (speed / 2.0);
-					ent->s.pos.trType = trType;
+					ent->s.pos.trType = (trType_t)trType;
 				}
 			}
 
@@ -2962,7 +2962,7 @@ qboolean G_ScriptAction_SetAutoSpawn( gentity_t* ent, char *params ) {
 		G_Error(S_COLOR_RED "G_ScriptAction_SetAutoSpawn(): setautospawn must have a target team\n" );
 	}
 
-	team = atoi(token);
+	team = (team_t)atoi(token);
 	pTeamAutoSpawn = team == 0 ? &(level.axisAutoSpawn) : &(level.alliesAutoSpawn);
 
 	tent = G_Find( NULL, FOFS(message), spawnname );
@@ -3421,7 +3421,7 @@ qboolean G_ScriptAction_SetChargeTimeFactor( gentity_t* ent, char *params )
 		G_Error(S_COLOR_RED "G_ScriptAction_SetChargeTimeFactor(): setchargetimefactor must have a team\n" );
 	}
 
-	team = atoi(token);
+	team = (team_t)atoi(token);
 
 	token = COM_ParseExt( &pString, qfalse );
 	if( !token[0] ) {
@@ -3638,7 +3638,7 @@ qboolean G_ScriptAction_DisableMessage( gentity_t *ent, char *params )
 
 	// find the entity with the given "targetname"
 	while ((target = G_FindByTargetname( target, token ))) {
-		target->s.aiState = 1;
+		target->s.aiState = (aistateEnum_t)1;
 	}
 
 	return qtrue;
@@ -4488,7 +4488,7 @@ qboolean G_ScriptAction_ObjectiveStatus( gentity_t *ent, char *params )
 	if (!token[0]) {
 		G_Error(S_COLOR_RED "G_ScriptAction_ObjectiveImage(): team parameter required\n" );
 	}
-	parm = atoi(token) == 0 ? "x" : "a";
+	parm = atoi(token) == 0 ? (char*)"x" : (char*)"a";
 
 	token = COM_Parse(&pString);
 	if (!token[0]) {
@@ -4589,7 +4589,7 @@ qboolean G_ScriptAction_VoiceAnnounce( gentity_t *ent, char *params)
 		G_Error(S_COLOR_RED "G_ScriptAction_VoiceAnnounce(): invalid system message\n" );
 	}
 
-	G_SendSystemMessage( sysmsg, !num ? TEAM_AXIS : TEAM_ALLIES );
+	G_SendSystemMessage( (sysMsg_t)sysmsg, !num ? TEAM_AXIS : TEAM_ALLIES );
 
 	return qtrue;
 }
@@ -5102,7 +5102,7 @@ qboolean G_ScriptAction_SetHQStatus( gentity_t *ent, char *params ) {
 		G_Error(S_COLOR_RED "G_ScriptAction_SetHQStatus(): sethqstatus must have a team\n" );
 	}
 
-	team = atoi(token);
+	team = (team_t)atoi(token);
 
 	token = COM_ParseExt( &pString, qfalse );
 	if( !token[0] ) {
@@ -7589,7 +7589,7 @@ qboolean G_ScriptAction_GotoMarker( gentity_t *ent, char *params )
 			if (trType != TR_LINEAR_STOP) {
 				// allow for acceleration/decceleration
 				ent->s.pos.trDuration = 1000.0 * dist / (speed / 2.0);
-				ent->s.pos.trType = trType;
+				ent->s.pos.trType = (trType_t)trType;
 			}
 			ent->reached = NULL;
 
@@ -7627,7 +7627,7 @@ qboolean G_ScriptAction_GotoMarker( gentity_t *ent, char *params )
 				ent->s.apos.trType = TR_LINEAR_STOP;
 				if (trType != TR_LINEAR_STOP) {	// allow for acceleration/decceleration
 					ent->s.pos.trDuration = 1000.0 * dist / (speed / 2.0);
-					ent->s.pos.trType = trType;
+					ent->s.pos.trType = (trType_t)trType;
 				}
 			}
 
@@ -7754,7 +7754,7 @@ qboolean G_ScriptAction_FaceAngles( gentity_t *ent, char *params )
 			for (i=0; i<3; ++i) {
 				ent->s.apos.trDelta[i] = 2.0 * 1000.0 * diff[i] / (float)duration;
 			}
-			ent->s.apos.trType = trType;
+			ent->s.apos.trType = (trType_t)trType;
 		}
 #ifdef OMNIBOTS
 		{

@@ -1274,7 +1274,7 @@ gentity_t *G_TempEntity( vec3_t origin, int event ) {
 	gentity_t	*e = G_Spawn();
 	vec3_t		snapped;
 
-	e->s.eType = ET_EVENTS + event;
+	e->s.eType = (entityType_t)(ET_EVENTS + event);
 
 	e->classname = "tempEntity";
 	e->eventTime = level.time;
@@ -1308,7 +1308,7 @@ It's not linked into the world. See SV_LinkEntity which is not called.
 gentity_t *G_TempEntityNotLinked( int event ) {
 	gentity_t	*e = G_Spawn();
 
-	e->s.eType = ET_EVENTS + event;
+	e->s.eType = (entityType_t)(ET_EVENTS + event);
 
 	e->classname = "tempEntity";
 	e->eventTime = level.time;
@@ -1323,7 +1323,7 @@ gentity_t *G_TempEntityNotLinked( int event ) {
 gentity_t* G_PopupMessage( popupMessageType_t type ) {
 	gentity_t* e = G_Spawn();
 
-	e->s.eType = ET_EVENTS + EV_POPUPMESSAGE;
+	e->s.eType = (entityType_t)(ET_EVENTS + EV_POPUPMESSAGE);
 	e->classname = "messageent";
 	e->eventTime = level.time;
 	e->r.eventTime = level.time;
@@ -1341,7 +1341,7 @@ gentity_t* G_PopupMessage( popupMessageType_t type ) {
 gentity_t* G_MissionMessage( popupMessageType_t type ) {
 	gentity_t* e = G_Spawn();
 
-	e->s.eType = ET_EVENTS + EV_MISSIONMESSAGE;
+	e->s.eType = (entityType_t)(ET_EVENTS + EV_MISSIONMESSAGE);
 	e->classname = "messageent";
 	e->eventTime = level.time;
 	e->r.eventTime = level.time;
@@ -2458,18 +2458,18 @@ team_t G_GetTeamFromEntity( gentity_t *ent ) {
 								case MOD_SMOKEGRENADE:
 								case MOD_BAZOOKA:
 								case MOD_THROWKNIFE:
-									return ent->s.teamNum;
+									return (team_t)ent->s.teamNum;
 								case MOD_SATCHEL:
 								case MOD_DYNAMITE:
 								case MOD_LANDMINE:
-									return ent->s.teamNum % 4;
+									return (team_t)(ent->s.teamNum % 4);
 							}
 							break;
 		case ET_MOVER:		if( ent->classnamehash == SCRIPT_MOVER_HASH /*&& !Q_stricmp(ent->classname, "script_mover")*/ ) {
-								return ent->s.teamNum;
+								return (team_t)ent->s.teamNum;
 							}
 							break;
-		case ET_CONSTRUCTIBLE:	return ent->s.teamNum;
+		case ET_CONSTRUCTIBLE:	return (team_t)ent->s.teamNum;
 								break;
 		case ET_MG42_BARREL: // zinx - fix for #470
 			return G_GetTeamFromEntity( &g_entities[ent->r.ownerNum] );

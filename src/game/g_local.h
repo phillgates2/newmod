@@ -26,7 +26,7 @@ extern "C" {
 
 // the "gameversion" client command will print this plus compile date
 #ifndef PRE_RELEASE_DEMO
-#define GAMEVERSION			"newmod" /* NewMod, Arena.ai, 2026-11-21 (see CHANGES): distinct mod identity. */
+#define GAMEVERSION			"overzealous" /* Overzealous, Arena.ai, 2026-11-27 (see CHANGES): distinct mod identity. */
 #else
 //#define GAMEVERSION			"You look like you need a monkey!"
 #define GAMEVERSION			"ettest"
@@ -2408,6 +2408,15 @@ extern GeoIP * gidb;
 //mcwf GeoIP
 
 void	trap_Printf( const char *fmt );
+
+/* trap_R_* declarations shared by game and cgame modules */
+qhandle_t	trap_R_RegisterModel( const char *name );
+qhandle_t	trap_R_RegisterSkin( const char *name );
+qhandle_t	trap_R_RegisterShader( const char *name );
+qhandle_t	trap_R_RegisterShaderNoMip( const char *name );
+int	trap_R_LerpTag( orientation_t *tag, grefEntity_t *refent, const char *tagName, int startIndex );
+int	trap_R_LerpTagNumber( orientation_t *tag, grefEntity_t *refent, int tagNum );
+int	trap_R_LookupTag( grefEntity_t *refent, const char *tagName );
 
 #if defined __linux__
 	void        trap_Error(const char *fmt) __attribute__((noreturn));

@@ -164,25 +164,37 @@ extern "C" {
 #undef QDECL
 #define	QDECL	__cdecl
 
+#endif
+
 // buildstring will be incorporated into the version string
 #ifdef NDEBUG
 #ifdef _M_IX86
 #define	CPUSTRING	"win-x86"
+#elif defined _M_X64
+#define	CPUSTRING	"win-x86_64"
 #elif defined _M_ALPHA
 #define	CPUSTRING	"win-AXP"
+#elif defined __APPLE__
+#define	CPUSTRING	"macos"
+#elif defined __linux__
+#define	CPUSTRING	"linux"
 #endif
 #else
 #ifdef _M_IX86
 #define	CPUSTRING	"win-x86-debug" // FIXME: is this right? it doesn't appear to be for client ...
+#elif defined _M_X64
+#define	CPUSTRING	"win-x86_64-debug"
 #elif defined _M_ALPHA
 #define	CPUSTRING	"win-AXP-debug"
+#elif defined __APPLE__
+#define	CPUSTRING	"macos-debug"
+#elif defined __linux__
+#define	CPUSTRING	"linux-debug"
 #endif
 #endif
 
 
 #define	PATH_SEP '\\'
-
-#endif
 
 //======================= MAC OS X SERVER DEFINES =====================
 

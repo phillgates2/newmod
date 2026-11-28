@@ -340,8 +340,13 @@ void win32_backtrace(LPEXCEPTION_POINTERS e){
 	process=GetCurrentProcess();
 
 	//_asm("int $3");
+#if defined(_M_X64)
+	lastBP=e->ContextRecord->Rbp;
+	lastRET=e->ContextRecord->Rip;
+#else
 	lastBP=e->ContextRecord->Ebp;
 	lastRET=e->ContextRecord->Eip;
+#endif
 
 	while(1){
 		if(IsBadReadPtr((void*)lastRET,1)){

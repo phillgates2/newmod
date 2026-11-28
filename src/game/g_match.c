@@ -829,7 +829,7 @@ int G_checkServerToggle(vmCvar_t *cv)
 // Sends a player's stats to the requesting client.
 void G_statsPrint(gentity_t *ent, int nType)
 {
-	char *cmd = (nType == 0) ? "ws" : ((nType == 1) ? "wws" : "gstats");	// Yes, not the cleanest
+	const char *cmd = (nType == 0) ? "ws" : ((nType == 1) ? "wws" : "gstats");	// Yes, not the cleanest
 	char arg[MAX_TOKEN_CHARS];
 
 	if(!ent || (ent->r.svFlags & SVF_BOT)) return;

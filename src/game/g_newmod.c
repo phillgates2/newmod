@@ -11,6 +11,19 @@
 #include <math.h>
 #include <stddef.h>
 
+/* Overzealous, Arena.ai, 2026-11-27: localtime_r is POSIX-only; Windows
+ * uses localtime_s with reversed arguments. Provide a portable shim that
+ * returns a struct tm* on success and NULL on failure, matching localtime_r. */
+#ifdef _WIN32
+static struct tm *NM_localtime_r(const time_t *t, struct tm *tm) {
+	if (localtime_s(tm, t) != 0)
+		return NULL;
+	return tm;
+}
+#else
+#define NM_localtime_r(t, tm) localtime_r(t, tm)
+#endif
+
 /* Don't embed untrusted player names in quoted engine commands. */
 static void NM_SafeText(const char *src, char *dst, size_t size) {
 	size_t n = 0;
@@ -641,7 +654,7 @@ qboolean G_nm_about(gentity_t *ent, int skiparg) {
 		SP("^dabout: ^9usage: !about\n");
 		return qfalse;
 	}
-	SP("^d" GAME_VERSION " ^9(experimental No Quarter-based ET: Legacy mod)\n");
+	SP("^d" GAME_VERSION " ^9(experimental No Quarter-based ET: Legacy mod - Overzealous)\n");
 	SP("^9Includes selected Jaymod and Oz adaptations; feature parity is incomplete.\n");
 	return qtrue;
 }
@@ -825,7 +838,7 @@ qboolean G_nm_ftime(gentity_t *ent, int skiparg) {
 		return qfalse;
 	}
 	now = time(NULL);
-	if (now == (time_t)-1 || !localtime_r(&now, &local) ||
+	if (now == (time_t)-1 || !NM_localtime_r(&now, &local) ||
 	    !strftime(clock, sizeof(clock), "%I:%M:%S %p", &local)) {
 		SP("^dftime: ^9server time is unavailable\n");
 		return qfalse;

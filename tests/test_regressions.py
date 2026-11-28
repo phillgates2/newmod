@@ -1,4 +1,4 @@
-"""NewMod native module regressions, Arena.ai, 2026-11-21.
+"""Overzealous native module regressions, Arena.ai, 2026-11-27.
 
 These tests load the built libraries in fake engine/display harnesses. They
 exercise selected behavior, not a complete ET: Legacy multiplayer session.
@@ -16,7 +16,7 @@ ARCH = os.environ.get("ARCH", "x86_64")
 WITH_LUA = os.environ.get("WITH_LUA", "1") == "1"
 WITH_BOT = os.environ.get("WITH_OMNIBOT", "1") == "1"
 WITH_AUTO_GUID = os.environ.get("WITH_AUTO_GUID", "0") == "1"
-MODDIR = Path(os.environ.get("NEWMOD_TEST_MODDIR", ROOT / "build" / "newmod"))
+MODDIR = Path(os.environ.get("OVERZEALOUS_TEST_MODDIR", ROOT / "build" / "overzealous"))
 MODULES = [MODDIR / f"{name}.mp.{ARCH}.so" for name in ("qagame", "cgame", "ui")]
 
 
@@ -26,7 +26,7 @@ class NativeRegressionTests(unittest.TestCase):
         missing = [str(path) for path in MODULES if not path.is_file()]
         if missing:
             raise RuntimeError("build the modules first: " + ", ".join(missing))
-        cls.tmp = tempfile.TemporaryDirectory(prefix="newmod-tests-")
+        cls.tmp = tempfile.TemporaryDirectory(prefix="overzealous-tests-")
 
     @classmethod
     def tearDownClass(cls):
@@ -96,7 +96,7 @@ class NativeRegressionTests(unittest.TestCase):
                        [f"-D{item}" for item in defs] +
                        [str(ROOT / "tests/game_commands.c"), "-ldl", "-lm", "-o", str(harness)],
                        cwd=ROOT, check=True)
-        env = dict(os.environ, LD_PRELOAD=str(library), NEWMOD_FAULT_ONLY="1")
+        env = dict(os.environ, LD_PRELOAD=str(library), OVERZEALOUS_FAULT_ONLY="1")
         subprocess.run([str(harness), str(MODULES[0])], cwd=ROOT, env=env, check=True, timeout=30)
 
     def test_ui_edit_field_bounds(self):

@@ -497,12 +497,12 @@ int trap_CIN_PlayCinematic( const char *arg0, int xpos, int ypos, int width, int
 // stops playing the cinematic and ends it.  should always return FMV_EOF
 // cinematics must be stopped in reverse order of when they are started
 e_status trap_CIN_StopCinematic(int handle) {
-  return NM_SYSCALL(UI_CIN_STOPCINEMATIC, handle); /* CHANGES: native ABI */
+  return (e_status)NM_SYSCALL(UI_CIN_STOPCINEMATIC, handle); /* CHANGES: native ABI */
 }
 
 // will run a frame of the cinematic but will not draw it.  Will return FMV_EOF if the end of the cinematic has been reached.
 e_status trap_CIN_RunCinematic (int handle) {
-  return NM_SYSCALL(UI_CIN_RUNCINEMATIC, handle); /* CHANGES: native ABI */
+  return (e_status)NM_SYSCALL(UI_CIN_RUNCINEMATIC, handle); /* CHANGES: native ABI */
 }
 
 // draws the current frame

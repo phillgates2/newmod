@@ -112,7 +112,7 @@ void CG_ParseServerinfo( void ) {
 	const char	*info = CG_ConfigString( CS_SERVERINFO );
 	char	*mapname;
 
-	cg_gameType.integer = cgs.gametype = atoi( Info_ValueForKey( info, "g_gametype" ) );
+	cg_gameType.integer = cgs.gametype = (gametype_t)atoi( Info_ValueForKey( info, "g_gametype" ) );
 	cg_antilag.integer = cgs.antilag = atoi( Info_ValueForKey( info, "g_antilag" ) );
 	if ( !cgs.localServer ) {
 		trap_Cvar_Set("g_gametype", va("%i", cgs.gametype));
@@ -635,7 +635,7 @@ void CG_ParseWolfinfo( void ) {
 			cgs.nextTimeLimit 		= atof(value);
 			break;
 		case TOK_gamestate:
-			cgs.gamestate  			= atoi(value);
+			cgs.gamestate			= (gamestate_t)atoi(value);
 			break;
 		case TOK_g_currentCampaign:
 			Q_strncpyz(cgs.currentCampaign, value, sizeof(cgs.currentCampaign));
@@ -716,7 +716,7 @@ void CG_ParseSpawns( void ) {
 		if(cg.spawnTeams[i] != newteam) {
 			cg.spawnTeams_old[i] = cg.spawnTeams[i];
 			cg.spawnTeams_changeTime[i] = cg.time;
-			cg.spawnTeams[i] = newteam;
+			cg.spawnTeams[i] = (team_t)newteam;
 		}
 
 		s = Info_ValueForKey( info, "c" );
@@ -871,7 +871,7 @@ void CG_ShaderStateChanged(void) {
 	char newShader[MAX_QPATH];
 	char timeOffset[16];
 	const char *o = CG_ConfigString( CS_SHADERSTATE );
-	char *n,*t;
+	const char *t, *n;
 
 	while (o && *o) {
 		n = strstr(o, "=");
@@ -2645,7 +2645,7 @@ static void CG_ServerCommand( void ) {
 
 				for( i = WP_KNIFE; i < WP_NUM_WEAPONS; i++ ) {
 
-					if(!BG_ValidStatWeapon( i )) {
+					if(!BG_ValidStatWeapon( (weapon_t)i )) {
 						continue;
 					}
 

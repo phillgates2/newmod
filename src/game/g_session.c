@@ -154,7 +154,7 @@ void G_CalcRank( gclient_t* client )
 	client->sess.rank = 0;
 
 	for( i = 0; i < SK_NUM_SKILLS; ++i ) {
-		G_SetPlayerSkill( client, i );
+		G_SetPlayerSkill( client, (skillType_t)i );
 		cnt += client->sess.skill[ i ];
 	}
 
