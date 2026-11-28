@@ -43,7 +43,7 @@ void installcrashhandler() {
 
 	memset(&act, 0, sizeof(act));
 	memset(&oldact, 0, sizeof(oldact));
-	act.sa_sigaction = (void *)CrashHandler;
+	act.sa_sigaction = (void (*)(int, siginfo_t *, void *))CrashHandler;
 	sigemptyset(&act.sa_mask);
 	act.sa_flags = SA_SIGINFO;
 
@@ -60,7 +60,7 @@ void restorecrashhandler() {
 
 void installinthandler() {
 	// Trap Ctrl-C
-	signal(SIGINT, (void *)INTHandler);
+	signal(SIGINT, (__sighandler_t)INTHandler);
 }
 
 void linux_siginfo(int signal, siginfo_t *siginfo) {
@@ -93,7 +93,7 @@ void linux_dsoinfo() {
 
 	for (dyn = (ElfW(Dyn) *)phdr->p_vaddr; dyn->d_tag != DT_NULL; dyn++)
 		if (dyn->d_tag == DT_DEBUG) {
-			rdebug = (void *)dyn->d_un.d_ptr;
+			rdebug = (struct r_debug *)dyn->d_un.d_ptr;
 			break;
 		}
 
@@ -146,11 +146,13 @@ void linux_backtrace(ucontext_t *ctx) {
 	#else
 		G_CrashLogPrintf("Stack frames: %zd entries\n", size-1);
 
-		#if defined(__x86_64__) // might break -m32 builds on 64bit
+		#if defined(__x86_64__)
 			// IRATA: x86_64 defines REG_RIP instead.
 			array[1] = (void *)ctx->uc_mcontext.gregs[REG_RIP];
-		#else
+		#elif defined(__i386__)
 			array[1] = (void *)ctx->uc_mcontext.gregs[REG_EIP];
+		#elif defined(__aarch64__)
+			array[1] = (void *)ctx->uc_mcontext.pc;
 		#endif
 
 	#endif// GLIBC_21
@@ -197,7 +199,7 @@ void CrashHandler(int signal, siginfo_t *siginfo, ucontext_t *ctx) {
 		G_ShutdownGame(0);
 		//pass control to the default handler.
 		if(signal == SIGSEGV) {
-			OldHandler = (void *)oldact[SIGSEGV].sa_sigaction;
+			OldHandler = (void (*)(int))oldact[SIGSEGV].sa_sigaction;
 			(*OldHandler)(signal);
 		}
 		else {
@@ -207,7 +209,7 @@ void CrashHandler(int signal, siginfo_t *siginfo, ucontext_t *ctx) {
 	else {
 		//end this madness we are looping.
 		G_Error("Recursive segfault. Bailing out.");
-		OldHandler = (void *)oldact[SIGSEGV].sa_sigaction;
+		OldHandler = (void (*)(int))oldact[SIGSEGV].sa_sigaction;
 		(*OldHandler)(signal);
 	}
 
@@ -215,7 +217,7 @@ void CrashHandler(int signal, siginfo_t *siginfo, ucontext_t *ctx) {
 
 }
 
-#elif defined WIN32
+#elif defined(WIN32) && !defined(_WIN64)
 #include <windows.h>
 #include <process.h>
 #include <imagehlp.h>
@@ -461,7 +463,7 @@ void DisableCoreDump() {
 void EnableStackTrace() {
 	#if defined __linux__
 		installcrashhandler();
-	#elif defined WIN32
+	#elif defined(WIN32) && !defined(_WIN64)
 		win32_initialize_handler();
 	#else
 
@@ -471,7 +473,7 @@ void EnableStackTrace() {
 void DisableStackTrace() {
 	#if defined __linux__
 		restorecrashhandler();
-	#elif defined WIN32
+	#elif defined(WIN32) && !defined(_WIN64)
 		win32_deinitialize_handler();
 	#else
 

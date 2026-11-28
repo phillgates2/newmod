@@ -387,7 +387,7 @@ void	Svcmd_EntityList_f (void) {
 		}
 		G_Printf("\n");
 	}
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 	G_Printf("%4i: first_free_entity\n", (int) (first_free_entity - g_entities) );
 	G_Printf("%4i: last_free_entity\n", (int)(last_free_entity - g_entities));
 #else

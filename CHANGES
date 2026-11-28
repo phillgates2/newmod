@@ -1,6 +1,31 @@
 NewMod change log
 =================
 
+2026-11-28 — Arena.ai Agent Mode
+--------------------------------
+Multi-architecture / cross-platform builds and dedicated-server compatibility
+* Makefile and tools/lipo_universal.py: support Linux x86_64 and i386
+  (<mod>.mp.x86_64.so, <mod>.mp.i386.so), Windows x64 and x86 (<mod>_mp_x64.dll,
+  <mod>_mp_x86.dll), and macOS universal x86_64 + arm64 (<mod>_mac) matching
+  ET: Legacy's Sys_GetDLLName conventions. Target glibc 2.17 on cross-compiled
+  Linux modules, pack client modules into build/overzealous-all.pk3, and add
+  server-dist (build/overzealous-server-linux.tar.gz) with loose 32-bit and
+  64-bit qagame server modules alongside overzealous-all.pk3.
+* src/game/q_shared.h, g_main.c, g_syscalls.c, cgame/cg_main.c, cg_syscalls.c,
+  ui/ui_main.c, ui/ui_syscalls.c: add DLLEXPORT + QDECL on vmMain and dllEntry
+  so Windows 32/64-bit PE DLLs export exact unmangled entrypoints; normalize
+  _WIN32/WIN32, __APPLE__/MACOS_X, portable SinCos, and 64-bit pointer-offset
+  casts across x86_64, arm64, and _WIN64.
+* src/game/g_crash.c and src/cgame/cg_crash.c: support i386, x86_64, and
+  aarch64 Linux crash instruction pointers, typed POSIX signal/ELF casts under
+  C++, and 32-bit-only guards around legacy Win32 imagehlp backtraces.
+* src/game/g_main.c (ServerCheck) and g_client.c (CGAMEFileExists): allow
+  custom non-etmain fs_game directories (e.g., ozmod or overzealous), recognize
+  overzealous*.pk3 in sv_pakNames, and fail cleanly via G_Error instead of
+  terminating the host process with exit(1).
+* Omnibot/Common/BotLoadLibrary.cpp: add 64-bit omnibot_et.x86_64.so and
+  omnibot_et_x64.dll fallback library names.
+
 2026-11-21 — Arena.ai Agent Mode
 --------------------------------
 NewMod is derived directly from No Quarter by the No Quarter Mod Team and

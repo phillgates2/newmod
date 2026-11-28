@@ -25,7 +25,7 @@ extern "C" __attribute__((weak)) qhandle_t trap_R_RegisterModel( const char *nam
 #pragma export on
 #endif
 #endif
-extern "C" void dllEntry( intptr_t (QDECL *syscallptr)(intptr_t arg, ...) ) {
+extern "C" DLLEXPORT void QDECL dllEntry( intptr_t (QDECL *syscallptr)(intptr_t arg, ...) ) {
 	syscall = syscallptr;
 }
 #if defined(__MACOS__)

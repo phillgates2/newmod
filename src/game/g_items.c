@@ -669,7 +669,7 @@ int Pickup_Weapon( gentity_t *ent, gentity_t *other ) {
 						if (g_logOptions.integer & LOGOPTS_PICKUPS) {
 							if ( !(other->r.svFlags & SVF_BOT) || ((other->r.svFlags & SVF_BOT) && (g_logOptions.integer & LOGOPTS_BOTS)) ) {
 								if(ent->parent && ent->parent->client) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 									G_LogPrintf("Ammo_Pack: %d %d\n", (int)(ent->parent - g_entities), (int)(other - g_entities));	// OSP
 #else
 									G_LogPrintf("Ammo_Pack: %d %d\n", ent->parent - g_entities, other - g_entities);	// OSP
@@ -1080,7 +1080,7 @@ int Pickup_Health(gentity_t *ent, gentity_t *other) {
 				AddScore(ent->parent, WOLF_HEALTH_UP);
 				if (g_logOptions.integer & LOGOPTS_PICKUPS) {
 					if ( !(other->r.svFlags & SVF_BOT) || ((other->r.svFlags & SVF_BOT) && (g_logOptions.integer & LOGOPTS_BOTS)) ) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 						G_LogPrintf("Health_Pack: %d %d\n", (int)(ent->parent - g_entities), (int)(other - g_entities));	// OSP
 #else
 						G_LogPrintf("Health_Pack: %d %d\n", ent->parent - g_entities, other - g_entities);	// OSP

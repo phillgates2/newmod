@@ -520,7 +520,7 @@ char *G_createStats(gentity_t *refEnt)
 		}
 	}
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 	return( va("%d %d %d%s%s %d%s", (int)(refEnt - g_entities),
 									refEnt->client->sess.rounds,
 									dwWeaponMask,

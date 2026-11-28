@@ -50,6 +50,11 @@ static char queued_console[MAX_STRING_CHARS * 2];
 static jmp_buf error_jump;
 static unsigned char binary_packet[PACKET_OFFSET + MAX_CLIENTS * 19];
 static char fake_userinfo[MAX_INFO_STRING], fake_session[MAX_STRING_CHARS];
+static char fake_fs_game[64] = "newmod";
+static char fake_version[128] = "ET 2.60b linux-i386";
+static char fake_sv_pure[16] = "1";
+static char fake_sv_paknames[256] = "overzealous-all pak0";
+static int msg_whine_sets;
 static char campaign_gametype[32];
 static char configstrings[MAX_CONFIGSTRINGS][MAX_QPATH * 2];
 static char stored[4096], console_output[8192];
@@ -132,6 +137,8 @@ static intptr_t fake_syscall(intptr_t op, ...) {
             snprintf(campaign_gametype, sizeof(campaign_gametype), "%s", (char *)args[1]);
         } else if (!strcmp((char *)args[0], "session") || !strncmp((char *)args[0], "fireteam", 8)) {
             /* G_ShutdownGame writes world and fireteam session cvars. */
+        } else if (!strncmp((char *)args[0], "g_msg", 5)) {
+            ++msg_whine_sets;
         } else { fprintf(stderr, "unexpected cvar set %s\n", (char *)args[0]); exit(1); }
         return 0;
     case G_GET_CONFIGSTRING:
@@ -157,7 +164,10 @@ static intptr_t fake_syscall(intptr_t op, ...) {
     case G_CVAR_VARIABLE_STRING_BUFFER:
         CHECK(n == 3 && (int)args[2] > 0);
         snprintf((char *)args[1], (size_t)args[2], "%s",
-                 !strcmp((char *)args[0], "fs_game") ? "newmod" :
+                 !strcmp((char *)args[0], "fs_game") ? fake_fs_game :
+                 !strcmp((char *)args[0], "version") ? fake_version :
+                 !strcmp((char *)args[0], "sv_pure") ? fake_sv_pure :
+                 !strcmp((char *)args[0], "sv_pakNames") ? fake_sv_paknames :
                  !strcmp((char *)args[0], "g_gravity") ? gravity_string :
                  !strcmp((char *)args[0], "session0") ? fake_session : ".");
         return 0;
@@ -2895,6 +2905,35 @@ static void test_lua_module_loading(void) {
 }
 #endif
 
+static void test_server_check(void) {
+    void (*server_check)(void) = sym("ServerCheck");
+    reset_messages();
+    errors = msg_whine_sets = 0;
+    snprintf(fake_fs_game, sizeof(fake_fs_game), "%s", "ozmod");
+    snprintf(fake_version, sizeof(fake_version), "%s", "ET 2.60b linux-i386");
+    snprintf(fake_sv_pure, sizeof(fake_sv_pure), "%s", "1");
+    snprintf(fake_sv_paknames, sizeof(fake_sv_paknames), "%s", "overzealous-all pak0");
+    server_check();
+    CHECK(errors == 0 && msg_whine_sets == 0);
+
+    snprintf(fake_fs_game, sizeof(fake_fs_game), "%s", "overzealous");
+    snprintf(fake_version, sizeof(fake_version), "%s", "ET 2.60b linux-x86_64");
+    snprintf(fake_sv_paknames, sizeof(fake_sv_paknames), "%s", "overzealous-linux-x86_64 pak0");
+    server_check();
+    CHECK(errors == 0 && msg_whine_sets == 0);
+
+    snprintf(fake_fs_game, sizeof(fake_fs_game), "%s", "etmain");
+    expect_error = 1;
+    if (!setjmp(error_jump)) {
+        server_check();
+        CHECK(0 && "ServerCheck must reject fs_game=etmain");
+    }
+    expect_error = 0;
+    CHECK(errors == 1);
+    errors = 0;
+    snprintf(fake_fs_game, sizeof(fake_fs_game), "%s", "newmod");
+}
+
 int main(int argc, char **argv) {
     void (*entry)(intptr_t (*)(intptr_t, ...));
     CHECK(argc == 2);
@@ -2911,7 +2950,8 @@ int main(int argc, char **argv) {
     check_command = sym("G_shrubbot_cmd_check"); say_command = sym("Cmd_Say_f");
     client_command = sym("ClientCommand"); find_clients = sym("ClientNumbersFromString");
     bit_set = sym("COM_BitSet"); bit_clear = sym("COM_BitClear"); bit_check = sym("COM_BitCheck");
-    if (getenv("NEWMOD_FAULT_ONLY")) { test_config_fault_injection(); dlclose(module); return 0; }
+    if (getenv("NEWMOD_FAULT_ONLY") || getenv("OVERZEALOUS_FAULT_ONLY")) { test_config_fault_injection(); dlclose(module); return 0; }
+    test_server_check();
     test_shrubbot_config_reload(); test_mapvote_config_roundtrip(); test_showbans_paging(); test_mute_commands();
     test_ban_creation();
     test_vectors(); test_shrub_chat_tokenization(); test_string_replacement(); test_custom_command_dispatch();

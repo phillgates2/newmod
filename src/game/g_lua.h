@@ -47,7 +47,7 @@
 #define HOSTARCH	"UNIX"
 #define EXTENSION	"so"
 
-#elif defined WIN32
+#elif defined WIN32 || defined _WIN32
 
 #define HOSTARCH	"WIN32"
 #define EXTENSION	"dll"

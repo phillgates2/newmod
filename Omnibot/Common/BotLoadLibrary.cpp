@@ -219,6 +219,14 @@ eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *pat
 		g_BotLibrary = Omnibot_LL( OB_VA(".\\omni-bot\\%s.dll", lib) );
 	if(g_BotLibrary == 0)
 		g_BotLibrary = Omnibot_LL( OB_VA("%s.dll", lib) );
+#ifdef _WIN64
+	if(g_BotLibrary == 0)
+		g_BotLibrary = Omnibot_LL( OB_VA("%s\\%s_x64.dll", path ? path : ".", lib) );
+	if(g_BotLibrary == 0)
+		g_BotLibrary = Omnibot_LL( OB_VA(".\\omni-bot\\%s_x64.dll", lib) );
+	if(g_BotLibrary == 0)
+		g_BotLibrary = Omnibot_LL( OB_VA("%s_x64.dll", lib) );
+#endif
 	if(g_BotLibrary == 0)
 	{
 		g_OmnibotLibPath.clear();
@@ -361,6 +369,22 @@ eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *pat
 		if(homeDir)
 			g_BotLibrary = Omnibot_LL(OB_VA("%s.so", lib));
 	}
+#ifdef __x86_64__
+	if(!g_BotLibrary)
+	{
+		g_BotLibrary = Omnibot_LL(OB_VA("%s/%s.x86_64.so", path ? path : ".", lib));
+	}
+	if(!g_BotLibrary)
+	{
+		g_BotLibrary = Omnibot_LL(OB_VA("./%s.x86_64.so", lib));
+	}
+	if(!g_BotLibrary)
+	{
+		char *homeDir = getenv("HOME");
+		if(homeDir)
+			g_BotLibrary = Omnibot_LL(OB_VA("%s/omni-bot/%s.x86_64.so", homeDir, lib));
+	}
+#endif
 	if(!g_BotLibrary)
 	{
 		g_OmnibotLibPath.clear();

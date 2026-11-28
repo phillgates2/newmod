@@ -1425,7 +1425,7 @@ void SP_trigger_objective_info( gentity_t *ent ) {
 			cia = 0;
 		}
 	}
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 	G_SetConfigStringValue( CS_OID_DATA + level.numOidTriggers,				"e", va("%i", (int) (ent-g_entities) ) );
 #else
 	G_SetConfigStringValue( CS_OID_DATA + level.numOidTriggers,				"e", va("%i", ent-g_entities) );

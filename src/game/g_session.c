@@ -73,7 +73,7 @@ void G_WriteClientSessionData( gclient_t *client, qboolean restart ) {
 #endif
 		);
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 	trap_Cvar_Set( va( "session%i", (int)(client - level.clients) ), s );
 #else
 	trap_Cvar_Set( va( "session%i", client - level.clients ), s );
@@ -100,7 +100,7 @@ void G_WriteClientSessionData( gclient_t *client, qboolean restart ) {
 				client->sess.medals[6]
 				);
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 			trap_Cvar_Set( va( "sessionstats%i", (int)(client - level.clients) ), s );
 #else
 			trap_Cvar_Set( va( "sessionstats%i", client - level.clients ), s );
@@ -187,7 +187,7 @@ void G_ReadSessionData( gclient_t *client )
 	qboolean test;
 	qboolean load = qfalse;
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 	trap_Cvar_VariableStringBuffer( va( "session%i", (int)(client - level.clients) ), s, sizeof(s) );
 #else
 	trap_Cvar_VariableStringBuffer( va( "session%i", client - level.clients ), s, sizeof(s) );
@@ -270,7 +270,7 @@ void G_ReadSessionData( gclient_t *client )
 	}
 
 	if(load) {
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 		trap_Cvar_VariableStringBuffer( va( "sessionstats%i", (int)(client - level.clients) ), s, sizeof(s) );
 #else
 		trap_Cvar_VariableStringBuffer( va( "sessionstats%i", client - level.clients ), s, sizeof(s) );

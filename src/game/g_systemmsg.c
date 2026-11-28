@@ -65,7 +65,7 @@ qboolean G_SendSystemMessage( sysMsg_t message, int team ) {
 
 		if(other->client->sess.sessionTeam != team)
 			continue;
-#if defined(__x86_64__)
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64)
 		trap_SendServerCommand( (int)(other-g_entities), va("vschat %i %i", (int)(other-g_entities), message));
 #else
 		trap_SendServerCommand( other-g_entities, va("vschat %i %i", other-g_entities, message));
