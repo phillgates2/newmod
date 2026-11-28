@@ -617,7 +617,7 @@ void G_MissileDie( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, i
 		return;
 	}
 	if ( attacker && attacker->client && attacker->s.number != self->r.ownerNum ){
-		G_MissileDownXPAward( attacker, mod );
+		G_MissileDownXPAward( attacker, (meansOfDeath_t)mod );
 	}
 
 	self->takedamage	= qfalse;

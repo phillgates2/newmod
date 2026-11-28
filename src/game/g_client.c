@@ -849,7 +849,7 @@ team_t TeamCount(int ignoreClientNum, int team) {
 		if(level.clients[ref].sess.sessionTeam == team) count++;
 	}
 
-	return(count);
+	return(team_t)count;
 }
 // -NERVE - SMF
 
@@ -1144,8 +1144,8 @@ void G_AddClassWeapons(gclient_t *client) {
 			return;
 	}
 
-	primary = client->sess.latchPlayerWeapon;
-	secondary = client->sess.latchPlayerWeapon2;
+	primary = (weapon_t)client->sess.latchPlayerWeapon;
+	secondary = (weapon_t)client->sess.latchPlayerWeapon2;
 
 	// correct player weapon
 	secondary = G_CorrectSecondaryWeapon( secondary, team, client->sess.skill[SK_LIGHT_WEAPONS], client->sess.skill[SK_HEAVY_WEAPONS], pc );
@@ -1169,7 +1169,7 @@ void G_AddClassWeapons(gclient_t *client) {
 		}
 	}
 	else if ( pc == PC_COVERTOPS ) {
-		secondary2 = weapAlts[secondary];
+		secondary2 = (weapon_t)weapAlts[secondary];
 	}
 
 	// add ammo to akimbo sidearm
@@ -1193,8 +1193,8 @@ void G_AddClassWeapons(gclient_t *client) {
 	}
 
 	// add alt weapon if available
-	if ( weapAlts[primary] != WP_NONE && !G_IsWeaponDisabled(&g_entities[client->ps.clientNum], weapAlts[primary], qtrue) ){
-		AddWeaponToPlayer( client, weapAlts[primary], GetWeaponTableData(weapAlts[primary])->defaultStartingAmmo*numClips, GetWeaponTableData(weapAlts[primary])->defaultStartingClip, qfalse );
+	if ( weapAlts[primary] != WP_NONE && !G_IsWeaponDisabled(&g_entities[client->ps.clientNum], (weapon_t)weapAlts[primary], qtrue) ){
+		AddWeaponToPlayer( client, (weapon_t)weapAlts[primary], GetWeaponTableData(weapAlts[primary])->defaultStartingAmmo*numClips, GetWeaponTableData(weapAlts[primary])->defaultStartingClip, qfalse );
 	}
 
 	// add nades
@@ -2146,7 +2146,7 @@ void ClientUserinfoChanged( int clientNum ) {
 
 // Return the length of the IP address if it has a port, or INT_MAX otherwise
 int GetIPLength(char const* ip) {
-	char* 	start	= strchr(ip, ':');
+	char* 	start	= (char*)strchr(ip, ':');
 	return (start == NULL ? INT_MAX : start - ip);
 }
 
@@ -2898,7 +2898,7 @@ void ClientSpawn( gentity_t *ent, qboolean revived, qboolean teamChange, qboolea
 			if (  !spawnPoint && !(ent->r.svFlags & SVF_BOT) ) {
 				spawnPoint = SelectSpectatorSpawnPoint( spawn_origin, spawn_angles );
 				if ( !spawnPoint ) {
-					SetTeam( ent, "s", qtrue, -1, -1, qfalse );
+					SetTeam( ent, "s", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse );
 				}
 			}
 
@@ -3046,7 +3046,7 @@ void ClientSpawn( gentity_t *ent, qboolean revived, qboolean teamChange, qboolea
 		}
 
 		if ( !doWar ) {
-			if( G_IsWeaponDisabled( ent, client->sess.latchPlayerWeapon, qtrue ) ) {
+			if( G_IsWeaponDisabled( ent, (weapon_t)client->sess.latchPlayerWeapon, qtrue ) ) {
 				bg_playerclass_t* classInfo = BG_PlayerClassForPlayerState( &ent->client->ps );
 				client->sess.latchPlayerWeapon = classInfo->classWeapons[0];
 				update = qtrue;
@@ -3070,13 +3070,13 @@ void ClientSpawn( gentity_t *ent, qboolean revived, qboolean teamChange, qboolea
 			}
 			// no other option, have to kick him to spectator
 			if ( !found )
-				SetTeam( ent, "s", qtrue, -1, -1, qfalse );
+				SetTeam( ent, "s", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse );
 
 			update = qtrue;
 		}
 
 		if ( !doWar ) {
-			if( G_IsWeaponDisabled( ent, client->sess.playerWeapon, qtrue ) ) {
+			if( G_IsWeaponDisabled( ent, (weapon_t)client->sess.playerWeapon, qtrue ) ) {
 				bg_playerclass_t* classInfo = BG_PlayerClassForPlayerState( &ent->client->ps );
 				client->sess.playerWeapon = classInfo->classWeapons[0];
 				update = qtrue;
@@ -3148,7 +3148,7 @@ void ClientSpawn( gentity_t *ent, qboolean revived, qboolean teamChange, qboolea
 	}
 	else {
 		//bani - #245 - we try to orient them in the freelook direction when revived
-		vec3_t	newangle = { 0, SHORT2ANGLE( ent->client->pers.cmd.angles[YAW] + ent->client->ps.delta_angles[YAW] ), 0};
+		vec3_t	newangle = { 0, (float)SHORT2ANGLE( ent->client->pers.cmd.angles[YAW] + ent->client->ps.delta_angles[YAW] ), 0};
 
 		SetClientViewAngle( ent, newangle );
 	}

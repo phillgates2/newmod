@@ -2484,15 +2484,15 @@ weapon_t BG_FindClipForWeapon( weapon_t weapon) {
 	/* NewMod, 2026-11-21: appended tools can follow the ammo/team entries. */
 	for ( it = bg_itemlist + INDEX_IT_WEAPON ; it->classname ; it++) {
 		if ( it->giType == IT_WEAPON && it->giTag == weapon )
-			return it->giClipIndex;
+			return (weapon_t)it->giClipIndex;
 	}
-	return 0;
+	return (weapon_t)0;
 }
 
 void Init_FindClipForWeapon( void ) {
 	int	wp;
 	for ( wp=WP_NONE; wp<WP_NUM_WEAPONS; wp++ ) {
-		WeaponTable[wp].clipindex = BG_FindClipForWeapon(wp);
+		WeaponTable[wp].clipindex = BG_FindClipForWeapon((weapon_t)wp);
 	}
 }
 
@@ -2507,15 +2507,15 @@ weapon_t BG_FindAmmoForWeapon( weapon_t weapon ) {
 	/* NewMod, 2026-11-21: appended tools can follow the ammo/team entries. */
 	for ( it = bg_itemlist + INDEX_IT_WEAPON ; it->classname ; it++) {
 		if ( it->giType == IT_WEAPON && it->giTag == weapon )
-			return it->giAmmoIndex;
+			return (weapon_t)it->giAmmoIndex;
 	}
-	return 0;
+	return (weapon_t)0;
 }
 
 void Init_FindAmmoForWeapon( void ) {
 	int	wp;
 	for ( wp=WP_NONE; wp<WP_NUM_WEAPONS; wp++ ) {
-		WeaponTable[wp].ammoindex = BG_FindAmmoForWeapon(wp);
+		WeaponTable[wp].ammoindex = BG_FindAmmoForWeapon((weapon_t)wp);
 	}
 }
 
@@ -2736,7 +2736,7 @@ weapon_t BG_GrenadeTypeForTeam( team_t team ) {
 
 // Gordon: setting numOfClips = 0 allows you to check if the client needs ammo, but doesnt give any
 qboolean BG_AddMagicAmmo( playerState_t *ps, int *skillBits, int teamNum, int numOfClips ) {
-	int			weapon;
+	weapon_t		weapon;
 	int			canAdd;
 	int			maxammo;
 	int			clip;
@@ -2824,7 +2824,7 @@ qboolean BG_AddMagicAmmo( playerState_t *ps, int *skillBits, int teamNum, int nu
 	// reloadable weapons..
 // TODO: This is a terrible piece of code ...
 	for ( i=0; reloadableWeapons[i] >= 0; i++) {
-		weapon = reloadableWeapons[i];
+		weapon = (weapon_t)reloadableWeapons[i];
 		if ( !COM_BitCheck( ps->weapons, weapon ) ) continue;
 
 		switch (weapon) {
@@ -2923,7 +2923,7 @@ qboolean BG_CanItemBeGrabbed( const entityState_t *ent, const playerState_t *ps,
 				return BG_AddMagicAmmo( (playerState_t *)ps, skillBits, teamNum, 0);	// Arnout: had to cast const away
 			}
 			// jaquboss don't grab ammo if we have already enough
-			if ( ps->ammo[item->giTag] < BG_MaxAmmoForWeapon( item->giTag, skillBits, ps->stats[STAT_PLAYER_CLASS] ) ){
+				if ( ps->ammo[item->giTag] < BG_MaxAmmoForWeapon( (weapon_t)item->giTag, skillBits, ps->stats[STAT_PLAYER_CLASS] ) ){
 				int			i;
 
 				// jaquboss only eat ammo we can use

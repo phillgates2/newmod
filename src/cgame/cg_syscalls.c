@@ -1121,7 +1121,7 @@ void trap_SendMessage( char *buf, int buflen ) {
 }
 
 messageStatus_t trap_MessageStatus( void ) {
-	return NM_SYSCALL( CG_MESSAGESTATUS ); /* CHANGES: native ABI */
+	return (messageStatus_t)NM_SYSCALL( CG_MESSAGESTATUS ); /* CHANGES: native ABI */
 }
 
 //bani - dynamic shaders

@@ -83,7 +83,7 @@ void G_PrintAccuracyLog( gentity_t *ent ) {
 	Q_strncpyz(buffer, "WeaponStats", 2048);
 
 	for( i = WP_KNIFE; i < WP_NUM_WEAPONS; i++ ) {
-		if(!BG_ValidStatWeapon(i)) {
+		if(!BG_ValidStatWeapon((weapon_t)i)) {
 			continue;
 		}
 
@@ -353,7 +353,7 @@ void G_XPDecay(gentity_t *ent, int seconds, qboolean force)
 		if(ent->client->sess.skillpoints[i] < p)
 			p = ent->client->sess.skillpoints[i];
 
-		G_LoseSkillPointsExt(ent, i, p);
+		G_LoseSkillPointsExt(ent, (skillType_t)i, p);
 	}
 }
 

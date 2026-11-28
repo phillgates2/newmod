@@ -857,7 +857,7 @@ void BG_AnimParseAnimScript( animModelInfo_t *animModelInfo, animScriptData_t *s
 				BG_AnimParseError( "BG_AnimParseAnimScript: unexpected '%s'", token );	// RF mod
 			}
 
-			parseMode = newParseMode;
+			parseMode = (animScriptParseMode_t)newParseMode;
 			parseMovetype = ANIM_MT_UNUSED;
 			parseEvent = -1;
 			continue;
@@ -965,7 +965,7 @@ void BG_AnimParseAnimScript( animModelInfo_t *animModelInfo, animScriptData_t *s
 					indexes[indentLevel] = BG_IndexForString( token, animMoveTypesStr, qfalse );
 					if (parseMode == PARSEMODE_ANIMATION) {
 						currentScript = &animModelInfo->scriptAnims[indexes[0]][indexes[1]];
-						parseMovetype = indexes[1];
+						parseMovetype = (scriptAnimMoveTypes_t)indexes[1];
 					}
 					else if (parseMode == PARSEMODE_CANNED_ANIMATIONS) {
 						currentScript = &animModelInfo->scriptCannedAnims[indexes[1]];
@@ -1307,10 +1307,10 @@ int BG_ExecuteCommand( playerState_t *ps, animModelInfo_t *animModelInfo, animSc
 		duration = scriptCommand->animDuration[0] + SERVER_FRAMETIME;
 		// FIXME: how to sync torso/legs anims accounting for transition blends, etc
 		if (scriptCommand->bodyPart[0] == ANIM_BP_BOTH || scriptCommand->bodyPart[0] == ANIM_BP_LEGS) {
-			playedLegsAnim = ( BG_PlayAnim( ps, animModelInfo, scriptCommand->animIndex[0], scriptCommand->bodyPart[0], duration, setTimer, isContinue, force ) > -1 );
+			playedLegsAnim = ( BG_PlayAnim( ps, animModelInfo, scriptCommand->animIndex[0], (animBodyPart_t)scriptCommand->bodyPart[0], duration, setTimer, isContinue, force ) > -1 );
 		}
 		else {
-			BG_PlayAnim( ps, animModelInfo, scriptCommand->animIndex[0], scriptCommand->bodyPart[0], duration, setTimer, isContinue, force );
+			BG_PlayAnim( ps, animModelInfo, scriptCommand->animIndex[0], (animBodyPart_t)scriptCommand->bodyPart[0], duration, setTimer, isContinue, force );
 		}
 	}
 	if (scriptCommand->bodyPart[1]) {
@@ -1318,10 +1318,10 @@ int BG_ExecuteCommand( playerState_t *ps, animModelInfo_t *animModelInfo, animSc
 		// FIXME: how to sync torso/legs anims accounting for transition blends, etc
 		// just play the animation for the torso
 		if (scriptCommand->bodyPart[1] == ANIM_BP_BOTH || scriptCommand->bodyPart[1] == ANIM_BP_LEGS) {
-			playedLegsAnim = ( BG_PlayAnim( ps, animModelInfo, scriptCommand->animIndex[1], scriptCommand->bodyPart[1], duration, setTimer, isContinue, force ) > -1 );
+			playedLegsAnim = ( BG_PlayAnim( ps, animModelInfo, scriptCommand->animIndex[1], (animBodyPart_t)scriptCommand->bodyPart[1], duration, setTimer, isContinue, force ) > -1 );
 		}
 		else {
-			BG_PlayAnim( ps, animModelInfo, scriptCommand->animIndex[1], scriptCommand->bodyPart[1], duration, setTimer, isContinue, force );
+			BG_PlayAnim( ps, animModelInfo, scriptCommand->animIndex[1], (animBodyPart_t)scriptCommand->bodyPart[1], duration, setTimer, isContinue, force );
 		}
 	}
 
@@ -1439,7 +1439,7 @@ int	BG_AnimScriptCannedAnimation( playerState_t *ps, animModelInfo_t *animModelI
 		return -1;
 	}
 
-	movetype = globalScriptData->clientConditions[ ps->clientNum ][ ANIM_COND_MOVETYPE ][0];
+	movetype = (scriptAnimMoveTypes_t)globalScriptData->clientConditions[ ps->clientNum ][ ANIM_COND_MOVETYPE ][0];
 	if (!movetype) {	// no valid movetype yet for this client
 		return -1;
 	}

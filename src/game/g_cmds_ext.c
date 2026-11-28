@@ -250,7 +250,8 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	gclient_t *cl;
 	gentity_t *cl_ent;
 	char n2[MAX_NETNAME], ready[16], ref[16], rate[256];
-	char *s, *tc, *coach, userinfo[MAX_INFO_STRING];
+	char *s, userinfo[MAX_INFO_STRING];
+	const char *tc, *coach;
 
 
 	if(g_gamestate.integer == GS_PLAYING) {
@@ -717,7 +718,7 @@ void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state
 	}
 
 	if(iWeap < WS_KNIFE) {
-		G_commandHelp(ent, (state)?"topshots":"bottomshots", dwCommand);
+		G_commandHelp(ent, (char*)((state)?"topshots":"bottomshots"), dwCommand);
 
 		Q_strncpyz(z, "^3Available weapon codes:^7\n", sizeof(z));
 		for(i=WS_KNIFE; i<WS_MAX; i++) {

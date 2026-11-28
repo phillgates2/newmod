@@ -905,7 +905,7 @@ void MatchTeam( gentity_t *teamLeader, int moverState, int time ) {
 		if(teamLeader->flags & FL_KICKACTIVATE)			slave->flags |= FL_KICKACTIVATE;
 		if(teamLeader->flags & FL_SOFTACTIVATE)			slave->flags |= FL_SOFTACTIVATE;
 
-		SetMoverState( slave, moverState, time );
+		SetMoverState( slave, (moverState_t)moverState, time );
 	}
 }
 
@@ -925,7 +925,7 @@ void MatchTeamReverseAngleOnSlaves( gentity_t *teamLeader, int moverState, int t
 		if(teamLeader->flags & FL_KICKACTIVATE)			slave->flags |= FL_KICKACTIVATE;
 		if(teamLeader->flags & FL_SOFTACTIVATE)			slave->flags |= FL_SOFTACTIVATE;
 
-		SetMoverState( slave, moverState, time );
+		SetMoverState( slave, (moverState_t)moverState, time );
 	}
 }
 
@@ -3745,8 +3745,8 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 
 	// Skills stuff
 
-	if( G_GetWeaponClassForMOD( mod ) >= self->constructibleStats.weaponclass ) {
-		G_AddKillSkillPointsForDestruction( attacker, mod, &self->constructibleStats );
+	if( G_GetWeaponClassForMOD( (meansOfDeath_t)mod ) >= self->constructibleStats.weaponclass ) {
+		G_AddKillSkillPointsForDestruction( attacker, (meansOfDeath_t)mod, &self->constructibleStats );
 	}
 }
 
@@ -4072,7 +4072,7 @@ void use_invisible_user(gentity_t *ent, gentity_t *other, gentity_t *activator )
 	}
 
 	if(other->client) {
-		G_Script_ScriptEvent( ent, SE_ACTIVATE, other->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies" );
+		G_Script_ScriptEvent( ent, SE_ACTIVATE, (char*)(other->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies") );
 	}
 	G_UseTargets ( ent, other);	//----(SA)	how about this so the triggered targets have an 'activator' as well as an 'other'?
 								//----(SA)	Please let me know if you forsee any problems with this.
@@ -4372,8 +4372,8 @@ void func_constructible_explode( gentity_t *self, gentity_t *inflictor, gentity_
 			}
 
 			// Skills stuff
-			if( G_GetWeaponClassForMOD( mod ) >= self->constructibleStats.weaponclass ) {
-				G_AddKillSkillPointsForDestruction( attacker, mod, &self->constructibleStats );
+			if( G_GetWeaponClassForMOD( (meansOfDeath_t)mod ) >= self->constructibleStats.weaponclass ) {
+				G_AddKillSkillPointsForDestruction( attacker, (meansOfDeath_t)mod, &self->constructibleStats );
 			}
 		}
 		else {
@@ -4415,8 +4415,8 @@ void func_constructible_explode( gentity_t *self, gentity_t *inflictor, gentity_
 			G_Script_ScriptEvent( self, SE_DEATH, "" );
 
 			// Skills stuff
-			if( G_GetWeaponClassForMOD( mod ) >= self->constructibleStats.weaponclass ) {
-				G_AddKillSkillPointsForDestruction( attacker, mod, &self->constructibleStats );
+			if( G_GetWeaponClassForMOD( (meansOfDeath_t)mod ) >= self->constructibleStats.weaponclass ) {
+				G_AddKillSkillPointsForDestruction( attacker, (meansOfDeath_t)mod, &self->constructibleStats );
 			}
 
 			// unlink
@@ -4444,8 +4444,8 @@ void func_constructible_explode( gentity_t *self, gentity_t *inflictor, gentity_
 		}
 
 		// Skills stuff
-		if( G_GetWeaponClassForMOD( mod ) >= self->constructibleStats.weaponclass ) {
-			G_AddKillSkillPointsForDestruction( attacker, mod, &self->constructibleStats );
+		if( G_GetWeaponClassForMOD( (meansOfDeath_t)mod ) >= self->constructibleStats.weaponclass ) {
+			G_AddKillSkillPointsForDestruction( attacker, (meansOfDeath_t)mod, &self->constructibleStats );
 		}
 
 		// core: display a message on who did it..

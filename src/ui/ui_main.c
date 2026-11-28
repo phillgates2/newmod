@@ -120,7 +120,7 @@ extern "C" intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intp
 		case UI_IS_FULLSCREEN:
 			return _UI_IsFullscreen();
 		case UI_SET_ACTIVE_MENU:
-			_UI_SetActiveMenu( arg0 );
+			_UI_SetActiveMenu( (uiMenuCommand_t)arg0 );
 			return 0;
 		case UI_GET_ACTIVE_MENU:
 			return _UI_GetActiveMenu();

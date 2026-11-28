@@ -443,7 +443,7 @@ cvarTable_t		gameCvarTable[] =
 	{ NULL,									"gamename",								GAMEVERSION,							CVAR_SERVERINFO | CVAR_ROM, 								0,		qfalse },
 	{ NULL,									"gamedate",								__DATE__,								CVAR_ROM, 													0,		qfalse },
 	{ &g_gamestate,							"gamestate",							"-1",									CVAR_WOLFINFO | CVAR_ROM,									0,		qfalse },
-	{ NULL,									"mod_version",							NEWMOD_VERSION,								CVAR_SERVERINFO | CVAR_ROM },
+{ NULL,								"mod_version",				OVERZEALOUS_VERSION,				CVAR_SERVERINFO | CVAR_ROM },
 	/* NewMod, Arena.ai, 2026-11-21 (see CHANGES): advertise this derivative, not its upstream. */
 	/* NewMod, Arena.ai, 2026-11-21 (see CHANGES): no public project URL has been verified. */
 	{ NULL,									"mod_url",								"",	CVAR_SERVERINFO | CVAR_ROM },
@@ -1438,7 +1438,7 @@ void G_CheckForCursorHints( gentity_t *ent ) {
 									}
 
 									if( !canPickup ) {
-										canPickup = G_CanPickupWeapon( it->giTag, ent );
+										canPickup = G_CanPickupWeapon( (weapon_t)it->giTag, ent );
 									}
 
 									if( canPickup ) {
@@ -2143,7 +2143,7 @@ qboolean G_ReadWeaponRestrictions(void) {
 		G_Printf(va("Reading restrictions from file \"nq_weapons_%s.cfg\"\n", mapname));
 	}
 
-	cfg = malloc(len+1);
+	cfg = (char*)malloc(len+1);
 	trap_FS_Read(cfg, len, f);
 	*(cfg + len) = '\0';
 	trap_FS_FCloseFile(f);
@@ -2905,9 +2905,9 @@ static void ServerCheck( void ) {
 		msgWhine = qtrue;
 		shutdown = qtrue;
 	}
-	/* NewMod, Arena.ai, 2026-11-21 (see CHANGES): retain the engine-version check above; use a distinct directory. */
-	else if ( Q_stricmp(versionStr, "newmod" ) != 0 ) {
-		G_Printf("^1Error: Wrong mod directory, should be 'newmod'\n" );
+	/* Overzealous, Arena.ai, 2026-11-27 (see CHANGES): retain the engine-version check above; use a distinct directory. */
+	else if ( Q_stricmp(versionStr, "overzealous" ) != 0 ) {
+		G_Printf("^1Error: Wrong mod directory, should be 'overzealous'\n" );
 		msgWhine = qtrue;
 		shutdown = qtrue;
 	}
@@ -3768,8 +3768,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 		cs[0] = '\0';
 
 		for ( i = 0; i < SK_NUM_SKILLS; ++i) {
-			InitSkillLevelStructure( i );
-			G_ReassignSkillLevel( i );
+			InitSkillLevelStructure( (skillType_t)i );
+			G_ReassignSkillLevel( (skillType_t)i );
 		}
 
 		Info_SetValueForKey(cs, "SS",
@@ -4026,7 +4026,7 @@ void etpro_PlayerInfo( void ) {
 		lastclient = i;
 
 		if( e->inuse == qfalse ) {
-			playerteam = 0;
+			playerteam = (team_t)0;
 		}
 		else {
 			playerteam = e->client->sess.sessionTeam;
@@ -4539,7 +4539,7 @@ void BeginIntermission( void ) {
 			flagent->s.weapon = 1000.f / 15.f;
 			flagent->spawnflags = 2;
 			flagent->s.teamNum = 0;
-			flagent->s.apos.trType = 1;
+			flagent->s.apos.trType = (trType_t)1;
 			flagent->clipmask = 0;
 			flagent->r.contents = 0;
 			// origin & angles
@@ -6699,7 +6699,7 @@ void G_mapvoteinfo_read() {
 		G_Printf("mapvoteinfo: file exceeds 1 MiB limit\n");
 		return;
 	}
-	cnf2 = calloc((size_t)len + 1, 1);
+	cnf2 = (char*)calloc((size_t)len + 1, 1);
 	if (!cnf2) {
 		trap_FS_FCloseFile(f);
 		G_Printf("mapvoteinfo: out of memory\n");

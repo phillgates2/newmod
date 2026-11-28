@@ -375,7 +375,7 @@ static void CG_Obituary( entityState_t *ent ) {
 	clientInfo_t	*ca; // JPW NERVE ca = attacker
 	qhandle_t		deathShader			= cgs.media.pmImages[PM_DEATH];
 	qhandle_t		icon				= cgs.media.pmImages[PM_DEATH];
-	weapon_t		weapon				= ent->weapon;
+	weapon_t		weapon				= (weapon_t)ent->weapon;
 	int				flags				= ent->dmgFlags;
 	vec3_t			color				= {1.f,1.f,1.f};
 	qboolean		overrideIcon		= qfalse;
@@ -1161,7 +1161,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 
 			le->lifeRate	= 1.0/(le->endTime - le->startTime);
 			le->leFlags		= LEF_TUMBLE;
-			le->leMarkType	= 0;
+			le->leMarkType	= (leMarkType_t)0;
 
 			VectorCopy( origin, re->origin );
 			AxisCopy( axisDefault, re->axis );
@@ -1427,7 +1427,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 
 			le->lifeRate	= 1.0/(le->endTime - le->startTime);
 			le->leFlags		= LEF_TUMBLE;
-			le->leMarkType	= 0;
+			le->leMarkType	= (leMarkType_t)0;
 
 			VectorCopy( origin, re->origin );
 			AxisCopy( axisDefault, re->axis );
@@ -1644,7 +1644,7 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 		le->leFlags				= LEF_TUMBLE;
 		le->bounceFactor		= 0.4f;
 		// le->leBounceSoundType	= LEBS_WOOD;
-		le->leMarkType			= 0;
+		le->leMarkType			= (leMarkType_t)0;
 
 		VectorCopy( origin, re->origin );
 		AxisCopy( axisDefault, re->axis );
@@ -1746,7 +1746,7 @@ void CG_ShardJunk(centity_t *cent, vec3_t origin, vec3_t dir) {
 	le->lifeRate			= 1.0/(le->endTime - le->startTime);
 	le->leFlags				= LEF_TUMBLE;
 	le->bounceFactor		= 0.4f;
-	le->leMarkType			= 0;
+	le->leMarkType			= (leMarkType_t)0;
 
 	VectorCopy( origin, re->origin );
 	AxisCopy( axisDefault, re->axis );
@@ -1791,7 +1791,7 @@ void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir) {
 	le->lifeRate			= 1.0/(le->endTime - le->startTime);
 	le->leFlags				= LEF_TUMBLE | LEF_TUMBLE_SLOW;
 	le->bounceFactor		= 0.4f;
-	le->leMarkType			= 0;
+	le->leMarkType			= (leMarkType_t)0;
 	le->breakCount			= 1;
 	le->sizeScale			= 0.5f;
 
@@ -3245,7 +3245,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 
 			if( str ) {
 				qhandle_t shader = CG_GetPMItemIcon( cent );
-				CG_AddPMItem( cent->currentState.effect1Time, str, shader, NULL );
+				CG_AddPMItem( (popupMessageType_t)cent->currentState.effect1Time, str, shader, NULL );
 			}
 			CG_PlayPMItemSound( cent );
 		}
@@ -3257,7 +3257,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 
 			if( str ) {
 				qhandle_t shader = CG_GetMMItemIcon( cent );
-				CG_AddMMItem( cent->currentState.effect1Time, str, shader, NULL, cent->currentState.weapon );
+				CG_AddMMItem( (popupMessageType_t)cent->currentState.effect1Time, str, shader, NULL, cent->currentState.weapon );
 			}
 			if ( cent->currentState.loopSound ) {
 				CG_PlayMMItemSound( cent );

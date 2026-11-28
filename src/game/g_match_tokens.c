@@ -37,7 +37,7 @@
 #include <string.h>
 #include "g_strparse.h"
 #line 5 "input_tokens_hwban.gperf"
-struct g_strtoken_t { char* name; g_StringToken_t index; };
+struct g_strtoken_t { char* name; int index; };
 
 #define TOTAL_KEYWORDS 49
 #define MIN_WORD_LENGTH 1
@@ -264,7 +264,7 @@ in_word_set (register const char *str, register unsigned int len)
 	#include <string.h>
 	#include "g_strparse.h"
 	#line 5 "input_tokens.gperf"
-	struct g_strtoken_t { char* name; g_StringToken_t index; };
+	struct g_strtoken_t { char* name; int index; };
 
 	#define MIN_WORD_LENGTH 1
 	#define MAX_WORD_LENGTH 20

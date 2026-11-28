@@ -721,7 +721,7 @@ qboolean ClientInactivityTimer( gclient_t *client )
 	else {
 		if ( level.time > client->inactivityTime ) {
 			if ( inTeam ) {
-				SetTeam(&g_entities[client - level.clients], "s", qtrue, -1, -1, qfalse);
+				SetTeam(&g_entities[client - level.clients], "s", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse);
 				client->inactivityWarning = qfalse;
 				client->inactivityTime = level.time + SECONDS_1 * inactivityspec;
 				client->inactivitySecondsLeft = inactivityspec;
@@ -1444,7 +1444,7 @@ extern "C" void G_SetIdentifyClient( gentity_t *ent )
 
 		}
 		else {
-			ent->client->ps.stats[STAT_IDENTIFYAMMO] = (int)((other->client->ps.ammo[WeaponTable[other->s.weapon].ammoindex] / (float)BG_MaxAmmoForWeapon( other->s.weapon, other->client->sess.skillBits, other->client->sess.playerType) ) * 255);
+			ent->client->ps.stats[STAT_IDENTIFYAMMO] = (int)((other->client->ps.ammo[WeaponTable[other->s.weapon].ammoindex] / (float)BG_MaxAmmoForWeapon( (weapon_t)other->s.weapon, other->client->sess.skillBits, other->client->sess.playerType) ) * 255);
 			ent->client->ps.stats[STAT_IDENTIFYCLIP] = (int)((other->client->ps.ammoclip[WeaponTable[other->s.weapon].clipindex] / (float)GetWeaponTableData(other->s.weapon)->maxclip ) * 255);
 
 			// make sure we send positive values

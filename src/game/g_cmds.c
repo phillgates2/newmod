@@ -1049,8 +1049,8 @@ qboolean ExecGive( gentity_t *ent, char *name, char *amt, char *amt2) {
 					amount = skillLevels[skill][ent->client->sess.skill[skill] + 1] - ent->client->sess.skillpoints[skill];
 				}
 
-				G_AddSkillPoints( ent, skill, hasAmount2 ? (float)amount2 : (float)amount );
-				G_DEBUG_ADD_SKILL_POINTS( ent, skill, amount, "give skill" ); // b064
+				G_AddSkillPoints( ent, (skillType_t)skill, hasAmount2 ? (float)amount2 : (float)amount );
+				G_DEBUG_ADD_SKILL_POINTS( ent, (skillType_t)skill, amount, "give skill" ); // b064
 				result = qtrue;
 			}
 		}
@@ -1062,8 +1062,8 @@ qboolean ExecGive( gentity_t *ent, char *name, char *amt, char *amt2) {
 					amount = skillLevels[i][ent->client->sess.skill[i] + 1] - floor(ent->client->sess.skillpoints[i]);
 				}
 
-				G_AddSkillPoints( ent, i, (float)amount );
-				G_DEBUG_ADD_SKILL_POINTS( ent, i, amount, "give skill" );
+				G_AddSkillPoints( ent, (skillType_t)i, (float)amount );
+				G_DEBUG_ADD_SKILL_POINTS( ent, (skillType_t)i, amount, "give skill" );
 			}
 			result = qtrue;
 		}
@@ -1445,7 +1445,7 @@ void G_TeamDataForString( const char* teamstr, int clientNum, team_t* team, spec
 	else {
 		*team = PickTeam( clientNum );
 		if(!G_teamJoinCheck( *team, &g_entities[clientNum] )) {
-			*team = ((TEAM_AXIS | TEAM_ALLIES) & ~*team);
+			*team = (team_t)((TEAM_AXIS | TEAM_ALLIES) & ~*team);
 		}
 	}
 }
@@ -1751,7 +1751,7 @@ void StopFollowing( gentity_t *ent ) {
 		VectorCopy(client->ps.origin, pos);
 		VectorCopy(client->ps.viewangles, angle);
 		// Need this as it gets spec mode reset properly
-		SetTeam( ent, "s", qtrue, -1, -1, qfalse );
+		SetTeam( ent, "s", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse );
 		VectorCopy(pos, client->ps.origin);
 		SetClientViewAngle(ent, angle);
 		ent->client->sess.spectatorState = SPECTATOR_FREE;
@@ -1997,8 +1997,8 @@ void Cmd_Team_f( gentity_t *ent, unsigned int dwCommand, qboolean fValue ) {
 	trap_Argv( 3, weap,		sizeof( weap	));
 	trap_Argv( 4, weap2,	sizeof( weap2	));
 
-	w =		atoi( weap );
-	w2 =	atoi( weap2 );
+	w = (weapon_t)atoi( weap );
+	w2 = (weapon_t)atoi( weap2 );
 
 	// tjw: allow old-school q2 players to use the '/team r' or '/team b' commands without losing their class
 	if(*ptype) {
@@ -2017,7 +2017,7 @@ void Cmd_Team_f( gentity_t *ent, unsigned int dwCommand, qboolean fValue ) {
 			}
 			// no other option, have to kick him to spectator
 			if ( !found ) {
-				SetTeam( ent, "s", qtrue, -1, -1, qfalse );
+				SetTeam( ent, "s", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse );
 				return;
 			}
 		}
@@ -2161,7 +2161,7 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir, qboolean skipBots ) {
 
 	// first set them to spectator
 	if (( ent->client->sess.spectatorState == SPECTATOR_NOT ) && (!( ent->client->ps.pm_flags & PMF_LIMBO)) ) { // JPW NERVE for limbo state
-		SetTeam( ent, "spectator", qfalse, -1, -1, qfalse );
+		SetTeam( ent, "spectator", qfalse, (weapon_t)-1, (weapon_t)-1, qfalse );
 	}
 
 	if ( dir != 1 && dir != -1 ) {
@@ -2520,7 +2520,7 @@ char *G_Shortcuts(gentity_t *ent, char *text) {
 
 			Com_sprintf(s, sizeof(s), "%i", (ent->health > 0) ? ent->health : 0);
 
-			weapon = BG_FindItemForWeapon(ent->client->ps.weapon);
+			weapon = BG_FindItemForWeapon((weapon_t)ent->client->ps.weapon);
 			if ( weapon ){
 				int clip = WeaponTable[ent->client->ps.weapon].clipindex;
 				int ammo = WeaponTable[ent->client->ps.weapon].ammoindex;
@@ -3169,7 +3169,7 @@ qboolean Cmd_CallVote_f( gentity_t *ent, unsigned int dwCommand, qboolean fRefCo
 	if( strchr( arg1, ';' ) || strchr( arg2, ';' ) ||
 	    strchr( arg1, '\r' ) || strchr( arg2, '\r' ) ||
 	    strchr( arg1, '\n' ) || strchr( arg2, '\n' ) ) {
-		char *strCmdBase = (!fRefCommand) ? "vote" : "ref command";
+		char *strCmdBase = (char*)((!fRefCommand) ? "vote" : "ref command");
 		G_refPrintf(ent, "Invalid %s string", strCmdBase);
 		return(qfalse);
 	}
@@ -3337,7 +3337,7 @@ void Cmd_Vote_f( gentity_t *ent ) {
 
 			AddScore( other, WOLF_FRIENDLY_PENALTY );
 
-			G_LoseKillSkillPoints( other, ent->sound2to1, ent->sound1to2, ent->sound2to3 ? qtrue : qfalse );
+			G_LoseKillSkillPoints( other, (meansOfDeath_t)ent->sound2to1, (hitRegion_t)ent->sound1to2, ent->sound2to3 ? qtrue : qfalse );
 		}
 		else {
 			trap_SendServerCommand( ent->client->pers.complaintClient, "cpm \"No complaint filed against you.\n\"" );
@@ -4493,7 +4493,7 @@ void Cmd_WeaponStat_f ( gentity_t* ent ) {
 		return;
 	}
 	trap_Argv( 1, buffer, 16 );
-	stat = atoi(buffer);
+	stat = (extWeaponStats_t)atoi(buffer);
 
 	if ( stat < 0 || stat >= WS_MAX )
 		return;

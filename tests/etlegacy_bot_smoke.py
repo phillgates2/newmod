@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Optional ET: Legacy server smoke with synthetic bots, not real clients.
 
-NewMod, Arena.ai, 2026-11-21. Compiles a disposable Omni-Bot ABI fixture,
+Overzealous, Arena.ai, 2026-11-27. Compiles a disposable Omni-Bot ABI fixture,
 creates an empty map and placeholder data, then forces game state and invokes
 synthetic Lua damage. It tests selected lifecycle/dispatch paths only; it
 is not an actual bot library, playable game, prediction or multiplayer test.
 Requires a separately supplied ET: Legacy 2.86.2 dedicated-server executable,
-a C++ compiler and the default NewMod build with Lua and Omni-Bot enabled.
+a C++ compiler and the default Overzealous build with Lua and Omni-Bot enabled.
 """
 import argparse
 import hashlib
@@ -228,7 +228,7 @@ quit
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("engine", type=Path, help="ET: Legacy 2.86.2 Linux x86-64 dedicated server")
-    parser.add_argument("--module", type=Path, default=ROOT / "build/newmod/qagame.mp.x86_64.so")
+    parser.add_argument("--module", type=Path, default=ROOT / "build/overzealous/qagame.mp.x86_64.so")
     parser.add_argument("--cxx", default=os.environ.get("CXX", "c++"), help="C++ compiler command")
     parser.add_argument("--port", type=int, default=0, help="local UDP port (default: choose an available port)")
     parser.add_argument("--show-log", action="store_true", help="print engine output on success too")
@@ -245,13 +245,13 @@ def main():
     if not compiler:
         parser.error("compiler command must not be empty")
 
-    with tempfile.TemporaryDirectory(prefix="newmod-etl-bot-smoke-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="overzealous-etl-bot-smoke-") as temporary:
         root = Path(temporary)
         base, home, botdir = root / "base", root / "home", root / "bot"
         home.mkdir()
         botdir.mkdir()
-        newmod = create_fixture(base, bot_capable=True)
-        shutil.copyfile(module, newmod / "qagame.mp.x86_64.so")
+        overzealous_dir = create_fixture(base, bot_capable=True)
+        shutil.copyfile(module, overzealous_dir / "qagame.mp.x86_64.so")
         try:
             subprocess.run(compiler + ["-std=gnu++11", "-fPIC", "-shared", "-I", str(ROOT),
                                        str(ROOT / "tests/fixture_omnibot.cpp"), "-o", str(botdir / "omnibot_et.so")],
@@ -264,13 +264,13 @@ def main():
             return 1
 
         lua = LUA.encode()
-        (newmod / "smoke.lua").write_bytes(lua)
+        (overzealous_dir / "smoke.lua").write_bytes(lua)
         digest = hashlib.sha1(lua).hexdigest().upper()
-        (newmod / "smoke.cfg").write_text(
+        (overzealous_dir / "smoke.cfg").write_text(
             f'set lua_modules "smoke.lua"\nset lua_allowedModules "{digest}"\n'
             'set g_doWarmup "1"\nset match_minplayers "8"\nset g_tyranny "1"\nset g_shortcuts "1"\n'
         )
-        with (newmod / "shrubbot.cfg").open("a") as config:
+        with (overzealous_dir / "shrubbot.cfg").open("a") as config:
             config.write(
                 "[admin]\nname = SeenBot\nguid = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nlevel = 1\nflags = %\n\n"
                 "[mute]\nname = HistoricalAlias\nguid = cccccccccccccccccccccccccccccccc\nexpires = 0\n\n"
@@ -286,21 +286,21 @@ def main():
             )
         # A malformed reload must retain the live permissions, bans and
         # custom commands. The original is selected again before restart.
-        (newmod / "invalid-shrub.cfg").write_text(
+        (overzealous_dir / "invalid-shrub.cfg").write_text(
             "[command]\ncommand = fixtureecho\nlevels = " + "0 " * 33 + "\n"
         )
-        (newmod / "run.cfg").write_text(RUN)
-        (newmod / "finish.cfg").write_text(FINISH)
+        (overzealous_dir / "run.cfg").write_text(RUN)
+        (overzealous_dir / "finish.cfg").write_text(FINISH)
         # Keep the startup command count below ET: Legacy's 32-line limit;
         # the staged cfg files hold the test actions and their waits.
         command = [
             str(engine), "+set", "fs_basepath", str(base), "+set", "fs_homepath", str(home),
-            "+set", "fs_game", "newmod", "+set", "net_ip", "127.0.0.1",
+            "+set", "fs_game", "overzealous", "+set", "net_ip", "127.0.0.1",
             "+set", "net_port", str(args.port or available_udp_port()),
             "+set", "dedicated", "1", "+set", "com_recommendedSet", "1", "+set", "g_gametype", "2",
             "+set", "sv_pure", "0", "+set", "sv_fps", "20",
             "+set", "omnibot_enable", "1", "+set", "omnibot_path", str(botdir),
-            "+exec", "smoke.cfg", "+map", "newmod_test", "+exec", "run.cfg",
+            "+exec", "smoke.cfg", "+map", "overzealous_test", "+exec", "run.cfg",
         ]
         try:
             proc = subprocess.run(command, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,

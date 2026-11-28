@@ -172,8 +172,8 @@ void G_refLockTeams_cmd(gentity_t *ent, qboolean fLock)
 // Pause/unpause a match.
 void G_refPause_cmd(gentity_t *ent, qboolean fPause)
 {
-	char *status[2] = { "^5UN", "^1" };
-	char *referee = (ent) ? "Referee" : "ref";
+	const char *status[2] = { "^5UN", "^1" };
+	const char *referee = (ent) ? "Referee" : "ref";
 
 	if((PAUSE_UNPAUSING >= level.match_pause && !fPause) || (PAUSE_NONE != level.match_pause && fPause)) {
 		// CHRUKER: b047 - Remove unneeded \" and linebreak
@@ -237,10 +237,10 @@ void G_refPlayerPut_cmd(gentity_t *ent, int team_id)
 	player->client->pers.ready = qfalse;
 
 	if( team_id == TEAM_AXIS ) {
-		SetTeam( player, "red", qtrue, -1, -1, qfalse );
+		SetTeam( player, "red", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse );
 	}
 	else {
-		SetTeam( player, "blue", qtrue, -1, -1, qfalse );
+		SetTeam( player, "blue", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse );
 	}
 
 	if(g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN)
@@ -276,7 +276,7 @@ void G_refRemove_cmd(gentity_t *ent)
 	AP(va("cp \"%s\n^7removed from team %s\n\"", player->client->pers.netname, aTeams[player->client->sess.sessionTeam]));
 	CPx(pid, va("print \"^5You've been removed from the %s team\n\"", aTeams[player->client->sess.sessionTeam]));
 
-	SetTeam( player, "s", qtrue, -1, -1, qfalse );
+	SetTeam( player, "s", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse );
 
 	if(g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN) {
 		G_readyMatchState();

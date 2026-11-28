@@ -567,7 +567,7 @@ static void G_xpsave_convert_old_config() {
 	}
 
 	// Allocate memory to read in the file...
-	next_token = xpsave_data = malloc(len + 1);
+	next_token = xpsave_data = (char*)malloc(len + 1);
 	if ( NULL == xpsave_data ) {
 		G_Printf("G_xpsave_convert_old_config: unable to malloc memory for xpsave file data\n");
 		trap_FS_FCloseFile(f);

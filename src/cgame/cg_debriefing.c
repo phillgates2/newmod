@@ -3062,10 +3062,10 @@ void CG_Debreifing2_Awards_Parse( void ) {
 		token = COM_Parse( &cs );
 
 		if(isDisplayed) { // see check of team in CG_Debreifing2_Awards_Draw
-			cgs.dbAwardTeams[ i ] = atoi(token);
+			cgs.dbAwardTeams[ i ] = (team_t)atoi(token);
 		}
 		else {
-			cgs.dbAwardTeams[ i ] = -1;
+			cgs.dbAwardTeams[ i ] = (team_t)-1;
 		}
 	}
 

@@ -530,6 +530,13 @@ void		Display_CacheAll();
 
 // TTimo
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
+void Menu_FadeItemByName(menuDef_t *menu, const char *p, qboolean fadeOut);
+void Menu_TransitionItemByName(menuDef_t *menu, const char *p, rectDef_t rectFrom, rectDef_t rectTo, int time, float amt);
+void Menu_OrbitItemByName(menuDef_t *menu, const char *p, float x, float y, float cx, float cy, int time);
+itemDef_t *Menu_FindItemByName(menuDef_t *menu, const char *p);
+itemDef_t *Menu_ClearFocus(menuDef_t *menu);
+int Menu_ItemsMatchingGroup(menuDef_t *menu, const char *name);
+itemDef_t *Menu_GetMatchingItemByNumber(menuDef_t *menu, int index, const char *name);
 
 void		*UI_Alloc( int size );
 void		UI_InitMemory( void );

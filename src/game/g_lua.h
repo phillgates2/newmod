@@ -52,7 +52,7 @@
 #define HOSTARCH	"WIN32"
 #define EXTENSION	"dll"
 
-#elif defined __MACOS__
+#elif defined __MACOS__ || defined __APPLE__
 
 #define HOSTARCH	"MACOS"
 #define EXTENSION	"so"

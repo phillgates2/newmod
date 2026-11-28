@@ -720,8 +720,8 @@ static float CG_DrawTimer( float y, qboolean draw ) {
 		int		w, w2;
 		vec4_t	color = { 0.625f, 0.625f, 0.6f, 1.0f };
 		int		tens;
-		char	*rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || cg.snap->ps.pm_flags & PMF_FOLLOW) && cg_drawReinforcementTime.integer > 0) ?
-								va("^F%d%s", CG_CalculateReinfTime( qfalse ), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
+		char		*rt = (char*)((cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || cg.snap->ps.pm_flags & PMF_FOLLOW) && cg_drawReinforcementTime.integer > 0) ?
+								va("^F%d%s", CG_CalculateReinfTime( qfalse ), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "");
 		int x;
 		int msec = ( cgs.timelimit * 60.f * SECONDS_1_F ) - ( cg.time - cgs.levelStartTime );
 		int seconds = msec / SECONDS_1;
@@ -4477,7 +4477,7 @@ static void CG_DrawPlayerStatusHead( int offsetX ) {
 		return;
 	}
 
-	anim = cg.idleAnim;
+	anim = (hudHeadAnimNumber_t)cg.idleAnim;
 
 	for ( i = 0 ; i < MAX_HD_ANIMATIONS ; ++i ) {
 		animations[i] = character->hudheadanimations[i];
@@ -4846,7 +4846,7 @@ static void CG_DrawWeapRecharge( rectDef_t *rect ) {
 		weapon = cg.snap->ps.weapon;
 	}
 
-	if ( (weap != WP_MEDIC_ADRENALINE && (cg.time - cg.snap->ps.classWeaponTime < chargeTime * BG_ChargeUsage(weapon, cgs.clientinfo[cg.snap->ps.clientNum].skillBits))) ||
+	if ( (weap != WP_MEDIC_ADRENALINE && (cg.time - cg.snap->ps.classWeaponTime < chargeTime * BG_ChargeUsage((weapon_t)weapon, cgs.clientinfo[cg.snap->ps.clientNum].skillBits))) ||
 		(weap == WP_MEDIC_ADRENALINE && cg.snap->ps.powerups[PW_ADRENALINE]>0) ) {
 		color[0] = 1;
 		color[1] = color[2] = 0;

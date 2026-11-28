@@ -1909,7 +1909,7 @@ qboolean G_LandmineUnarmed( gentity_t* ent ) {
 }
 
 team_t G_LandmineTeam( gentity_t* ent ) {
-	return (ent->s.teamNum % 4);
+	return (team_t)(ent->s.teamNum % 4);
 }
 
 qboolean G_LandmineSpotted( gentity_t* ent ) {
@@ -2380,7 +2380,7 @@ evilbanigoto:
 							// core: mark that missionair point is already given for this dynamite..
 							traceEnt->etpro_misc_1 |= 2;
 
-							G_Script_ScriptEvent( hit, SE_DYNAMITED, ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies" );
+							G_Script_ScriptEvent( hit, SE_DYNAMITED, (char*)(ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies") );
 
 #ifdef OMNIBOTS
 							// notify omni-bot framework of planted dynamite
@@ -2465,7 +2465,7 @@ evilbanigoto:
 							// core: mark that missionair point is already given for this dynamite..
 							traceEnt->etpro_misc_1 |= 2;
 
-							G_Script_ScriptEvent( hit, SE_DYNAMITED, ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies" );
+							G_Script_ScriptEvent( hit, SE_DYNAMITED, (char*)(ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies") );
 
 #ifdef OMNIBOTS
 							// notify omni-bot framework of planted dynamite
@@ -4071,11 +4071,11 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 
 	if (!reflection && g_entities[ attacker->s.number ].r.linked == qtrue) {
 		g_entities[ attacker->s.number ].r.linked = qfalse;
-		G_Trace(source, &tr, start, NULL, NULL, end, ENTITYNUM_NONE, MASK_SHOT, !G_WeaponCanGib( GetWeaponTableData(attacker->s.weapon)->mod ));
+		G_Trace(source, &tr, start, NULL, NULL, end, ENTITYNUM_NONE, MASK_SHOT, !G_WeaponCanGib( (meansOfDeath_t)GetWeaponTableData(attacker->s.weapon)->mod ));
 		g_entities[ attacker->s.number ].r.linked = qtrue;
 	}
 	else {
-		G_Trace(source, &tr, start, NULL, NULL, end, ENTITYNUM_NONE, MASK_SHOT, !G_WeaponCanGib( GetWeaponTableData(attacker->s.weapon)->mod ));
+		G_Trace(source, &tr, start, NULL, NULL, end, ENTITYNUM_NONE, MASK_SHOT, !G_WeaponCanGib( (meansOfDeath_t)GetWeaponTableData(attacker->s.weapon)->mod ));
 	}
 
 	// bullet debugging using Q3A's railtrail
@@ -4137,7 +4137,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 			if (!g_simpleBullets.integer || reflection) {
 				trace_t tr2;
 
-				G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT, !G_WeaponCanGib(GetWeaponTableData(attacker->s.weapon)->mod) );
+				G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT, !G_WeaponCanGib( (meansOfDeath_t)GetWeaponTableData(attacker->s.weapon)->mod ) );
 
 				tent = G_TempEntity( tr.endpos, EV_BULLET_HIT_WALL );
 				// jaquboss make sure we hit water/slime surface
@@ -4167,7 +4167,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 				G_AddEvent( attacker, EV_BULLET, eventParm );
 			}
 
-			if ( jP_BulletReflects(attacker->s.weapon) ) {
+			if ( jP_BulletReflects((weapon_t)attacker->s.weapon) ) {
 				vec3_t	end2;
 
 				// Ridah, bullet impact should reflect off surface
@@ -4583,7 +4583,7 @@ void ThrowKnife( gentity_t *ent ) {
 	knife->s.apos.trDelta[0] = speed*3;
 
 	// item
-	knife->item =  BG_FindItemForWeapon( ent->s.weapon );
+	knife->item =  BG_FindItemForWeapon( (weapon_t)ent->s.weapon );
 	knife->s.modelindex = knife->item - bg_itemlist;	// store item number in modelindex
 	knife->s.otherEntityNum2 = 1;	// DHM - Nerve :: this is taking modelindex2's place for a dropped item
 	knife->flags |= FL_DROPPED_ITEM;	// so it gets removd after being picked up
@@ -5325,7 +5325,7 @@ void FireWeapon( gentity_t *ent ) {
 #ifndef DEBUG_STATS
 	if(g_gamestate.integer == GS_PLAYING)
 #endif
-		ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(ent->s.weapon)].atts += shots;
+		ent->client->sess.aWeaponStats[BG_WeapStatForWeapon((weapon_t)ent->s.weapon)].atts += shots;
 }
 
 // Created by: dvl
@@ -5433,7 +5433,7 @@ void C_CheckKickedDyna( gentity_t *player, gentity_t *dynaEnt ) {
 				// mark dynamite as in range
 				dynaEnt->etpro_misc_1 &= ~4;
 
-				G_Script_ScriptEvent( hit, SE_DYNAMITED, dynaEnt->parent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies" );
+				G_Script_ScriptEvent( hit, SE_DYNAMITED, (char*)(dynaEnt->parent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies") );
 
 #ifdef OMNIBOTS
 				// notify omni-bot framework of planted dynamite
@@ -5523,7 +5523,7 @@ void C_CheckKickedDyna( gentity_t *player, gentity_t *dynaEnt ) {
 				// mark dynamite as in range
 				dynaEnt->etpro_misc_1 &= ~4;
 
-				G_Script_ScriptEvent( hit, SE_DYNAMITED, dynaEnt->parent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies" );
+				G_Script_ScriptEvent( hit, SE_DYNAMITED, (char*)(dynaEnt->parent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies") );
 
 #ifdef OMNIBOTS
 				// notify omni-bot framework of planted dynamite

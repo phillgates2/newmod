@@ -1083,7 +1083,7 @@ void SP_team_WOLF_objective(gentity_t *ent) {
 	G_SpawnString( "description", "WARNING: No objective description set", &desc );
 
 	// Gordon: wtf is this g_alloced? just use a static buffer fgs...
-	ent->message = G_Alloc( strlen(desc)+1 );
+	ent->message = (char*)G_Alloc( strlen(desc)+1 );
 	Q_strncpyz( ent->message, desc, strlen(desc)+1 );
 
 	ent->nextthink =	level.time + SERVER_FRAMETIME_DELTA;
@@ -1765,7 +1765,7 @@ void G_shuffleTeams(void) {
 		}
 		G_DropItems(g_entities + sortClients[i]);
 
-		cl->sess.sessionTeam = cTeam;
+		cl->sess.sessionTeam = (team_t)cTeam;
 
 		G_UpdateCharacter(cl);
 		ClientUserinfoChanged(sortClients[i]);
@@ -1959,7 +1959,7 @@ void G_updateSpecLock(int nTeam, qboolean fLock) {
 #ifdef MV_SUPPORT
 		if(ent->client->pers.mvCount < 1) {
 #endif
-			SetTeam( ent, "s", qtrue, -1, -1, qfalse );
+			SetTeam( ent, "s", qtrue, (weapon_t)-1, (weapon_t)-1, qfalse );
 #ifdef MV_SUPPORT
 		}
 #endif

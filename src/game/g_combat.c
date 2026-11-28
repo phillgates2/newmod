@@ -448,7 +448,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 {
 	int				contents		= 0;
 	int				killer			= ENTITYNUM_WORLD;
-	char			*killerName 	= "<world>";
+	const char		*killerName 	= "<world>";
 	qboolean		nogib			= qtrue;
 	qboolean		killedintank	= qfalse;
 	weapon_t		weap;
@@ -474,16 +474,16 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	// ... set weap for any case
 	switch (meansOfDeath) {
 		case MOD_FEAR:
-			weap = modWeaponTableMP[self->client->lasthurt_mod][0];
+			weap = (weapon_t)modWeaponTableMP[self->client->lasthurt_mod][0];
 			break;
 		case MOD_FALLING:
 			if ( self->client->pmext.shoved ) {
-				weap = WP_NONE;
+				weap = (weapon_t)WP_NONE;
 				attacker = &g_entities[self->client->pmext.pusher];
 				meansOfDeath = MOD_SHOVE;
 			}
 			else {
-				weap = modWeaponTableMP[meansOfDeath][0];
+				weap = (weapon_t)modWeaponTableMP[meansOfDeath][0];
 				// IRATA: this was done later before ...
 				self->client->sess.newton++; // jaquboss
 			}
@@ -499,34 +499,34 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 					self->client->sess.panzernoob++;
 				}
 			}
-			weap = modWeaponTableMP[meansOfDeath][0];
+			weap = (weapon_t)modWeaponTableMP[meansOfDeath][0];
 			break;
 			// core: awards
 		case MOD_POISON:
 			if (attacker != self && !onSameTeam) {
 				attacker->client->sess.poisoneer++;
 			}
-			weap = modWeaponTableMP[meansOfDeath][0];
+			weap = (weapon_t)modWeaponTableMP[meansOfDeath][0];
 			break;
 		case MOD_KICKED:
 			if (attacker != self && !onSameTeam) {
 				attacker->client->sess.kickass++;
 			}
-			weap = modWeaponTableMP[meansOfDeath][0];
+			weap = (weapon_t)modWeaponTableMP[meansOfDeath][0];
 			break;
 		case MOD_M97:
 			// NewMod, Arena.ai: M97 shotgun — same awards as shotgun
-			weap = modWeaponTableMP[meansOfDeath][0];
+			weap = (weapon_t)modWeaponTableMP[meansOfDeath][0];
 			break;
 		case MOD_POISON_GAS:
 			// NewMod, Arena.ai: poison gas — counts as poison kill
 			if (attacker != self && !onSameTeam) {
 				attacker->client->sess.poisoneer++;
 			}
-			weap = modWeaponTableMP[meansOfDeath][0];
+			weap = (weapon_t)modWeaponTableMP[meansOfDeath][0];
 			break;
 		default:
-			weap = modWeaponTableMP[meansOfDeath][0];
+			weap = (weapon_t)modWeaponTableMP[meansOfDeath][0];
 			break;
 	}
 
@@ -582,7 +582,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 
 		if ( g_gamestate.integer == GS_PLAYING )	{
 			if ( attackerClient ) {
-				attacker->client->combatState |= (1 << COMBATSTATE_KILLEDPLAYER);
+				attacker->client->combatState = (combatstate_t)(attacker->client->combatState | (1 << COMBATSTATE_KILLEDPLAYER));
 			}
 		}
 	}
@@ -608,12 +608,12 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	if(meansOfDeath == MOD_FEAR) {
 		G_addStats(self, attacker, damage, self->client->lasthurt_mod);
 		// tjw: this would normally be handled in G_Damage()
-		G_AddKillSkillPoints(attacker, self->client->lasthurt_mod, 0, qfalse);
+		G_AddKillSkillPoints(attacker, (meansOfDeath_t)self->client->lasthurt_mod, (hitRegion_t)0, qfalse);
 	}
 	else if ( meansOfDeath != MOD_SWAP_PLACES ) {
 		G_addStats(self, attacker, damage, meansOfDeath);
 		if ( meansOfDeath == MOD_SHOVE && attackerClient && !onSameTeam ) {
-			G_AddKillSkillPoints(attacker, MOD_SHOVE, 0, qfalse);
+			G_AddKillSkillPoints(attacker, MOD_SHOVE, (hitRegion_t)0, qfalse);
 		}
 
 	}
@@ -696,7 +696,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 		(self->s.weapon != WP_LANDMINE_PGAS) &&
 		(self->s.weapon != WP_SATCHEL) )
 	{
-		vec3_t launchvel = {crandom(), crandom(), random()}, launchspot;
+		vec3_t launchvel = {(float)crandom(), (float)crandom(), (float)random()}, launchspot;
 
 		VectorScale( launchvel, 160, launchvel );
 		VectorCopy(self->r.currentOrigin, launchspot);
@@ -1410,8 +1410,8 @@ void G_Damage(gentity_t *targ,	gentity_t	*inflictor, gentity_t	*attacker,	vec3_t
 
 		if( g_gamestate.integer == GS_PLAYING && attacker != targ ) {
 			if( !onSameTeam ) {
-				targ->client->combatState		|= (1 << COMBATSTATE_DAMAGERECEIVED);
-				attacker->client->combatState	|= (1 << COMBATSTATE_DAMAGEDEALT);
+				targ->client->combatState = (combatstate_t)(targ->client->combatState | (1 << COMBATSTATE_DAMAGERECEIVED));
+				attacker->client->combatState = (combatstate_t)(attacker->client->combatState | (1 << COMBATSTATE_DAMAGEDEALT));
 			}
 		}
 	}
@@ -1439,7 +1439,7 @@ void G_Damage(gentity_t *targ,	gentity_t	*inflictor, gentity_t	*attacker,	vec3_t
 					return;
 				}
 				// only explosive weapons can hurt this
-				if( !G_WeaponIsExplosive( mod ) ) {
+				if( !G_WeaponIsExplosive( (meansOfDeath_t)mod ) ) {
 					return;
 				}
 				// check for team
@@ -1457,20 +1457,20 @@ void G_Damage(gentity_t *targ,	gentity_t	*inflictor, gentity_t	*attacker,	vec3_t
 			// 64 Dynamite only
 			// 256 Airstrike/artillery only
 			// 512 Satchel only
-			if( targ->parent && G_GetWeaponClassForMOD( mod ) == 2 )
+			if( targ->parent && G_GetWeaponClassForMOD( (meansOfDeath_t)mod ) == 2 )
 				return;
 
 			if( G_GetTeamFromEntity( inflictor ) == G_GetTeamFromEntity( targ ) )
 				return;
 
-			if( G_GetWeaponClassForMOD( mod ) < targ->constructibleStats.weaponclass )
+			if( G_GetWeaponClassForMOD( (meansOfDeath_t)mod ) < targ->constructibleStats.weaponclass )
 				return;
 			break;
 
 		case ET_MISSILE:
 			if ( targ->methodOfDeath == MOD_LANDMINE ) {
 				if( targ->s.modelindex2 ) {
-					if( G_WeaponIsExplosive( mod ) ) {
+					if( G_WeaponIsExplosive( (meansOfDeath_t)mod ) ) {
 						// update the map/radar..
 						G_RemoveTeamMapData( targ, qfalse, qtrue, qtrue );
 
@@ -1488,7 +1488,7 @@ void G_Damage(gentity_t *targ,	gentity_t	*inflictor, gentity_t	*attacker,	vec3_t
 			if( G_GetTeamFromEntity( inflictor ) == G_GetTeamFromEntity( targ ) ) {
 				return;
 			}
-			if( G_GetWeaponClassForMOD( mod ) < targ->constructibleStats.weaponclass ) {
+			if( G_GetWeaponClassForMOD( (meansOfDeath_t)mod ) < targ->constructibleStats.weaponclass ) {
 				return;
 			}
 			//bani - fix #238
@@ -1570,7 +1570,7 @@ void G_Damage(gentity_t *targ,	gentity_t	*inflictor, gentity_t	*attacker,	vec3_t
 		VectorAdd (targ->client->ps.velocity, kvel, targ->client->ps.velocity);
 
 		// jaquboss - are we pushed? Do not count when already flying..
-		if ( attacker && attacker->client && ( targ->client->ps.groundEntityNum != ENTITYNUM_NONE || G_WeaponIsExplosive(mod) )){
+		if ( attacker && attacker->client && ( targ->client->ps.groundEntityNum != ENTITYNUM_NONE || G_WeaponIsExplosive((meansOfDeath_t)mod) )){
 			targ->client->pmext.shoved = qtrue;
 			targ->client->pmext.pusher = attacker - g_entities;
 		}
@@ -1648,9 +1648,9 @@ void G_Damage(gentity_t *targ,	gentity_t	*inflictor, gentity_t	*attacker,	vec3_t
 	// Prevent 50% of explosive damage if wearing a Flak Jacket
 	// Note: this skill of SK_ENGINEER > 4 players did never work before r4847 and might change gameplay!
 	// There is a bigger chance to survive landmines, satchel, airstrikes , bazooka & CO
-	// for engineers  or for Flak Jacket owners (if this 'carry over' flag Flak Jacket is set) ... see G_WeaponIsExplosive(mod)
+	// for engineers  or for Flak Jacket owners (if this 'carry over' flag Flak Jacket is set) ... see G_WeaponIsExplosive((meansOfDeath_t)mod)
 	// Adrenaline servers and g_adrenaline ADF_HALFDAMAGE reduce take twice (This is madness.)
-	if (targ->client && G_WeaponIsExplosive(mod) && (targ->client->ps.powerups[PW_FLAKJACKET]) ) {
+	if (targ->client && G_WeaponIsExplosive((meansOfDeath_t)mod) && (targ->client->ps.powerups[PW_FLAKJACKET]) ) {
 		take *= .5f;
 	}
 
@@ -1909,7 +1909,7 @@ void G_Damage(gentity_t *targ,	gentity_t	*inflictor, gentity_t	*attacker,	vec3_t
 			if( targ->health <= GIB_HEALTH ) {
 				qboolean	fastBackstabbed			= (g_fastBackStab.integer && mod == MOD_BACKSTAB)? qtrue : qfalse;
 
-				if( !G_WeaponCanGib( mod ) && !fastBackstabbed ) {
+				if( !G_WeaponCanGib( (meansOfDeath_t)mod ) && !fastBackstabbed ) {
 					targ->health = GIB_HEALTH + 1;
 				}
 
@@ -1960,7 +1960,7 @@ void G_Damage(gentity_t *targ,	gentity_t	*inflictor, gentity_t	*attacker,	vec3_t
 
 				if( targ->client ) {
 					if( G_GetTeamFromEntity( inflictor ) != G_GetTeamFromEntity( targ ) )
-						G_AddKillSkillPoints( attacker, mod, hr, (dflags & DAMAGE_RADIUS));
+						G_AddKillSkillPoints( attacker, (meansOfDeath_t)mod, (hitRegion_t)hr, (dflags & DAMAGE_RADIUS));
 				}
 
 				if( targ->health < -999 ) {
@@ -1968,7 +1968,7 @@ void G_Damage(gentity_t *targ,	gentity_t	*inflictor, gentity_t	*attacker,	vec3_t
 				}
 
 				targ->enemy		= attacker;
-				targ->deathType = mod;
+				targ->deathType = (meansOfDeath_t)mod;
 
 				if( targ->die ) {
 					targ->die( targ, inflictor, attacker, take, mod );
